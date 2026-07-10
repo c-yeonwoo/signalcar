@@ -573,4 +573,3 @@ function CostRow({
     </div>
   );
 }
-}
