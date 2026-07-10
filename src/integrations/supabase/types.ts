@@ -1,0 +1,492 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  public: {
+    Tables: {
+      brands: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          name_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      deal_reports: {
+        Row: {
+          contract_month: string | null
+          contract_price: number
+          created_at: string
+          discount_amount: number | null
+          finance_type: Database["public"]["Enums"]["finance_type"] | null
+          id: string
+          list_price: number | null
+          options_taken: Json | null
+          region: string | null
+          source: Database["public"]["Enums"]["deal_source"]
+          trim_id: string
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
+        }
+        Insert: {
+          contract_month?: string | null
+          contract_price: number
+          created_at?: string
+          discount_amount?: number | null
+          finance_type?: Database["public"]["Enums"]["finance_type"] | null
+          id?: string
+          list_price?: number | null
+          options_taken?: Json | null
+          region?: string | null
+          source?: Database["public"]["Enums"]["deal_source"]
+          trim_id: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Update: {
+          contract_month?: string | null
+          contract_price?: number
+          created_at?: string
+          discount_amount?: number | null
+          finance_type?: Database["public"]["Enums"]["finance_type"] | null
+          id?: string
+          list_price?: number | null
+          options_taken?: Json | null
+          region?: string | null
+          source?: Database["public"]["Enums"]["deal_source"]
+          trim_id?: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_reports_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      official_promotions: {
+        Row: {
+          amount: number
+          captured_at: string
+          created_at: string
+          description: string | null
+          discount_type: Database["public"]["Enums"]["promotion_type"]
+          id: string
+          month: string
+          source_url: string | null
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          captured_at?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["promotion_type"]
+          id?: string
+          month: string
+          source_url?: string | null
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          captured_at?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["promotion_type"]
+          id?: string
+          month?: string
+          source_url?: string | null
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "official_promotions_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trim_options: {
+        Row: {
+          category: Database["public"]["Enums"]["option_category"]
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          notes: string | null
+          price: number | null
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["option_category"]
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          notes?: string | null
+          price?: number | null
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["option_category"]
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          notes?: string | null
+          price?: number | null
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trim_options_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trims: {
+        Row: {
+          base_price: number | null
+          created_at: string
+          discontinued_at: string | null
+          id: string
+          name: string
+          notes: string | null
+          released_at: string | null
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          base_price?: number | null
+          created_at?: string
+          discontinued_at?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          released_at?: string | null
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          base_price?: number | null
+          created_at?: string
+          discontinued_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          released_at?: string | null
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trims_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicles: {
+        Row: {
+          body_type: Database["public"]["Enums"]["body_type"] | null
+          brand_id: string
+          created_at: string
+          discontinued_at: string | null
+          fuel_type: Database["public"]["Enums"]["fuel_type"] | null
+          generation: string | null
+          id: string
+          launched_at: string | null
+          model_name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          body_type?: Database["public"]["Enums"]["body_type"] | null
+          brand_id: string
+          created_at?: string
+          discontinued_at?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          generation?: string | null
+          id?: string
+          launched_at?: string | null
+          model_name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body_type?: Database["public"]["Enums"]["body_type"] | null
+          brand_id?: string
+          created_at?: string
+          discontinued_at?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          generation?: string | null
+          id?: string
+          launched_at?: string | null
+          model_name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      body_type:
+        | "sedan"
+        | "suv"
+        | "hatchback"
+        | "wagon"
+        | "coupe"
+        | "convertible"
+        | "pickup"
+        | "van"
+        | "minivan"
+        | "other"
+      deal_source: "manual" | "receipt_ocr" | "community"
+      finance_type: "cash" | "installment" | "lease" | "rent"
+      fuel_type:
+        | "gasoline"
+        | "diesel"
+        | "hybrid"
+        | "phev"
+        | "ev"
+        | "lpg"
+        | "hydrogen"
+        | "other"
+      option_category:
+        | "exterior"
+        | "interior"
+        | "convenience"
+        | "safety"
+        | "powertrain"
+        | "package"
+        | "other"
+      promotion_type: "cash" | "finance" | "trade_in" | "other"
+      verification_status: "unverified" | "receipt_verified" | "flagged"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      body_type: [
+        "sedan",
+        "suv",
+        "hatchback",
+        "wagon",
+        "coupe",
+        "convertible",
+        "pickup",
+        "van",
+        "minivan",
+        "other",
+      ],
+      deal_source: ["manual", "receipt_ocr", "community"],
+      finance_type: ["cash", "installment", "lease", "rent"],
+      fuel_type: [
+        "gasoline",
+        "diesel",
+        "hybrid",
+        "phev",
+        "ev",
+        "lpg",
+        "hydrogen",
+        "other",
+      ],
+      option_category: [
+        "exterior",
+        "interior",
+        "convenience",
+        "safety",
+        "powertrain",
+        "package",
+        "other",
+      ],
+      promotion_type: ["cash", "finance", "trade_in", "other"],
+      verification_status: ["unverified", "receipt_verified", "flagged"],
+    },
+  },
+} as const

@@ -11,6 +11,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -77,14 +80,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "신차 구매 코치 — 카탈로그 관리" },
+      { name: "description", content: "자동차 브랜드·차종·트림·프로모션 카탈로그 관리자 도구" },
+      { property: "og:title", content: "신차 구매 코치 — 카탈로그 관리" },
+      { property: "og:description", content: "자동차 브랜드·차종·트림·프로모션 카탈로그 관리자 도구" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -119,8 +120,23 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col min-w-0">
+            <header className="h-12 flex items-center border-b bg-background sticky top-0 z-10">
+              <SidebarTrigger className="ml-2" />
+              <div className="ml-3 text-sm font-medium text-muted-foreground">
+                신차 구매 코치 — 카탈로그
+              </div>
+            </header>
+            <main className="flex-1 p-6">
+              <Outlet />
+            </main>
+          </div>
+        </div>
+        <Toaster richColors position="top-right" />
+      </SidebarProvider>
     </QueryClientProvider>
   );
 }
