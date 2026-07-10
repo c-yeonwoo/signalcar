@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { TrendingUp, TrendingDown, Minus, ChevronRight, ArrowUpRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, ArrowUpRight } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 
@@ -326,7 +326,6 @@ function ExplorePage() {
             <div className="text-[11px] opacity-70 mt-0.5">7문항으로 후보 3대까지</div>
           </div>
           <ArrowUpRight className="h-4 w-4 opacity-80" />
-          <ChevronRight className="hidden" />
         </Link>
       </section>
     </ConsumerShell>
