@@ -1,9 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, MessageCircle, Camera, User } from "lucide-react";
+import { Home, Compass, MessageCircle, Camera, User } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs = [
   { to: "/", label: "홈", icon: Home, match: (p: string) => p === "/" || p.startsWith("/car") },
+  { to: "/explore", label: "탐색", icon: Compass, match: (p: string) => p.startsWith("/explore") },
   { to: "/coach", label: "코치", icon: MessageCircle, match: (p: string) => p.startsWith("/coach") || p.startsWith("/diagnose") },
   { to: "/report", label: "제보", icon: Camera, match: (p: string) => p.startsWith("/report") },
   { to: "/me", label: "마이", icon: User, match: (p: string) => p.startsWith("/me") },
@@ -17,7 +18,7 @@ export function ConsumerShell({ children }: { children: ReactNode }) {
       <div className="w-full max-w-[480px] min-h-screen bg-[color:var(--color-app-bg)] relative flex flex-col shadow-[0_0_60px_rgba(18,32,58,0.08)]">
         <div className="flex-1 pb-24">{children}</div>
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-slate-100 pb-[env(safe-area-inset-bottom)] z-40">
-          <ul className="grid grid-cols-4">
+          <ul className="grid grid-cols-5">
             {tabs.map((t) => {
               const active = t.match(pathname);
               return (
