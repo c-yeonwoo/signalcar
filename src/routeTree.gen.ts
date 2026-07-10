@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReportRouteImport } from './routes/report'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as DiagnoseRouteImport } from './routes/diagnose'
 import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -25,6 +26,11 @@ import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehic
 const ReportRoute = ReportRouteImport.update({
   id: '/report',
   path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnoseRoute = DiagnoseRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
   '/diagnose': typeof DiagnoseRoute
+  '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/coach': typeof CoachRoute
   '/diagnose': typeof DiagnoseRoute
+  '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
   '/diagnose': typeof DiagnoseRoute
+  '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/coach'
     | '/diagnose'
+    | '/me'
     | '/report'
     | '/admin/brands'
     | '/admin/deal-reports'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/'
     | '/coach'
     | '/diagnose'
+    | '/me'
     | '/report'
     | '/admin/brands'
     | '/admin/deal-reports'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/coach'
     | '/diagnose'
+    | '/me'
     | '/report'
     | '/admin/brands'
     | '/admin/deal-reports'
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CoachRoute: typeof CoachRoute
   DiagnoseRoute: typeof DiagnoseRoute
+  MeRoute: typeof MeRoute
   ReportRoute: typeof ReportRoute
   CarVehicleIdRoute: typeof CarVehicleIdRoute
 }
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnose': {
@@ -302,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CoachRoute: CoachRoute,
   DiagnoseRoute: DiagnoseRoute,
+  MeRoute: MeRoute,
   ReportRoute: ReportRoute,
   CarVehicleIdRoute: CarVehicleIdRoute,
 }
