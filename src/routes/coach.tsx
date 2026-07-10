@@ -539,3 +539,38 @@ function QuoteRow({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function CostRow({
+  icon,
+  label,
+  sub,
+  monthly,
+  annual,
+  tint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  sub?: string;
+  monthly: number;
+  annual: number;
+  tint: string;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0 flex-1">
+        <div className={`text-[12.5px] font-semibold flex items-center gap-1.5 ${tint}`}>
+          {icon}
+          <span className="text-slate-800">{label}</span>
+        </div>
+        {sub && <div className="text-[11px] text-slate-500 mt-0.5 ml-5">{sub}</div>}
+      </div>
+      <div className="text-right shrink-0">
+        <div className="text-[14px] font-bold text-[color:var(--color-brand-navy)] leading-none">
+          월 {formatKRW(monthly)}
+        </div>
+        <div className="text-[10.5px] text-slate-400 mt-1">연 {formatKRW(annual)}</div>
+      </div>
+    </div>
+  );
+}
+}
