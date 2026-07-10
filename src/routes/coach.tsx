@@ -297,6 +297,58 @@ function Interview() {
           </div>
         </div>
 
+        {/* 예상 유지비 카드 */}
+        {ownership && (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-5 pt-5 pb-3 border-b border-slate-100">
+              <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                <Wrench className="h-3 w-3" /> 예상 월 유지비
+              </div>
+              <div className="mt-1 flex items-baseline gap-2">
+                <div className="text-[22px] font-bold text-[color:var(--color-brand-navy)]">
+                  월 {formatKRW(ownership.monthlyTotal)}
+                </div>
+                <div className="text-[11.5px] text-slate-400">
+                  연 {formatKRW(ownership.annualTotal)}
+                </div>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                연 {ownership.annualKm.toLocaleString()}km · {car.fuelEfficiency}km/{ownership.fuel.unit} · {ownership.fuel.label}
+              </div>
+            </div>
+
+            <div className="px-5 py-4 space-y-3">
+              <CostRow
+                icon={<Fuel className="h-3.5 w-3.5" />}
+                label="예상 기름값"
+                sub={`${ownership.fuel.label} ${ownership.fuel.price.toLocaleString()}원/${ownership.fuel.unit} 기준`}
+                monthly={ownership.monthlyFuel}
+                annual={ownership.annualFuelCost}
+                tint="text-[color:var(--color-brand-blue)]"
+              />
+              <CostRow
+                icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                label="예상 자동차 보험료"
+                sub="30대 · 무사고 · 대인/대물 표준 가정"
+                monthly={ownership.monthlyInsurance}
+                annual={ownership.annualInsurance}
+                tint="text-[color:var(--color-signal-buy)]"
+              />
+              <CostRow
+                icon={<Wrench className="h-3.5 w-3.5" />}
+                label="소모품·정비 (평균)"
+                sub="엔진오일·타이어·소모품 러프 추정"
+                monthly={ownership.monthlyMaintenance}
+                annual={ownership.annualMaintenance}
+                tint="text-[color:var(--color-signal-wait)]"
+              />
+            </div>
+            <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[10.5px] text-slate-400 leading-relaxed">
+              세금·주차·세차 등 개인 편차가 큰 항목은 제외한 러프 추정치예요. 실제 견적은 보험 다이렉트 견적으로 다시 확인해보세요.
+            </div>
+          </div>
+        )}
+
         <button
           onClick={() => toast.success("견적서를 마이 탭에 저장했어요")}
           className="w-full rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition"
