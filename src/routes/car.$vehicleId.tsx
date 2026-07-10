@@ -294,7 +294,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
           <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
           <p className={`text-[11.5px] ${MUTED} mt-0.5`}>중복 가능 + 택1 최대 합산</p>
         </div>
-        <p className={`${DISPLAY} text-[26px] font-bold tabular-nums leading-none`} style={{ color: accent.hex }}>
+        <p className={`${DISPLAY} text-[26px] font-bold tabular-nums leading-none`} style={{ color: accentHex }}>
           −{formatKRW(maxTotal)}
         </p>
       </div>
