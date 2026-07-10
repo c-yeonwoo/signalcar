@@ -1,9 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, TrendingDown, Sparkles, CalendarClock, Gift, Info, Layers } from "lucide-react";
+import { ArrowLeft, TrendingDown, Sparkles, CalendarClock, Gift, Info, Layers, Star, MessageSquareQuote, PlayCircle, Newspaper, ShieldCheck, ExternalLink } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { findCar, formatKRW, signalColor, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
-import type { Benefit } from "@/lib/mock-cars";
+import { findCar, formatKRW, signalColor, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
+import type { Benefit, ReviewBundle, ReviewItem } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/car/$vehicleId")({
   component: CarDetailPage,
@@ -131,6 +131,9 @@ function CarDetailPage() {
 
       {/* All benefits */}
       <BenefitsSection benefits={car.benefits} />
+
+      {/* Reviews */}
+      <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} />
 
       {/* Facelift timeline */}
       <section className="px-5 mt-4">
