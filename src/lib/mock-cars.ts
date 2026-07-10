@@ -50,15 +50,15 @@ export type Benefit = {
   source: "official" | "dealer" | "external"; // 공식/딜러재량/외부
 };
 
-export const BENEFIT_META: Record<BenefitCategory, { label: string; emoji: string }> = {
-  cash: { label: "현금 할인", emoji: "💵" },
-  finance: { label: "저리 할부/리스", emoji: "🏦" },
-  card: { label: "제휴 카드", emoji: "💳" },
-  tradein: { label: "기변·보상", emoji: "🔁" },
-  loyalty: { label: "재구매·패밀리", emoji: "👨‍👩‍👧" },
-  group: { label: "법인·단체", emoji: "🏢" },
-  eco: { label: "친환경 세제혜택", emoji: "🌱" },
-  gift: { label: "사은품", emoji: "🎁" },
+export const BENEFIT_META: Record<BenefitCategory, { label: string; code: string }> = {
+  cash: { label: "현금 할인", code: "CASH" },
+  finance: { label: "저리 할부·리스", code: "FIN" },
+  card: { label: "제휴 카드", code: "CARD" },
+  tradein: { label: "기변·보상", code: "TRD" },
+  loyalty: { label: "재구매·패밀리", code: "LOY" },
+  group: { label: "법인·단체", code: "GRP" },
+  eco: { label: "친환경 세제혜택", code: "ECO" },
+  gift: { label: "사은품", code: "GFT" },
 };
 
 export type ReviewSource = "owner" | "media" | "video";

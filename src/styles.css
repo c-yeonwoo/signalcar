@@ -9,10 +9,14 @@
  * Mobile-first, 토스 감성 + 주식차트 시그널.
  */
 @theme {
-  --font-sans: "Pretendard Variable", "Pretendard", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --font-sans: "DM Sans", "Pretendard Variable", "Pretendard", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --font-display: "Space Grotesk", "Pretendard Variable", "Pretendard", system-ui, sans-serif;
   --color-app-bg: #f7f8fa;
-  --color-brand-navy: #12203a;
-  --color-brand-blue: #2e6bff;
+  --color-brand-navy: #0f1b3d;
+  --color-brand-ink: #1e3a5f;
+  --color-brand-blue: #3b6fa0;
+  --color-brand-mist: #e8edf3;
+  --color-brand-line: #d1d9e2;
   --color-signal-buy: #16a34a;
   --color-signal-buy-soft: #dcfce7;
   --color-signal-wait: #f59e0b;
