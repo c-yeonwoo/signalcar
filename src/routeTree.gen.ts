@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DiagnoseRouteImport } from './routes/diagnose'
 import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,6 +21,11 @@ import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-report
 import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehicles.$vehicleId'
 
+const DiagnoseRoute = DiagnoseRouteImport.update({
+  id: '/diagnose',
+  path: '/diagnose',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoachRoute = CoachRouteImport.update({
   id: '/coach',
   path: '/coach',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
+  '/diagnose': typeof DiagnoseRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/coach': typeof CoachRoute
+  '/diagnose': typeof DiagnoseRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
+  '/diagnose': typeof DiagnoseRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/coach'
+    | '/diagnose'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/coach'
+    | '/diagnose'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/coach'
+    | '/diagnose'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -149,11 +161,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   CoachRoute: typeof CoachRoute
+  DiagnoseRoute: typeof DiagnoseRoute
   CarVehicleIdRoute: typeof CarVehicleIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/diagnose': {
+      id: '/diagnose'
+      path: '/diagnose'
+      fullPath: '/diagnose'
+      preLoaderRoute: typeof DiagnoseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/coach': {
       id: '/coach'
       path: '/coach'
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   CoachRoute: CoachRoute,
+  DiagnoseRoute: DiagnoseRoute,
   CarVehicleIdRoute: CarVehicleIdRoute,
 }
 export const routeTree = rootRouteImport
