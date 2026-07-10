@@ -8,10 +8,13 @@ import {
   RotateCcw,
   CheckCircle2,
   Crown,
+  Fuel,
+  ShieldCheck,
+  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
+import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/coach")({
   component: CoachPage,
@@ -190,6 +193,9 @@ function Interview() {
     ? Math.round((car.medianContract + optionsTotal * 0.98) / 10000) * 10000
     : 0;
 
+  const annualKm = MILEAGE_MAP[answers["mileage"] ?? "mid"]?.km ?? 15000;
+  const ownership = car ? estimateOwnership(car, annualKm) : null;
+
   const restart = () => {
     setCarId(null);
     setStep(0);
@@ -290,6 +296,58 @@ function Interview() {
             </div>
           </div>
         </div>
+
+        {/* 예상 유지비 카드 */}
+        {ownership && (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-5 pt-5 pb-3 border-b border-slate-100">
+              <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                <Wrench className="h-3 w-3" /> 예상 월 유지비
+              </div>
+              <div className="mt-1 flex items-baseline gap-2">
+                <div className="text-[22px] font-bold text-[color:var(--color-brand-navy)]">
+                  월 {formatKRW(ownership.monthlyTotal)}
+                </div>
+                <div className="text-[11.5px] text-slate-400">
+                  연 {formatKRW(ownership.annualTotal)}
+                </div>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                연 {ownership.annualKm.toLocaleString()}km · {car.fuelEfficiency}km/{ownership.fuel.unit} · {ownership.fuel.label}
+              </div>
+            </div>
+
+            <div className="px-5 py-4 space-y-3">
+              <CostRow
+                icon={<Fuel className="h-3.5 w-3.5" />}
+                label="예상 기름값"
+                sub={`${ownership.fuel.label} ${ownership.fuel.price.toLocaleString()}원/${ownership.fuel.unit} 기준`}
+                monthly={ownership.monthlyFuel}
+                annual={ownership.annualFuelCost}
+                tint="text-[color:var(--color-brand-blue)]"
+              />
+              <CostRow
+                icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                label="예상 자동차 보험료"
+                sub="30대 · 무사고 · 대인/대물 표준 가정"
+                monthly={ownership.monthlyInsurance}
+                annual={ownership.annualInsurance}
+                tint="text-[color:var(--color-signal-buy)]"
+              />
+              <CostRow
+                icon={<Wrench className="h-3.5 w-3.5" />}
+                label="소모품·정비 (평균)"
+                sub="엔진오일·타이어·소모품 러프 추정"
+                monthly={ownership.monthlyMaintenance}
+                annual={ownership.annualMaintenance}
+                tint="text-[color:var(--color-signal-wait)]"
+              />
+            </div>
+            <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[10.5px] text-slate-400 leading-relaxed">
+              세금·주차·세차 등 개인 편차가 큰 항목은 제외한 러프 추정치예요. 실제 견적은 보험 다이렉트 견적으로 다시 확인해보세요.
+            </div>
+          </div>
+        )}
 
         <button
           onClick={() => toast.success("견적서를 마이 탭에 저장했어요")}
@@ -478,6 +536,40 @@ function QuoteRow({ label, value }: { label: string; value: string }) {
     <div className="flex items-center justify-between text-[13px]">
       <span className="text-slate-600">{label}</span>
       <span className="text-slate-800 font-medium">{value}</span>
+    </div>
+  );
+}
+
+function CostRow({
+  icon,
+  label,
+  sub,
+  monthly,
+  annual,
+  tint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  sub?: string;
+  monthly: number;
+  annual: number;
+  tint: string;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0 flex-1">
+        <div className={`text-[12.5px] font-semibold flex items-center gap-1.5 ${tint}`}>
+          {icon}
+          <span className="text-slate-800">{label}</span>
+        </div>
+        {sub && <div className="text-[11px] text-slate-500 mt-0.5 ml-5">{sub}</div>}
+      </div>
+      <div className="text-right shrink-0">
+        <div className="text-[14px] font-bold text-[color:var(--color-brand-navy)] leading-none">
+          월 {formatKRW(monthly)}
+        </div>
+        <div className="text-[10.5px] text-slate-400 mt-1">연 {formatKRW(annual)}</div>
+      </div>
     </div>
   );
 }
