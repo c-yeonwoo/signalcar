@@ -27,6 +27,38 @@ export type MockCar = {
   fuelType: "gasoline" | "diesel" | "hybrid" | "ev";
   fuelEfficiency: number; // km/L (or km/kWh for EV)
   insuranceAnnual: number; // 30대 남성 기준 예시 (원/년)
+  benefits: Benefit[];
+};
+
+export type BenefitCategory =
+  | "cash" // 현금 할인
+  | "finance" // 저리 할부/리스
+  | "card" // 제휴 카드
+  | "tradein" // 기변/기존차 보상
+  | "loyalty" // 재구매·패밀리
+  | "group" // 법인·단체
+  | "eco" // 친환경 세제혜택
+  | "gift"; // 사은품
+
+export type Benefit = {
+  id: string;
+  category: BenefitCategory;
+  title: string;
+  amount: number; // 원 (0이면 비금전 혜택)
+  note: string; // 조건·주의
+  stackable: boolean; // 다른 혜택과 중복 가능?
+  source: "official" | "dealer" | "external"; // 공식/딜러재량/외부
+};
+
+export const BENEFIT_META: Record<BenefitCategory, { label: string; emoji: string }> = {
+  cash: { label: "현금 할인", emoji: "💵" },
+  finance: { label: "저리 할부/리스", emoji: "🏦" },
+  card: { label: "제휴 카드", emoji: "💳" },
+  tradein: { label: "기변·보상", emoji: "🔁" },
+  loyalty: { label: "재구매·패밀리", emoji: "👨‍👩‍👧" },
+  group: { label: "법인·단체", emoji: "🏢" },
+  eco: { label: "친환경 세제혜택", emoji: "🌱" },
+  gift: { label: "사은품", emoji: "🎁" },
 };
 
 export const MOCK_CARS: MockCar[] = [
