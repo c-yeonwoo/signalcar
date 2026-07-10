@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
@@ -20,6 +20,8 @@ const INK = "text-[color:var(--color-brand-ink)]";
 const MUTED = "text-slate-500";
 const HAIRLINE = "border-[color:var(--color-brand-mist)]";
 const DISPLAY = "font-[family-name:var(--font-display)] tracking-tight";
+const EYEBROW = "text-[11px] font-semibold text-[color:var(--color-brand-blue)]";
+const SECTION_TITLE = "text-[15px] font-bold text-[color:var(--color-brand-navy)]";
 
 function signalAccent(s: Signal) {
   if (s === "buy") return { hex: "#16A34A", label: "BUY" };
@@ -62,39 +64,33 @@ function CarDetailPage() {
   return (
     <ConsumerShell>
       {/* Top bar */}
-      <div className="px-5 pt-6 pb-3 flex items-center justify-between">
+      <div className="px-5 pt-5 pb-2 flex items-center justify-between">
         <Link to="/" className={`inline-flex items-center gap-1 text-[12px] ${MUTED}`}>
           <ArrowLeft className="h-3.5 w-3.5" /> 홈
         </Link>
-        <div className={`text-[10px] font-semibold tracking-[0.2em] uppercase ${INK}`}>
-          SignalCar · Detail
-        </div>
+        <div className={`text-[11px] font-semibold ${INK}`}>시그널카</div>
       </div>
 
       {/* SECTION 01 · Model header */}
-      <section className="px-5 pt-2 pb-6">
-        <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[color:var(--color-brand-blue)]">
-          {car.brand}
-        </p>
-        <h1 className={`${DISPLAY} ${NAVY} text-[36px] leading-[1.02] font-bold mt-1`}>
+      <section className="px-5 pt-2 pb-5">
+        <p className={EYEBROW}>{car.brand}</p>
+        <h1 className={`${DISPLAY} ${NAVY} text-[32px] leading-[1.1] font-bold mt-1`}>
           {car.model}
         </h1>
-        <p className={`${MUTED} text-[13px] mt-1.5`}>
+        <p className={`${MUTED} text-[13px] mt-1`}>
           {car.trim} · {car.bodyType}
         </p>
 
-        <div className="mt-5 flex items-end justify-between border-t border-b border-[color:var(--color-brand-mist)] py-4">
+        <div className="mt-4 flex items-end justify-between rounded-2xl bg-[color:var(--color-brand-mist)]/60 px-4 py-3.5">
           <div>
-            <p className={`text-[9.5px] font-bold tracking-[0.2em] uppercase ${MUTED}`}>
-              시장 중앙값
-            </p>
-            <p className={`${DISPLAY} ${NAVY} text-[26px] font-bold mt-0.5`}>
+            <p className={`text-[11px] ${MUTED}`}>시장 실거래 중앙값</p>
+            <p className={`${DISPLAY} ${NAVY} text-[24px] font-bold mt-0.5 tabular-nums`}>
               {formatKRW(car.medianContract)}
             </p>
           </div>
           <div className="text-right">
-            <p className={`text-[9.5px] font-bold tracking-[0.2em] uppercase ${MUTED}`}>정가</p>
-            <p className={`${DISPLAY} text-[15px] font-medium mt-0.5 text-slate-400 line-through`}>
+            <p className={`text-[11px] ${MUTED}`}>정가</p>
+            <p className={`text-[14px] mt-0.5 text-slate-400 line-through tabular-nums`}>
               {formatKRW(car.listPrice)}
             </p>
           </div>
@@ -155,36 +151,32 @@ function CarDetailPage() {
       </section>
 
       {/* SECTION 03 · Verdict (navy band) */}
-      <section className="bg-[color:var(--color-brand-navy)] text-white px-6 py-8">
-        <div className="flex items-center gap-3">
+      <section className="bg-[color:var(--color-brand-navy)] text-white px-5 py-6">
+        <div className="flex items-center gap-2">
           <span
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: accent.hex }}
           />
           <span
-            className="text-[10px] font-bold tracking-[0.28em] uppercase"
+            className="text-[11px] font-bold"
             style={{ color: accent.hex }}
           >
-            Signal · {accent.label}
+            {signalLabel(car.signal)} 시그널
           </span>
-          <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-white/50">
-            Coach Verdict
-          </span>
+          <span className="text-[11px] text-white/50">· 코치 판단</span>
         </div>
 
-        <h2 className={`${DISPLAY} text-[26px] leading-[1.15] font-bold mt-4`}>
+        <h2 className={`${DISPLAY} text-[22px] leading-[1.25] font-bold mt-3`}>
           {car.headline}
         </h2>
-        <p className="text-[13.5px] leading-relaxed text-white/75 mt-3 font-light italic">
-          "{car.coach}"
+        <p className="text-[13.5px] leading-relaxed text-white/80 mt-2.5">
+          {car.coach}
         </p>
 
-        <div className="mt-6 pt-5 border-t border-white/10">
+        <div className="mt-5 pt-4 border-t border-white/10">
           <div className="flex items-baseline justify-between mb-2">
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50">
-              6M Price Index
-            </span>
-            <span className={`${DISPLAY} text-[15px] font-bold`} style={{ color: accent.hex }}>
+            <span className="text-[11px] text-white/60">최근 6개월 가격 추이</span>
+            <span className="text-[11px] font-semibold" style={{ color: accent.hex }}>
               {signalLabel(car.signal)}
             </span>
           </div>
@@ -193,17 +185,15 @@ function CarDetailPage() {
       </section>
 
       {/* SECTION 04 · Price distribution */}
-      <section className="bg-white px-6 py-8 border-t border-b border-[color:var(--color-brand-mist)]">
+      <section className="bg-white px-5 py-6 border-b border-[color:var(--color-brand-mist)]">
         <div className="flex items-center justify-between">
-          <h3 className={`text-[10px] font-bold tracking-[0.22em] uppercase ${NAVY}`}>
-            Market Distribution
-          </h3>
-          <span className={`text-[10px] font-bold tracking-[0.15em] uppercase text-[color:var(--color-brand-blue)]`}>
-            {car.reports} Reports
+          <h3 className={SECTION_TITLE}>실거래가 분포</h3>
+          <span className="text-[11px] text-[color:var(--color-brand-blue)] font-medium">
+            제보 {car.reports}건
           </span>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6">
           <div className="relative h-[6px] bg-[color:var(--color-brand-mist)]">
             {/* IQR band */}
             <div className="absolute inset-y-0 left-[18%] right-[18%] bg-slate-300" />
@@ -213,19 +203,19 @@ function CarDetailPage() {
               style={{ backgroundColor: accent.hex }}
             />
           </div>
-          <div className="mt-2 flex justify-between text-[9.5px] font-bold tracking-widest uppercase">
-            <span className={MUTED}>Min · {formatKRW(car.minContract)}</span>
-            <span style={{ color: accent.hex }}>Median · {formatKRW(car.medianContract)}</span>
-            <span className={MUTED}>Max · {formatKRW(car.maxContract)}</span>
+          <div className="mt-2 flex justify-between text-[11px] tabular-nums">
+            <span className={MUTED}>최저 {formatKRW(car.minContract)}</span>
+            <span className="font-semibold" style={{ color: accent.hex }}>중앙 {formatKRW(car.medianContract)}</span>
+            <span className={MUTED}>최고 {formatKRW(car.maxContract)}</span>
           </div>
         </div>
 
-        <div className={`mt-6 grid grid-cols-2 gap-4 pt-5 border-t ${HAIRLINE}`}>
-          <Metric label="Discount vs List" value={`−${discountPct}%`} sub={`−${formatKRW(savings)}`} />
+        <div className={`mt-5 grid grid-cols-2 gap-4 pt-4 border-t ${HAIRLINE}`}>
+          <Metric label="정가 대비 할인" value={`−${discountPct}%`} sub={`−${formatKRW(savings)}`} />
           <Metric
-            label="Promo Strength"
-            value={`${car.promoPercentile}`}
-            sub={`/ 100 · ${car.promoThisMonth.label}`}
+            label="이달 프로모션"
+            value={`${car.promoPercentile}점`}
+            sub={car.promoThisMonth.label}
           />
         </div>
       </section>
@@ -237,16 +227,14 @@ function CarDetailPage() {
       <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} />
 
       {/* SECTION 07 · Facelift timeline */}
-      <section className="bg-white px-6 py-8 border-t border-[color:var(--color-brand-mist)]">
-        <h3 className={`text-[10px] font-bold tracking-[0.22em] uppercase ${NAVY} mb-3`}>
-          Model Cycle
-        </h3>
+      <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
+        <h3 className={`${SECTION_TITLE} mb-2.5`}>모델 사이클</h3>
         {car.facelift ? (
           <>
-            <p className={`${DISPLAY} ${NAVY} text-[18px] font-bold`}>
+            <p className={`${NAVY} text-[15px] font-semibold`}>
               {car.facelift.month} · {car.facelift.note}
             </p>
-            <p className={`${MUTED} text-[12.5px] leading-relaxed mt-2`}>
+            <p className={`${MUTED} text-[12.5px] leading-relaxed mt-1.5`}>
               발표 임박 시점의 딜러 재고 정리는 통상 할인 폭이 커집니다.
             </p>
           </>
@@ -261,9 +249,9 @@ function CarDetailPage() {
       <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-5 z-30">
         <Link
           to="/coach"
-          className={`block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[11px] tracking-[0.28em] uppercase ${DISPLAY} active:opacity-90 transition`}
+          className={`block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-3.5 rounded-2xl font-semibold text-[14px] shadow-lg shadow-[color:var(--color-brand-navy)]/25 active:opacity-90 transition`}
         >
-          Consult with a Coach
+          AI 코치에게 물어보기
         </Link>
       </div>
     </ConsumerShell>
@@ -273,9 +261,9 @@ function CarDetailPage() {
 function Metric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div>
-      <p className={`text-[9.5px] font-bold tracking-[0.2em] uppercase ${MUTED}`}>{label}</p>
-      <p className={`${DISPLAY} ${NAVY} text-[22px] font-bold mt-1 tabular-nums`}>{value}</p>
-      {sub && <p className={`text-[11px] mt-0.5 ${MUTED} tabular-nums`}>{sub}</p>}
+      <p className={`text-[11px] ${MUTED}`}>{label}</p>
+      <p className={`${NAVY} text-[20px] font-bold mt-0.5 tabular-nums`}>{value}</p>
+      {sub && <p className={`text-[11.5px] mt-0.5 ${MUTED} tabular-nums`}>{sub}</p>}
     </div>
   );
 }
@@ -296,23 +284,19 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
   }, {});
 
   const sourceLabel = (s: Benefit["source"]) =>
-    s === "official" ? "Official" : s === "dealer" ? "Dealer" : "Partner";
+    s === "official" ? "공식" : s === "dealer" ? "딜러재량" : "제휴";
 
   return (
     <section className="bg-white border-t border-[color:var(--color-brand-mist)]">
       {/* Header band with big savings */}
-      <div className="px-6 py-7 grid grid-cols-3 gap-4 items-end border-b border-[color:var(--color-brand-mist)]">
-        <div className="col-span-1">
-          <p className={`text-[9.5px] font-bold tracking-[0.2em] uppercase text-[color:var(--color-brand-blue)]`}>
-            Max Savings
-          </p>
+      <div className="px-5 py-5 flex items-end justify-between border-b border-[color:var(--color-brand-mist)]">
+        <div>
+          <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
+          <p className={`text-[11.5px] ${MUTED} mt-0.5`}>중복 가능 + 택1 최대 합산</p>
         </div>
-        <div className="col-span-2 text-right">
-          <p className={`${DISPLAY} ${NAVY} text-[30px] font-bold tabular-nums leading-none`}>
-            −{formatKRW(maxTotal)}
-          </p>
-          <p className={`text-[10.5px] ${MUTED} mt-1.5`}>중복 가능 혜택 + 택1 최대치 합산</p>
-        </div>
+        <p className={`${DISPLAY} text-[26px] font-bold tabular-nums leading-none`} style={{ color: accentHex }}>
+          −{formatKRW(maxTotal)}
+        </p>
       </div>
 
       {/* Category rows */}
@@ -320,14 +304,9 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
         {Object.entries(grouped).map(([cat, items]) => {
           const meta = BENEFIT_META[cat as keyof typeof BENEFIT_META];
           return (
-            <div key={cat} className={`px-6 py-5 border-b ${HAIRLINE}`}>
-              <div className="flex items-baseline justify-between mb-3">
-                <div className="flex items-baseline gap-2.5">
-                  <span className={`${DISPLAY} text-[10px] font-bold tracking-[0.2em] text-slate-400`}>
-                    {meta.code}
-                  </span>
-                  <span className={`text-[12.5px] font-semibold ${INK}`}>{meta.label}</span>
-                </div>
+            <div key={cat} className={`px-5 py-4 border-b ${HAIRLINE}`}>
+              <div className="mb-2">
+                <span className={`text-[12.5px] font-semibold ${INK}`}>{meta.label}</span>
               </div>
               <table className="w-full">
                 <tbody>
@@ -337,17 +316,17 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className={`text-[13px] font-medium ${NAVY}`}>{b.title}</span>
                           <span
-                            className={`text-[9px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 border ${
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                               b.source === "official"
-                                ? "border-[color:var(--color-brand-navy)] text-[color:var(--color-brand-navy)]"
-                                : "border-slate-300 text-slate-500"
+                                ? "bg-[color:var(--color-brand-navy)]/8 text-[color:var(--color-brand-navy)]"
+                                : "bg-slate-100 text-slate-500"
                             }`}
                           >
                             {sourceLabel(b.source)}
                           </span>
                           {!b.stackable && (
-                            <span className="text-[9px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 border border-slate-300 text-slate-500">
-                              Exclusive
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                              택1
                             </span>
                           )}
                         </div>
@@ -356,15 +335,13 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                       <td className="py-2 text-right whitespace-nowrap align-top">
                         {b.amount > 0 ? (
                           <span
-                            className={`${DISPLAY} text-[14px] font-bold tabular-nums`}
+                            className="text-[14px] font-bold tabular-nums"
                             style={{ color: accentHex }}
                           >
                             −{formatKRW(b.amount)}
                           </span>
                         ) : (
-                          <span className={`text-[10.5px] font-bold tracking-widest uppercase ${MUTED}`}>
-                            Rate
-                          </span>
+                          <span className={`text-[11px] ${MUTED}`}>금리</span>
                         )}
                       </td>
                     </tr>
@@ -376,7 +353,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
         })}
       </div>
 
-      <div className={`px-6 py-4 text-[10.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
+      <div className={`px-5 py-3 text-[11.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
         <Info className="h-3 w-3 mt-0.5 shrink-0" />
         <span>
           일부 혜택은 중복 불가·조건부입니다. 딜러가 <b className={NAVY}>패키지로 묶어 크게 보이게</b> 하는 경우가 있으니 각 항목의 근거를 개별 확인하세요.
@@ -387,7 +364,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
 }
 
 function reviewSourceLabel(src: ReviewItem["source"]) {
-  return src === "owner" ? "Owner" : src === "video" ? "Video" : "Press";
+  return src === "owner" ? "실오너" : src === "video" ? "영상" : "미디어";
 }
 
 function ReviewsSection({ bundle }: { bundle?: ReviewBundle }) {
@@ -396,63 +373,69 @@ function ReviewsSection({ bundle }: { bundle?: ReviewBundle }) {
 
   return (
     <>
-      {/* Owner Intelligence · dark editorial band */}
-      <section className="bg-[color:var(--color-brand-navy)] text-white px-6 py-8">
-        <div className="flex items-end justify-between mb-6">
+      {/* Owner summary — soft card */}
+      <section className="bg-[color:var(--color-brand-mist)]/50 px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
+        <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-[9.5px] font-bold tracking-[0.28em] uppercase text-white/50">
-              Owner Intelligence
-            </p>
-            <h3 className={`${DISPLAY} text-[22px] font-bold mt-1`}>Aspect Scorecard</h3>
+            <h3 className={SECTION_TITLE}>실오너 리뷰 요약</h3>
+            <p className={`text-[11.5px] ${MUTED} mt-0.5`}>AI가 정리한 한 줄</p>
           </div>
-          <div className="text-right">
-            <p className={`${DISPLAY} text-[32px] font-bold leading-none tabular-nums`}>
-              {aiSummary.overall.toFixed(1)}
-            </p>
-            <p className="text-[10px] tracking-[0.15em] uppercase text-white/50 mt-1">
-              {aiSummary.sampleSize.toLocaleString()} reviews
+          <div className="text-right shrink-0 ml-3">
+            <div className="flex items-center gap-1 justify-end">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400" strokeWidth={0} />
+              <span className={`${NAVY} text-[22px] font-bold leading-none tabular-nums`}>
+                {aiSummary.overall.toFixed(1)}
+              </span>
+            </div>
+            <p className={`text-[11px] ${MUTED} mt-1`}>
+              리뷰 {aiSummary.sampleSize.toLocaleString()}개
             </p>
           </div>
         </div>
 
-        <p className="text-[13px] leading-relaxed text-white/80 font-light italic border-l border-white/20 pl-4">
-          "{aiSummary.tldr}"
-        </p>
+        <div className="rounded-xl bg-white px-4 py-3 border border-[color:var(--color-brand-mist)]">
+          <p className={`text-[13.5px] ${INK} leading-relaxed`}>{aiSummary.tldr}</p>
+        </div>
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-6 pt-5 border-t border-white/10">
-          <div>
-            <p className="text-[9.5px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1.5">
-              Strengths
-            </p>
+        <div className="grid grid-cols-2 gap-2.5 mt-3">
+          <div className="rounded-xl bg-white p-3 border border-[color:var(--color-brand-mist)]">
+            <div className="flex items-center gap-1.5 mb-2">
+              <ThumbsUp className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="text-[11.5px] font-semibold text-emerald-700">좋아요</span>
+            </div>
             <ul className="space-y-1">
               {aiSummary.pros.map((p) => (
-                <li key={p} className="text-[11.5px] text-white/85 leading-snug">— {p}</li>
+                <li key={p} className={`text-[12px] ${INK} leading-snug`}>· {p}</li>
               ))}
             </ul>
           </div>
-          <div>
-            <p className="text-[9.5px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1.5">
-              Trade-offs
-            </p>
+          <div className="rounded-xl bg-white p-3 border border-[color:var(--color-brand-mist)]">
+            <div className="flex items-center gap-1.5 mb-2">
+              <ThumbsDown className="h-3.5 w-3.5 text-rose-500" />
+              <span className="text-[11.5px] font-semibold text-rose-600">아쉬워요</span>
+            </div>
             <ul className="space-y-1">
               {aiSummary.cons.map((p) => (
-                <li key={p} className="text-[11.5px] text-white/85 leading-snug">— {p}</li>
+                <li key={p} className={`text-[12px] ${INK} leading-snug`}>· {p}</li>
               ))}
             </ul>
           </div>
         </div>
 
-        {/* Aspect bars — mono white */}
-        <div className="mt-6 pt-5 border-t border-white/10 space-y-3.5">
+        {/* Aspect bars */}
+        <div className="mt-4 rounded-xl bg-white p-4 border border-[color:var(--color-brand-mist)] space-y-2.5">
           {aspects.map((a) => (
-            <div key={a.label}>
-              <div className="flex justify-between text-[10px] font-bold tracking-[0.15em] uppercase text-white/70 mb-1">
-                <span>{a.label}</span>
-                <span className="tabular-nums">{Math.round((a.score / 5) * 100)}%</span>
+            <div key={a.label} className="flex items-center gap-3">
+              <span className={`text-[12px] ${INK} w-16 shrink-0`}>{a.label}</span>
+              <div className="flex-1 h-1.5 rounded-full bg-[color:var(--color-brand-mist)] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-[color:var(--color-brand-blue)]"
+                  style={{ width: `${(a.score / 5) * 100}%` }}
+                />
               </div>
-              <div className="h-[2px] bg-white/10">
-                <div className="h-full bg-white" style={{ width: `${(a.score / 5) * 100}%` }} />
-              </div>
+              <span className={`${NAVY} text-[12px] font-semibold tabular-nums w-8 text-right`}>
+                {a.score.toFixed(1)}
+              </span>
             </div>
           ))}
         </div>
@@ -460,55 +443,74 @@ function ReviewsSection({ bundle }: { bundle?: ReviewBundle }) {
 
       {/* Individual reviews */}
       <section className="bg-white">
-        <div className="px-6 pt-7 pb-3 flex items-baseline justify-between border-b border-[color:var(--color-brand-mist)]">
-          <h3 className={`text-[10px] font-bold tracking-[0.22em] uppercase ${NAVY}`}>
-            Verified Reviews
-          </h3>
-          <span className={`text-[10px] ${MUTED} tracking-widest uppercase`}>{items.length} entries</span>
+        <div className="px-5 pt-5 pb-3 flex items-baseline justify-between">
+          <h3 className={SECTION_TITLE}>리뷰 {items.length}개</h3>
+          <span className={`text-[11.5px] text-[color:var(--color-brand-blue)]`}>최신순</span>
         </div>
-        <ul>
-          {items.map((r) => (
-            <li key={r.id} className={`px-6 py-5 border-b ${HAIRLINE}`}>
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="flex items-baseline gap-2.5 flex-wrap">
-                  <span className={`${DISPLAY} text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400`}>
-                    {reviewSourceLabel(r.source)}
-                  </span>
-                  <span className={`text-[12.5px] font-semibold ${NAVY}`}>{r.author}</span>
-                  {r.verified && (
-                    <span className="text-[9px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 border border-[color:var(--color-brand-navy)] text-[color:var(--color-brand-navy)]">
-                      Verified
-                    </span>
-                  )}
+        <ul className="px-5 pb-2 space-y-3">
+          {items.map((r) => {
+            const initial = r.author.trim().charAt(0);
+            const badgeTone =
+              r.source === "owner"
+                ? "bg-emerald-50 text-emerald-700"
+                : r.source === "video"
+                ? "bg-rose-50 text-rose-600"
+                : "bg-slate-100 text-slate-600";
+            return (
+              <li
+                key={r.id}
+                className="rounded-2xl bg-white border border-[color:var(--color-brand-mist)] p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-full bg-[color:var(--color-brand-mist)] flex items-center justify-center shrink-0">
+                    <span className={`${NAVY} text-[13px] font-bold`}>{initial}</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`text-[13px] font-semibold ${NAVY}`}>{r.author}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${badgeTone}`}>
+                        {reviewSourceLabel(r.source)}
+                      </span>
+                      {r.verified && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[color:var(--color-brand-navy)]/8 text-[color:var(--color-brand-navy)]">
+                          검증
+                        </span>
+                      )}
+                    </div>
+                    <div className={`flex items-center gap-1.5 mt-0.5 text-[11px] ${MUTED}`}>
+                      <span className="flex items-center gap-0.5">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                          <Star
+                            key={i}
+                            className={`h-3 w-3 ${i < Math.round(r.rating) ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                            strokeWidth={0}
+                          />
+                        ))}
+                      </span>
+                      <span className="tabular-nums">{r.rating.toFixed(1)}</span>
+                      <span>·</span>
+                      <span>{r.date}</span>
+                      {r.ownershipMonths ? <span>· {r.ownershipMonths}개월 보유</span> : null}
+                      {r.channel ? <span>· {r.channel}</span> : null}
+                    </div>
+                  </div>
                 </div>
-                <span className={`text-[10px] ${MUTED} tabular-nums shrink-0`}>{r.date}</span>
-              </div>
-              <div className={`mt-1 text-[10.5px] ${MUTED} tracking-wider`}>
-                <span className={`${DISPLAY} font-bold text-[color:var(--color-brand-ink)]`}>
-                  {r.rating.toFixed(1)}
-                </span>
-                <span className="mx-1.5">/</span>
-                <span>5.0</span>
-                {r.ownershipMonths ? <span className="ml-2">· {r.ownershipMonths}mo owned</span> : null}
-                {r.channel ? <span className="ml-2">· {r.channel}</span> : null}
-              </div>
-              <p className={`text-[13px] ${INK} mt-2.5 leading-relaxed font-light italic`}>
-                "{r.quote}"
-              </p>
-              {r.url && (
-                <a
-                  href={r.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`inline-flex items-center gap-1 text-[10.5px] font-bold tracking-[0.15em] uppercase ${NAVY} mt-3 hover:opacity-70`}
-                >
-                  Read Source <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
-            </li>
-          ))}
+                <p className={`text-[13px] ${INK} mt-2.5 leading-relaxed`}>{r.quote}</p>
+                {r.url && (
+                  <a
+                    href={r.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`inline-flex items-center gap-1 text-[11.5px] ${NAVY} mt-2 hover:opacity-70`}
+                  >
+                    원문 보기 <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
-        <div className={`px-6 py-4 text-[10.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
+        <div className={`px-5 py-3 text-[11.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
           <Info className="h-3 w-3 mt-0.5 shrink-0" />
           <span>실오너 리뷰는 시그널카 견적서·계약 제보와 연결된 사용자만 작성 가능합니다.</span>
         </div>
