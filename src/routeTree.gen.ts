@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
@@ -16,30 +17,35 @@ import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-report
 import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehicles.$vehicleId'
 
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
-  id: '/admin/vehicles',
-  path: '/admin/vehicles',
-  getParentRoute: () => rootRouteImport,
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
-  id: '/admin/promotions',
-  path: '/admin/promotions',
-  getParentRoute: () => rootRouteImport,
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDealReportsRoute = AdminDealReportsRouteImport.update({
-  id: '/admin/deal-reports',
-  path: '/admin/deal-reports',
-  getParentRoute: () => rootRouteImport,
+  id: '/deal-reports',
+  path: '/deal-reports',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminBrandsRoute = AdminBrandsRouteImport.update({
-  id: '/admin/brands',
-  path: '/admin/brands',
-  getParentRoute: () => rootRouteImport,
+  id: '/brands',
+  path: '/brands',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminVehiclesVehicleIdRoute = AdminVehiclesVehicleIdRouteImport.update({
   id: '/$vehicleId',
@@ -48,6 +54,7 @@ const AdminVehiclesVehicleIdRoute = AdminVehiclesVehicleIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof AdminRouteWithChildren
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/admin': typeof AdminRouteWithChildren
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/admin'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/admin/vehicles/$vehicleId'
   id:
     | '__root__'
+    | '/admin'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -100,49 +110,52 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AdminBrandsRoute: typeof AdminBrandsRoute
-  AdminDealReportsRoute: typeof AdminDealReportsRoute
-  AdminPromotionsRoute: typeof AdminPromotionsRoute
-  AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
-  AdminIndexRoute: typeof AdminIndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
-      path: '/admin'
+      path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/vehicles': {
       id: '/admin/vehicles'
-      path: '/admin/vehicles'
+      path: '/vehicles'
       fullPath: '/admin/vehicles'
       preLoaderRoute: typeof AdminVehiclesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/promotions': {
       id: '/admin/promotions'
-      path: '/admin/promotions'
+      path: '/promotions'
       fullPath: '/admin/promotions'
       preLoaderRoute: typeof AdminPromotionsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/deal-reports': {
       id: '/admin/deal-reports'
-      path: '/admin/deal-reports'
+      path: '/deal-reports'
       fullPath: '/admin/deal-reports'
       preLoaderRoute: typeof AdminDealReportsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/brands': {
       id: '/admin/brands'
-      path: '/admin/brands'
+      path: '/brands'
       fullPath: '/admin/brands'
       preLoaderRoute: typeof AdminBrandsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/vehicles/$vehicleId': {
       id: '/admin/vehicles/$vehicleId'
@@ -166,12 +179,26 @@ const AdminVehiclesRouteWithChildren = AdminVehiclesRoute._addFileChildren(
   AdminVehiclesRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
+interface AdminRouteChildren {
+  AdminBrandsRoute: typeof AdminBrandsRoute
+  AdminDealReportsRoute: typeof AdminDealReportsRoute
+  AdminPromotionsRoute: typeof AdminPromotionsRoute
+  AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
   AdminBrandsRoute: AdminBrandsRoute,
   AdminDealReportsRoute: AdminDealReportsRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,
   AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
