@@ -129,6 +129,9 @@ function CarDetailPage() {
         </div>
       </section>
 
+      {/* All benefits */}
+      <BenefitsSection benefits={car.benefits} />
+
       {/* Facelift timeline */}
       <section className="px-5 mt-4">
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
