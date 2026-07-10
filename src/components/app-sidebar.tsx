@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "대시보드", url: "/", icon: LayoutDashboard },
-  { title: "브랜드", url: "/brands", icon: Building2 },
-  { title: "차종·트림", url: "/vehicles", icon: Car },
-  { title: "공식 프로모션", url: "/promotions", icon: Tag },
-  { title: "실계약가 제보", url: "/deal-reports", icon: FileText },
+  { title: "대시보드", url: "/admin", icon: LayoutDashboard },
+  { title: "브랜드", url: "/admin/brands", icon: Building2 },
+  { title: "차종·트림", url: "/admin/vehicles", icon: Car },
+  { title: "공식 프로모션", url: "/admin/promotions", icon: Tag },
+  { title: "실계약가 제보", url: "/admin/deal-reports", icon: FileText },
 ];
 
 export function AppSidebar() {
