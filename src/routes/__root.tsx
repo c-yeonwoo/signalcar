@@ -11,8 +11,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -79,11 +77,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "신차 구매 코치 — 카탈로그 관리" },
-      { name: "description", content: "자동차 브랜드·차종·트림·프로모션 카탈로그 관리자 도구" },
-      { property: "og:title", content: "신차 구매 코치 — 카탈로그 관리" },
-      { property: "og:description", content: "자동차 브랜드·차종·트림·프로모션 카탈로그 관리자 도구" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#12203A" },
+      { title: "신차 구매 코치 — 지금 사도 될까?" },
+      { name: "description", content: "실거래가·프로모션·연식변경 신호로 신차 구매 타이밍을 알려주는 소비자 편 코치" },
+      { property: "og:title", content: "신차 구매 코치" },
+      { property: "og:description", content: "지금이 살 때일까? 실거래가·프로모션·연식변경 신호로 알려드릴게요." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -91,6 +90,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -120,23 +124,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <header className="h-12 flex items-center border-b bg-background sticky top-0 z-10">
-              <SidebarTrigger className="ml-2" />
-              <div className="ml-3 text-sm font-medium text-muted-foreground">
-                신차 구매 코치 — 카탈로그
-              </div>
-            </header>
-            <main className="flex-1 p-6">
-              <Outlet />
-            </main>
-          </div>
-        </div>
-        <Toaster richColors position="top-right" />
-      </SidebarProvider>
+      <Outlet />
+      <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
 }
