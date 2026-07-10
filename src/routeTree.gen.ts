@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as MeRouteImport } from './routes/me'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as DiagnoseRouteImport } from './routes/diagnose'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -32,6 +33,11 @@ const ReportRoute = ReportRouteImport.update({
 const MeRoute = MeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnoseRoute = DiagnoseRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
   '/admin/brands': typeof AdminBrandsRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/compare'
     | '/diagnose'
+    | '/explore'
     | '/me'
     | '/report'
     | '/admin/brands'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/compare'
     | '/diagnose'
+    | '/explore'
     | '/me'
     | '/report'
     | '/admin/brands'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/compare'
     | '/diagnose'
+    | '/explore'
     | '/me'
     | '/report'
     | '/admin/brands'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CompareRoute: typeof CompareRoute
   DiagnoseRoute: typeof DiagnoseRoute
+  ExploreRoute: typeof ExploreRoute
   MeRoute: typeof MeRoute
   ReportRoute: typeof ReportRoute
   CarVehicleIdRoute: typeof CarVehicleIdRoute
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnose': {
@@ -343,6 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CompareRoute: CompareRoute,
   DiagnoseRoute: DiagnoseRoute,
+  ExploreRoute: ExploreRoute,
   MeRoute: MeRoute,
   ReportRoute: ReportRoute,
   CarVehicleIdRoute: CarVehicleIdRoute,
