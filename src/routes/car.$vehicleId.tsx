@@ -288,72 +288,115 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
 
   return (
     <section className="bg-white border-t border-[color:var(--color-brand-mist)]">
-      {/* Header band with big savings */}
-      <div className="px-5 py-5 flex items-end justify-between border-b border-[color:var(--color-brand-mist)]">
-        <div>
-          <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
-          <p className={`text-[11.5px] ${MUTED} mt-0.5`}>중복 가능 + 택1 최대 합산</p>
-        </div>
-        <p className={`${DISPLAY} text-[26px] font-bold tabular-nums leading-none`} style={{ color: accentHex }}>
-          −{formatKRW(maxTotal)}
-        </p>
+      <div className="px-5 pt-5 pb-2">
+        <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
       </div>
 
-      {/* Category rows */}
-      <div>
+      {/* Hero: Max savings block */}
+      <div className="px-5">
+        <div
+          className="relative rounded-2xl p-5 overflow-hidden text-white"
+          style={{
+            background: `linear-gradient(135deg, ${accentHex} 0%, color-mix(in oklab, ${accentHex} 70%, #0f1b3d) 100%)`,
+          }}
+        >
+          <div
+            className="absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-20"
+            style={{ background: "white" }}
+          />
+          <p className="text-[11.5px] uppercase tracking-[0.14em] opacity-80">최대 예상 혜택</p>
+          <p className={`${DISPLAY} text-[34px] font-extrabold tabular-nums leading-none mt-2`}>
+            −{formatKRW(maxTotal)}
+          </p>
+          <div className="mt-3 flex items-center gap-2 text-[11.5px] opacity-90">
+            <span className="px-2 py-0.5 rounded-full bg-white/15">중복 {formatKRW(stackTotal)}</span>
+            <span className="px-2 py-0.5 rounded-full bg-white/15">택1 최대 {formatKRW(exclusiveBest)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Category blocks grid */}
+      <div className="px-5 pt-4 pb-2 grid grid-cols-2 gap-2.5">
         {Object.entries(grouped).map(([cat, items]) => {
           const meta = BENEFIT_META[cat as keyof typeof BENEFIT_META];
+          const catTotal = items.reduce((s, b) => s + (b.amount || 0), 0);
           return (
-            <div key={cat} className={`px-5 py-4 border-b ${HAIRLINE}`}>
-              <div className="mb-2">
-                <span className={`text-[12.5px] font-semibold ${INK}`}>{meta.label}</span>
+            <div
+              key={cat}
+              className="rounded-xl border border-[color:var(--color-brand-mist)] bg-white p-3 flex flex-col"
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <span className={`text-[12px] font-semibold ${INK} leading-tight`}>{meta.label}</span>
+                <span className={`text-[10.5px] ${MUTED} tabular-nums`}>{items.length}개</span>
               </div>
-              <table className="w-full">
-                <tbody>
-                  {items.map((b) => (
-                    <tr key={b.id} className="align-top">
-                      <td className="py-2 pr-3">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`text-[13px] font-medium ${NAVY}`}>{b.title}</span>
-                          <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                              b.source === "official"
-                                ? "bg-[color:var(--color-brand-navy)]/8 text-[color:var(--color-brand-navy)]"
-                                : "bg-slate-100 text-slate-500"
-                            }`}
-                          >
-                            {sourceLabel(b.source)}
-                          </span>
-                          {!b.stackable && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                              택1
-                            </span>
-                          )}
-                        </div>
-                        <p className={`text-[11.5px] ${MUTED} mt-1 leading-snug`}>{b.note}</p>
-                      </td>
-                      <td className="py-2 text-right whitespace-nowrap align-top">
-                        {b.amount > 0 ? (
-                          <span
-                            className="text-[14px] font-bold tabular-nums"
-                            style={{ color: accentHex }}
-                          >
-                            −{formatKRW(b.amount)}
-                          </span>
-                        ) : (
-                          <span className={`text-[11px] ${MUTED}`}>금리</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {catTotal > 0 && (
+                <p
+                  className="text-[15px] font-bold tabular-nums mt-1"
+                  style={{ color: accentHex }}
+                >
+                  −{formatKRW(catTotal)}
+                </p>
+              )}
+              <ul className="mt-2 space-y-1">
+                {items.slice(0, 2).map((b) => (
+                  <li key={b.id} className={`text-[11px] ${MUTED} leading-snug truncate`}>
+                    · {b.title}
+                  </li>
+                ))}
+                {items.length > 2 && (
+                  <li className={`text-[10.5px] ${MUTED}`}>외 {items.length - 2}건</li>
+                )}
+              </ul>
             </div>
           );
         })}
       </div>
 
-      <div className={`px-5 py-3 text-[11.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
+      {/* Detail list */}
+      <div className="px-5 pt-3">
+        <p className={`text-[11px] ${MUTED} mb-2`}>세부 내역</p>
+        <div className="rounded-xl border border-[color:var(--color-brand-mist)] divide-y divide-[color:var(--color-brand-mist)] overflow-hidden">
+          {Object.entries(grouped).flatMap(([cat, items]) => {
+            const meta = BENEFIT_META[cat as keyof typeof BENEFIT_META];
+            return items.map((b) => (
+              <div key={b.id} className="px-3 py-2.5 flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className={`text-[10.5px] ${MUTED}`}>{meta.label}</span>
+                    <span className={`text-[13px] font-medium ${NAVY}`}>{b.title}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                        b.source === "official"
+                          ? "bg-[color:var(--color-brand-navy)]/8 text-[color:var(--color-brand-navy)]"
+                          : "bg-slate-100 text-slate-500"
+                      }`}
+                    >
+                      {sourceLabel(b.source)}
+                    </span>
+                    {!b.stackable && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                        택1
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-[11px] ${MUTED} mt-0.5 leading-snug`}>{b.note}</p>
+                </div>
+                <div className="whitespace-nowrap pt-0.5">
+                  {b.amount > 0 ? (
+                    <span className="text-[13px] font-bold tabular-nums" style={{ color: accentHex }}>
+                      −{formatKRW(b.amount)}
+                    </span>
+                  ) : (
+                    <span className={`text-[11px] ${MUTED}`}>금리</span>
+                  )}
+                </div>
+              </div>
+            ));
+          })}
+        </div>
+      </div>
+
+      <div className={`mx-5 mt-3 mb-5 rounded-lg px-3 py-2.5 text-[11px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/50`}>
         <Info className="h-3 w-3 mt-0.5 shrink-0" />
         <span>
           일부 혜택은 중복 불가·조건부입니다. 딜러가 <b className={NAVY}>패키지로 묶어 크게 보이게</b> 하는 경우가 있으니 각 항목의 근거를 개별 확인하세요.
