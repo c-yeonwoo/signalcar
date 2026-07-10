@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as PromotionsRouteImport } from './routes/promotions'
+import { Route as DealReportsRouteImport } from './routes/deal-reports'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
@@ -23,6 +24,11 @@ const VehiclesRoute = VehiclesRouteImport.update({
 const PromotionsRoute = PromotionsRouteImport.update({
   id: '/promotions',
   path: '/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealReportsRoute = DealReportsRouteImport.update({
+  id: '/deal-reports',
+  path: '/deal-reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrandsRoute = BrandsRouteImport.update({
@@ -44,6 +50,7 @@ const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/deal-reports': typeof DealReportsRoute
   '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/deal-reports': typeof DealReportsRoute
   '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/deal-reports': typeof DealReportsRoute
   '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
@@ -68,15 +77,23 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/brands'
+    | '/deal-reports'
     | '/promotions'
     | '/vehicles'
     | '/vehicles/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/brands' | '/promotions' | '/vehicles' | '/vehicles/$vehicleId'
+  to:
+    | '/'
+    | '/brands'
+    | '/deal-reports'
+    | '/promotions'
+    | '/vehicles'
+    | '/vehicles/$vehicleId'
   id:
     | '__root__'
     | '/'
     | '/brands'
+    | '/deal-reports'
     | '/promotions'
     | '/vehicles'
     | '/vehicles/$vehicleId'
@@ -85,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BrandsRoute: typeof BrandsRoute
+  DealReportsRoute: typeof DealReportsRoute
   PromotionsRoute: typeof PromotionsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
 }
@@ -103,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/promotions'
       fullPath: '/promotions'
       preLoaderRoute: typeof PromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deal-reports': {
+      id: '/deal-reports'
+      path: '/deal-reports'
+      fullPath: '/deal-reports'
+      preLoaderRoute: typeof DealReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/brands': {
@@ -144,6 +169,7 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BrandsRoute: BrandsRoute,
+  DealReportsRoute: DealReportsRoute,
   PromotionsRoute: PromotionsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
 }
