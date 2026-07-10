@@ -225,7 +225,7 @@ function ExplorePage() {
                 </div>
               </div>
               <div className="w-16 h-8">
-                <Sparkline points={r.history} color="#3B82F6" />
+                <Sparkline values={r.history} color="#3B82F6" />
               </div>
               <div className="w-14 text-right">
                 <div className="text-[12px] font-bold text-slate-700">{r.units.toLocaleString()}</div>
@@ -259,7 +259,7 @@ function ExplorePage() {
               </div>
               <div className="h-8 mt-1">
                 <Sparkline
-                  points={s.history}
+                  values={s.history}
                   color={s.trendPct >= 0 ? "#F59E0B" : "#16A34A"}
                 />
               </div>
