@@ -1,3 +1,7 @@
+import carGrandKoleos from "@/assets/car-grand-koleos.png";
+import carSantafe from "@/assets/car-santafe.png";
+import carSorento from "@/assets/car-sorento.png";
+
 export type Signal = "buy" | "wait" | "neutral";
 
 export type MockCar = {
@@ -19,6 +23,7 @@ export type MockCar = {
   history: number[]; // 최근 6개월 중앙값 (만원 단위 or 원, 상대값만 쓰이므로 상관 없음)
   promoThisMonth: { label: string; amount: number; note: string };
   imageColor: string; // gradient accent
+  image: string;
 };
 
 export const MOCK_CARS: MockCar[] = [
@@ -46,6 +51,7 @@ export const MOCK_CARS: MockCar[] = [
       note: "220만원 현금할인 또는 3.9% 저리",
     },
     imageColor: "from-emerald-400 to-teal-500",
+    image: carGrandKoleos,
   },
   {
     id: "santafe-calligraphy",
@@ -71,6 +77,7 @@ export const MOCK_CARS: MockCar[] = [
       note: "공식 할인 없음 · 딜러 재량 할인만 존재",
     },
     imageColor: "from-amber-400 to-orange-500",
+    image: carSantafe,
   },
   {
     id: "sorento-noblesse",
@@ -96,6 +103,7 @@ export const MOCK_CARS: MockCar[] = [
       note: "3년 4.5% · 현금할인 없음",
     },
     imageColor: "from-sky-400 to-indigo-500",
+    image: carSorento,
   },
 ];
 
