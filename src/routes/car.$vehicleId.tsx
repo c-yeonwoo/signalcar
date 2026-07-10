@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, TrendingDown, Sparkles, CalendarClock, Gift, Info, Layers, Star, MessageSquareQuote, PlayCircle, Newspaper, ShieldCheck, ExternalLink } from "lucide-react";
+import { ArrowLeft, TrendingDown, Sparkles, CalendarClock, Gift, Info, Layers, Star, MessageSquareQuote, PlayCircle, Newspaper, ShieldCheck, ExternalLink, Camera, ImageOff } from "lucide-react";
+import { useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalColor, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
@@ -27,6 +28,17 @@ function CarDetailPage() {
     car.signal === "buy" ? "#16A34A" : car.signal === "wait" ? "#F59E0B" : "#64748B";
   const savings = car.listPrice - car.medianContract;
 
+  const gallery: { label: string; src?: string }[] = [
+    { label: "정면", src: car.image },
+    { label: "측면" },
+    { label: "후면" },
+    { label: "실내" },
+    { label: "대시보드" },
+    { label: "트렁크" },
+  ];
+  const [activeShot, setActiveShot] = useState(0);
+  const shot = gallery[activeShot];
+
   return (
     <ConsumerShell>
       <header className="px-5 pt-6 pb-3">
@@ -42,14 +54,51 @@ function CarDetailPage() {
           {car.model}
         </h1>
 
-        <div className="mt-3 h-44 w-full rounded-2xl bg-white border border-slate-100 relative overflow-hidden">
-          <img
-            src={car.image}
-            alt={`${car.model} ${car.trim}`}
-            width={1024}
-            height={640}
-            className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_14px_24px_rgba(0,0,0,0.28)] scale-110"
-          />
+        {/* Gallery */}
+        <div className="mt-3 h-52 w-full rounded-2xl bg-white border border-slate-100 relative overflow-hidden">
+          {shot.src ? (
+            <img
+              src={shot.src}
+              alt={`${car.model} ${shot.label}`}
+              width={1024}
+              height={640}
+              className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_14px_24px_rgba(0,0,0,0.28)] scale-110"
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-300">
+              <ImageOff className="h-8 w-8" />
+              <div className="text-[12px]">{shot.label} 사진 준비중</div>
+            </div>
+          )}
+          <div className="absolute left-3 bottom-3 inline-flex items-center gap-1 rounded-full bg-black/60 text-white text-[11px] px-2 py-1 backdrop-blur">
+            <Camera className="h-3 w-3" />
+            {shot.label} · {activeShot + 1}/{gallery.length}
+          </div>
+        </div>
+        <div className="mt-2 flex gap-2 overflow-x-auto no-scrollbar -mx-5 px-5 pb-1">
+          {gallery.map((g, i) => (
+            <button
+              key={g.label}
+              onClick={() => setActiveShot(i)}
+              className={`shrink-0 h-16 w-20 rounded-lg border overflow-hidden relative transition ${
+                i === activeShot
+                  ? "border-[color:var(--color-brand-navy)] ring-2 ring-[color:var(--color-brand-navy)]/20"
+                  : "border-slate-200 opacity-80"
+              } bg-white`}
+            >
+              {g.src ? (
+                <img
+                  src={g.src}
+                  alt={g.label}
+                  className="absolute inset-0 h-full w-full object-contain scale-110"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-[10px] text-slate-400">
+                  {g.label}
+                </div>
+              )}
+            </button>
+          ))}
         </div>
 
         <div className={`mt-4 rounded-3xl p-6 ${sig.bg} relative overflow-hidden`}>
