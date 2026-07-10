@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/vehicles")({
+export const Route = createFileRoute("/admin/vehicles")({
   component: VehiclesPage,
   ssr: false,
 });
@@ -256,7 +256,7 @@ function VehiclesPage() {
                 <TableCell>{v.launched_at ?? "-"}</TableCell>
                 <TableCell className="text-right">
                   <Button asChild variant="ghost" size="sm">
-                    <Link to="/vehicles/$vehicleId" params={{ vehicleId: v.id }}>
+                    <Link to="/admin/vehicles/$vehicleId" params={{ vehicleId: v.id }}>
                       트림 <ChevronRight className="h-4 w-4" />
                     </Link>
                   </Button>

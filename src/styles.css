@@ -5,6 +5,23 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * Consumer app tokens (신차 구매 코치)
+ * Mobile-first, 토스 감성 + 주식차트 시그널.
+ */
+@theme {
+  --font-sans: "Pretendard Variable", "Pretendard", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --color-app-bg: #f7f8fa;
+  --color-brand-navy: #12203a;
+  --color-brand-blue: #2e6bff;
+  --color-signal-buy: #16a34a;
+  --color-signal-buy-soft: #dcfce7;
+  --color-signal-wait: #f59e0b;
+  --color-signal-wait-soft: #fef3c7;
+  --color-signal-neutral: #64748b;
+  --color-signal-neutral-soft: #e2e8f0;
+}
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
