@@ -144,7 +144,6 @@ function CarDetailPage() {
       <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-5 z-30">
         <Link
           to="/coach"
-          search={{ vehicle: car.id }}
           className="block w-full text-center rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.25)] active:scale-[0.99] transition"
         >
           협상 브리핑 받기 →
