@@ -42,8 +42,7 @@ function CarDetailPage() {
           {car.model}
         </h1>
 
-        <div className={`mt-3 h-44 w-full rounded-2xl bg-gradient-to-br ${car.imageColor} relative overflow-hidden`}>
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-black/15" />
+        <div className="mt-3 h-44 w-full rounded-2xl bg-white border border-slate-100 relative overflow-hidden">
           <img
             src={car.image}
             alt={`${car.model} ${car.trim}`}
