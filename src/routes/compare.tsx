@@ -93,7 +93,7 @@ function ComparePage() {
                     className="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm active:scale-[0.99] transition"
                   >
                     <div
-                      className={`h-20 rounded-xl bg-gradient-to-br ${c.imageColor} relative overflow-hidden`}
+                      className="h-20 rounded-xl bg-white border border-slate-100 relative overflow-hidden"
                     >
                       <img
                         src={c.image}

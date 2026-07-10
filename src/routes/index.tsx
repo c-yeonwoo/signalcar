@@ -51,8 +51,7 @@ function HomePage() {
               params={{ vehicleId: c.id }}
               className="block bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(18,32,58,0.04)] border border-slate-100 active:scale-[0.99] transition"
             >
-              <div className={`mb-4 h-36 w-full rounded-xl bg-gradient-to-br ${c.imageColor} relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-black/10" />
+              <div className="mb-4 h-36 w-full rounded-xl bg-white border border-slate-100 relative overflow-hidden">
                 <img
                   src={c.image}
                   alt={`${c.model} ${c.trim}`}
