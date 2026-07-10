@@ -27,6 +27,38 @@ export type MockCar = {
   fuelType: "gasoline" | "diesel" | "hybrid" | "ev";
   fuelEfficiency: number; // km/L (or km/kWh for EV)
   insuranceAnnual: number; // 30대 남성 기준 예시 (원/년)
+  benefits: Benefit[];
+};
+
+export type BenefitCategory =
+  | "cash" // 현금 할인
+  | "finance" // 저리 할부/리스
+  | "card" // 제휴 카드
+  | "tradein" // 기변/기존차 보상
+  | "loyalty" // 재구매·패밀리
+  | "group" // 법인·단체
+  | "eco" // 친환경 세제혜택
+  | "gift"; // 사은품
+
+export type Benefit = {
+  id: string;
+  category: BenefitCategory;
+  title: string;
+  amount: number; // 원 (0이면 비금전 혜택)
+  note: string; // 조건·주의
+  stackable: boolean; // 다른 혜택과 중복 가능?
+  source: "official" | "dealer" | "external"; // 공식/딜러재량/외부
+};
+
+export const BENEFIT_META: Record<BenefitCategory, { label: string; emoji: string }> = {
+  cash: { label: "현금 할인", emoji: "💵" },
+  finance: { label: "저리 할부/리스", emoji: "🏦" },
+  card: { label: "제휴 카드", emoji: "💳" },
+  tradein: { label: "기변·보상", emoji: "🔁" },
+  loyalty: { label: "재구매·패밀리", emoji: "👨‍👩‍👧" },
+  group: { label: "법인·단체", emoji: "🏢" },
+  eco: { label: "친환경 세제혜택", emoji: "🌱" },
+  gift: { label: "사은품", emoji: "🎁" },
 };
 
 export const MOCK_CARS: MockCar[] = [
@@ -58,6 +90,15 @@ export const MOCK_CARS: MockCar[] = [
     fuelType: "hybrid",
     fuelEfficiency: 15.6,
     insuranceAnnual: 950000,
+    benefits: [
+      { id: "gk-cash", category: "cash", title: "런칭 프로모션 현금 할인", amount: 2200000, note: "7월 계약분 · 재고 한정", stackable: false, source: "official" },
+      { id: "gk-fin", category: "finance", title: "3.9% 저리 할부 (36개월)", amount: 0, note: "현금 할인과 택1", stackable: false, source: "official" },
+      { id: "gk-card", category: "card", title: "삼성카드 제휴 할인", amount: 700000, note: "삼성카드 60개월 할부 · 신차 신청 시", stackable: true, source: "external" },
+      { id: "gk-trade", category: "tradein", title: "타사 SUV 보상", amount: 500000, note: "동급 SUV 폐차/이전 시", stackable: true, source: "official" },
+      { id: "gk-eco", category: "eco", title: "친환경차 세제혜택", amount: 1430000, note: "개소세·취득세 감면 (하이브리드)", stackable: true, source: "external" },
+      { id: "gk-dealer", category: "cash", title: "딜러 재량 할인 (예상)", amount: 800000, note: "지점별 편차 큼 · 협상 필요", stackable: true, source: "dealer" },
+      { id: "gk-gift", category: "gift", title: "블랙박스 + 매트 패키지", amount: 350000, note: "출고 시 장착 지원", stackable: true, source: "dealer" },
+    ],
   },
   {
     id: "santafe-calligraphy",
@@ -87,6 +128,12 @@ export const MOCK_CARS: MockCar[] = [
     fuelType: "hybrid",
     fuelEfficiency: 14.2,
     insuranceAnnual: 1080000,
+    benefits: [
+      { id: "sf-card", category: "card", title: "현대카드 M 제휴 할인", amount: 600000, note: "M포인트 100만 사용 시 추가", stackable: true, source: "external" },
+      { id: "sf-trade", category: "tradein", title: "패밀리 세이브 (재구매)", amount: 400000, note: "현대·기아 5년 이내 소유주", stackable: true, source: "official" },
+      { id: "sf-eco", category: "eco", title: "친환경차 세제혜택", amount: 1430000, note: "개소세·취득세 감면 (하이브리드)", stackable: true, source: "external" },
+      { id: "sf-dealer", category: "cash", title: "딜러 재량 할인 (예상)", amount: 500000, note: "인기 모델 · 폭 작음", stackable: true, source: "dealer" },
+    ],
   },
   {
     id: "sorento-noblesse",
@@ -116,6 +163,15 @@ export const MOCK_CARS: MockCar[] = [
     fuelType: "hybrid",
     fuelEfficiency: 13.8,
     insuranceAnnual: 1120000,
+    benefits: [
+      { id: "sr-fin", category: "finance", title: "저리 할부 4.5% (36개월)", amount: 800000, note: "동급 대비 -1.5%p 절감 효과", stackable: false, source: "official" },
+      { id: "sr-card", category: "card", title: "KB국민카드 제휴", amount: 500000, note: "60개월 할부 · 신차 계약 시", stackable: true, source: "external" },
+      { id: "sr-loyalty", category: "loyalty", title: "기아 패밀리 재구매", amount: 300000, note: "기아 차량 소유주", stackable: true, source: "official" },
+      { id: "sr-eco", category: "eco", title: "친환경차 세제혜택", amount: 1430000, note: "개소세·취득세 감면 (하이브리드)", stackable: true, source: "external" },
+      { id: "sr-group", category: "group", title: "법인·개인사업자 추가", amount: 500000, note: "사업자등록증 확인 시", stackable: true, source: "official" },
+      { id: "sr-dealer", category: "cash", title: "딜러 재량 할인 (예상)", amount: 700000, note: "연말 재고 정리 시 확대 가능", stackable: true, source: "dealer" },
+      { id: "sr-gift", category: "gift", title: "썬팅 + 매트 지원", amount: 400000, note: "출고 시 장착", stackable: true, source: "dealer" },
+    ],
   },
 ];
 
