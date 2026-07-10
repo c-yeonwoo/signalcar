@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { Plus, ChevronRight } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor, signalLabel, signalEmoji } from "@/lib/mock-cars";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -13,7 +14,11 @@ function HomePage() {
   return (
     <ConsumerShell>
       <header className="px-5 pt-8 pb-4">
-        <div className="text-[13px] text-slate-500">2026년 7월</div>
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="시그널카" width={28} height={28} className="h-7 w-7" />
+          <span className="text-[15px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
+          <span className="ml-auto text-[12px] text-slate-400">2026.07</span>
+        </div>
         <h1 className="text-[26px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
           안녕하세요 👋<br />
           어떤 차 보고 계세요?
@@ -41,12 +46,16 @@ function HomePage() {
               params={{ vehicleId: c.id }}
               className="block bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(18,32,58,0.04)] border border-slate-100 active:scale-[0.99] transition"
             >
-              <div className={`mb-4 h-32 w-full rounded-xl bg-gradient-to-br ${c.imageColor} opacity-90 flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />
-                <div className="relative flex flex-col items-center text-white/80">
-                  <ImageIcon className="h-6 w-6" strokeWidth={1.5} />
-                  <span className="text-[10px] mt-1 font-medium tracking-wide">차량 이미지</span>
-                </div>
+              <div className={`mb-4 h-36 w-full rounded-xl bg-gradient-to-br ${c.imageColor} relative overflow-hidden`}>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-black/10" />
+                <img
+                  src={c.image}
+                  alt={`${c.model} ${c.trim}`}
+                  loading="lazy"
+                  width={1024}
+                  height={640}
+                  className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.25)] scale-110"
+                />
               </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
