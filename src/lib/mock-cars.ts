@@ -24,6 +24,9 @@ export type MockCar = {
   promoThisMonth: { label: string; amount: number; note: string };
   imageColor: string; // gradient accent
   image: string;
+  fuelType: "gasoline" | "diesel" | "hybrid" | "ev";
+  fuelEfficiency: number; // km/L (or km/kWh for EV)
+  insuranceAnnual: number; // 30대 남성 기준 예시 (원/년)
 };
 
 export const MOCK_CARS: MockCar[] = [
@@ -52,6 +55,9 @@ export const MOCK_CARS: MockCar[] = [
     },
     imageColor: "from-emerald-400 to-teal-500",
     image: carGrandKoleos,
+    fuelType: "hybrid",
+    fuelEfficiency: 15.6,
+    insuranceAnnual: 950000,
   },
   {
     id: "santafe-calligraphy",
@@ -78,6 +84,9 @@ export const MOCK_CARS: MockCar[] = [
     },
     imageColor: "from-amber-400 to-orange-500",
     image: carSantafe,
+    fuelType: "hybrid",
+    fuelEfficiency: 14.2,
+    insuranceAnnual: 1080000,
   },
   {
     id: "sorento-noblesse",
@@ -104,6 +113,9 @@ export const MOCK_CARS: MockCar[] = [
     },
     imageColor: "from-sky-400 to-indigo-500",
     image: carSorento,
+    fuelType: "hybrid",
+    fuelEfficiency: 13.8,
+    insuranceAnnual: 1120000,
   },
 ];
 
@@ -130,4 +142,43 @@ export function signalLabel(s: Signal) {
 
 export function signalEmoji(s: Signal) {
   return s === "buy" ? "🟢" : s === "wait" ? "🟡" : "⚪";
+}
+
+/* ============ 유지비 추정 ============ */
+
+// 2026년 7월 기준 (mock)
+const FUEL_PRICE: Record<MockCar["fuelType"], { price: number; unit: string; label: string }> = {
+  gasoline: { price: 1720, unit: "L", label: "휘발유" },
+  diesel: { price: 1580, unit: "L", label: "경유" },
+  hybrid: { price: 1720, unit: "L", label: "휘발유 (하이브리드)" },
+  ev: { price: 340, unit: "kWh", label: "전기" },
+};
+
+export const MILEAGE_MAP: Record<string, { km: number; label: string }> = {
+  low: { km: 8000, label: "1만km 이하" },
+  mid: { km: 15000, label: "1~2만km" },
+  high: { km: 25000, label: "2만km 이상" },
+};
+
+export function estimateOwnership(car: MockCar, annualKm: number) {
+  const fuel = FUEL_PRICE[car.fuelType];
+  const annualFuelCost = Math.round((annualKm / car.fuelEfficiency) * fuel.price);
+  const monthlyFuel = Math.round(annualFuelCost / 12);
+  const monthlyInsurance = Math.round(car.insuranceAnnual / 12);
+  // 소모품·정비 (mock, 브랜드/차급 러프)
+  const annualMaintenance = Math.round(car.listPrice * 0.008);
+  const monthlyMaintenance = Math.round(annualMaintenance / 12);
+  const monthlyTotal = monthlyFuel + monthlyInsurance + monthlyMaintenance;
+  return {
+    fuel,
+    annualKm,
+    annualFuelCost,
+    monthlyFuel,
+    monthlyInsurance,
+    annualInsurance: car.insuranceAnnual,
+    annualMaintenance,
+    monthlyMaintenance,
+    monthlyTotal,
+    annualTotal: monthlyTotal * 12,
+  };
 }
