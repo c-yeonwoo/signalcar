@@ -52,7 +52,7 @@ function PromotionsListPage() {
                 <TableCell>{p.month.slice(0, 7)}</TableCell>
                 <TableCell>
                   {p.trim?.vehicle ? (
-                    <Link to="/vehicles/$vehicleId" params={{ vehicleId: p.trim.vehicle.id }} className="hover:underline">
+                    <Link to="/admin/vehicles/$vehicleId" params={{ vehicleId: p.trim.vehicle.id }} className="hover:underline">
                       {p.trim.vehicle.brand?.name} {p.trim.vehicle.model_name}
                       <span className="text-muted-foreground"> · {p.trim.name}</span>
                     </Link>

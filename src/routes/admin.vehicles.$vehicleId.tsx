@@ -83,7 +83,7 @@ function VehicleDetail() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Button asChild variant="ghost" size="sm">
-          <Link to="/vehicles"><ArrowLeft className="h-4 w-4 mr-1" />차종 목록</Link>
+          <Link to="/admin/vehicles"><ArrowLeft className="h-4 w-4 mr-1" />차종 목록</Link>
         </Button>
       </div>
       <div>
