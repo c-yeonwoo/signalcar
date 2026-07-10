@@ -28,7 +28,6 @@ export type MockCar = {
   fuelEfficiency: number; // km/L (or km/kWh for EV)
   insuranceAnnual: number; // 30대 남성 기준 예시 (원/년)
   benefits: Benefit[];
-  reviews: ReviewBundle;
 };
 
 export type BenefitCategory =
