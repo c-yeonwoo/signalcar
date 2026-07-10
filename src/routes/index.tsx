@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight, GitCompare } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor, signalLabel, signalEmoji } from "@/lib/mock-cars";
@@ -32,7 +32,12 @@ function HomePage() {
       <section className="px-5 space-y-3">
         <div className="flex items-center justify-between pt-2">
           <h2 className="text-[15px] font-semibold text-slate-700">관심 차종 3</h2>
-          <span className="text-[12px] text-slate-400">지금 살 때 신호</span>
+          <Link
+            to="/compare"
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[color:var(--color-brand-blue)]"
+          >
+            <GitCompare className="h-3.5 w-3.5" /> 비교하기
+          </Link>
         </div>
 
         {MOCK_CARS.map((c) => {

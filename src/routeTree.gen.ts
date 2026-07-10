@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as DiagnoseRouteImport } from './routes/diagnose'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +37,11 @@ const MeRoute = MeRouteImport.update({
 const DiagnoseRoute = DiagnoseRouteImport.update({
   id: '/diagnose',
   path: '/diagnose',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoachRoute = CoachRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
+  '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/coach': typeof CoachRoute
+  '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/coach': typeof CoachRoute
+  '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/me': typeof MeRoute
   '/report': typeof ReportRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/coach'
+    | '/compare'
     | '/diagnose'
     | '/me'
     | '/report'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/coach'
+    | '/compare'
     | '/diagnose'
     | '/me'
     | '/report'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/coach'
+    | '/compare'
     | '/diagnose'
     | '/me'
     | '/report'
@@ -185,6 +197,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   CoachRoute: typeof CoachRoute
+  CompareRoute: typeof CompareRoute
   DiagnoseRoute: typeof DiagnoseRoute
   MeRoute: typeof MeRoute
   ReportRoute: typeof ReportRoute
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       path: '/diagnose'
       fullPath: '/diagnose'
       preLoaderRoute: typeof DiagnoseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/coach': {
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   CoachRoute: CoachRoute,
+  CompareRoute: CompareRoute,
   DiagnoseRoute: DiagnoseRoute,
   MeRoute: MeRoute,
   ReportRoute: ReportRoute,
