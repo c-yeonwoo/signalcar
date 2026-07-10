@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
+import { Route as PromotionsRouteImport } from './routes/promotions'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
@@ -17,6 +18,11 @@ import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicl
 const VehiclesRoute = VehiclesRouteImport.update({
   id: '/vehicles',
   path: '/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromotionsRoute = PromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrandsRoute = BrandsRouteImport.update({
@@ -38,12 +44,14 @@ const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
 }
@@ -51,20 +59,33 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/brands': typeof BrandsRoute
+  '/promotions': typeof PromotionsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/brands' | '/vehicles' | '/vehicles/$vehicleId'
+  fullPaths:
+    | '/'
+    | '/brands'
+    | '/promotions'
+    | '/vehicles'
+    | '/vehicles/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/brands' | '/vehicles' | '/vehicles/$vehicleId'
-  id: '__root__' | '/' | '/brands' | '/vehicles' | '/vehicles/$vehicleId'
+  to: '/' | '/brands' | '/promotions' | '/vehicles' | '/vehicles/$vehicleId'
+  id:
+    | '__root__'
+    | '/'
+    | '/brands'
+    | '/promotions'
+    | '/vehicles'
+    | '/vehicles/$vehicleId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BrandsRoute: typeof BrandsRoute
+  PromotionsRoute: typeof PromotionsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
 }
 
@@ -75,6 +96,13 @@ declare module '@tanstack/react-router' {
       path: '/vehicles'
       fullPath: '/vehicles'
       preLoaderRoute: typeof VehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promotions': {
+      id: '/promotions'
+      path: '/promotions'
+      fullPath: '/promotions'
+      preLoaderRoute: typeof PromotionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/brands': {
@@ -116,6 +144,7 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BrandsRoute: BrandsRoute,
+  PromotionsRoute: PromotionsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
