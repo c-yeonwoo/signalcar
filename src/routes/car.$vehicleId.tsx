@@ -104,9 +104,9 @@ function CarDetailPage() {
       {/* SECTION 02 · Gallery */}
       <section className="bg-[color:var(--color-brand-mist)] py-1">
         <div className="grid grid-cols-4 grid-rows-2 gap-px">
-          {gallery.map((g, i) => {
+          {gallery.slice(0, 5).map((g, i) => {
             const big = i === 0;
-            const last = i === gallery.length - 1;
+            const isPlusTile = i === 4; // last visible tile becomes the "+more" affordance
             const isActive = i === activeShot;
             return (
               <button
@@ -134,10 +134,10 @@ function CarDetailPage() {
                 {isActive && (
                   <span className="absolute inset-0 ring-2 ring-inset ring-[color:var(--color-brand-navy)]" />
                 )}
-                {last && (
+                {isPlusTile && (
                   <span className="absolute inset-0 bg-[color:var(--color-brand-navy)]/85 flex flex-col items-center justify-center text-white">
-                    <span className={`${DISPLAY} text-xl font-bold`}>+18</span>
-                    <span className="text-[9px] tracking-[0.2em] uppercase mt-0.5">Photos</span>
+                    <span className={`${DISPLAY} text-lg font-bold`}>+{gallery.length - 4}</span>
+                    <span className="text-[9px] tracking-[0.2em] uppercase mt-0.5">More</span>
                   </span>
                 )}
               </button>
