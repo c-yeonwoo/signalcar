@@ -14,7 +14,277 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      brands: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          name_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      deal_reports: {
+        Row: {
+          contract_month: string | null
+          contract_price: number
+          created_at: string
+          discount_amount: number | null
+          finance_type: Database["public"]["Enums"]["finance_type"] | null
+          id: string
+          list_price: number | null
+          options_taken: Json | null
+          region: string | null
+          source: Database["public"]["Enums"]["deal_source"]
+          trim_id: string
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
+        }
+        Insert: {
+          contract_month?: string | null
+          contract_price: number
+          created_at?: string
+          discount_amount?: number | null
+          finance_type?: Database["public"]["Enums"]["finance_type"] | null
+          id?: string
+          list_price?: number | null
+          options_taken?: Json | null
+          region?: string | null
+          source?: Database["public"]["Enums"]["deal_source"]
+          trim_id: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Update: {
+          contract_month?: string | null
+          contract_price?: number
+          created_at?: string
+          discount_amount?: number | null
+          finance_type?: Database["public"]["Enums"]["finance_type"] | null
+          id?: string
+          list_price?: number | null
+          options_taken?: Json | null
+          region?: string | null
+          source?: Database["public"]["Enums"]["deal_source"]
+          trim_id?: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_reports_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      official_promotions: {
+        Row: {
+          amount: number
+          captured_at: string
+          created_at: string
+          description: string | null
+          discount_type: Database["public"]["Enums"]["promotion_type"]
+          id: string
+          month: string
+          source_url: string | null
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          captured_at?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["promotion_type"]
+          id?: string
+          month: string
+          source_url?: string | null
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          captured_at?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["promotion_type"]
+          id?: string
+          month?: string
+          source_url?: string | null
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "official_promotions_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trim_options: {
+        Row: {
+          category: Database["public"]["Enums"]["option_category"]
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          notes: string | null
+          price: number | null
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["option_category"]
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          notes?: string | null
+          price?: number | null
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["option_category"]
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          notes?: string | null
+          price?: number | null
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trim_options_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trims: {
+        Row: {
+          base_price: number | null
+          created_at: string
+          discontinued_at: string | null
+          id: string
+          name: string
+          notes: string | null
+          released_at: string | null
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          base_price?: number | null
+          created_at?: string
+          discontinued_at?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          released_at?: string | null
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          base_price?: number | null
+          created_at?: string
+          discontinued_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          released_at?: string | null
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trims_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicles: {
+        Row: {
+          body_type: Database["public"]["Enums"]["body_type"] | null
+          brand_id: string
+          created_at: string
+          discontinued_at: string | null
+          fuel_type: Database["public"]["Enums"]["fuel_type"] | null
+          generation: string | null
+          id: string
+          launched_at: string | null
+          model_name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          body_type?: Database["public"]["Enums"]["body_type"] | null
+          brand_id: string
+          created_at?: string
+          discontinued_at?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          generation?: string | null
+          id?: string
+          launched_at?: string | null
+          model_name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body_type?: Database["public"]["Enums"]["body_type"] | null
+          brand_id?: string
+          created_at?: string
+          discontinued_at?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          generation?: string | null
+          id?: string
+          launched_at?: string | null
+          model_name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +293,38 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      body_type:
+        | "sedan"
+        | "suv"
+        | "hatchback"
+        | "wagon"
+        | "coupe"
+        | "convertible"
+        | "pickup"
+        | "van"
+        | "minivan"
+        | "other"
+      deal_source: "manual" | "receipt_ocr" | "community"
+      finance_type: "cash" | "installment" | "lease" | "rent"
+      fuel_type:
+        | "gasoline"
+        | "diesel"
+        | "hybrid"
+        | "phev"
+        | "ev"
+        | "lpg"
+        | "hydrogen"
+        | "other"
+      option_category:
+        | "exterior"
+        | "interior"
+        | "convenience"
+        | "safety"
+        | "powertrain"
+        | "package"
+        | "other"
+      promotion_type: "cash" | "finance" | "trade_in" | "other"
+      verification_status: "unverified" | "receipt_verified" | "flagged"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +451,42 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      body_type: [
+        "sedan",
+        "suv",
+        "hatchback",
+        "wagon",
+        "coupe",
+        "convertible",
+        "pickup",
+        "van",
+        "minivan",
+        "other",
+      ],
+      deal_source: ["manual", "receipt_ocr", "community"],
+      finance_type: ["cash", "installment", "lease", "rent"],
+      fuel_type: [
+        "gasoline",
+        "diesel",
+        "hybrid",
+        "phev",
+        "ev",
+        "lpg",
+        "hydrogen",
+        "other",
+      ],
+      option_category: [
+        "exterior",
+        "interior",
+        "convenience",
+        "safety",
+        "powertrain",
+        "package",
+        "other",
+      ],
+      promotion_type: ["cash", "finance", "trade_in", "other"],
+      verification_status: ["unverified", "receipt_verified", "flagged"],
+    },
   },
 } as const
