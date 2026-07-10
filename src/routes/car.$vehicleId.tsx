@@ -41,6 +41,17 @@ function CarDetailPage() {
           {car.model}
         </h1>
 
+        <div className={`mt-3 h-44 w-full rounded-2xl bg-gradient-to-br ${car.imageColor} relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-black/15" />
+          <img
+            src={car.image}
+            alt={`${car.model} ${car.trim}`}
+            width={1024}
+            height={640}
+            className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_14px_24px_rgba(0,0,0,0.28)] scale-110"
+          />
+        </div>
+
         <div className={`mt-4 rounded-3xl p-6 ${sig.bg} relative overflow-hidden`}>
           <div className={`text-[13px] font-semibold ${sig.text}`}>
             {signalLabel(car.signal)} · 신뢰도 높음
