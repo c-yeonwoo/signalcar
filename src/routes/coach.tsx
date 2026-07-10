@@ -8,10 +8,13 @@ import {
   RotateCcw,
   CheckCircle2,
   Crown,
+  Fuel,
+  ShieldCheck,
+  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
+import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/coach")({
   component: CoachPage,
@@ -189,6 +192,9 @@ function Interview() {
   const estimatedContractHigh = car
     ? Math.round((car.medianContract + optionsTotal * 0.98) / 10000) * 10000
     : 0;
+
+  const annualKm = MILEAGE_MAP[answers["mileage"] ?? "mid"]?.km ?? 15000;
+  const ownership = car ? estimateOwnership(car, annualKm) : null;
 
   const restart = () => {
     setCarId(null);
