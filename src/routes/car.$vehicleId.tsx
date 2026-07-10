@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, TrendingDown, Sparkles, CalendarClock } from "lucide-react";
+import { ArrowLeft, TrendingDown, Sparkles, CalendarClock, Gift, Info, Layers } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { findCar, formatKRW, signalColor, signalLabel } from "@/lib/mock-cars";
+import { findCar, formatKRW, signalColor, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
+import type { Benefit } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/car/$vehicleId")({
   component: CarDetailPage,
