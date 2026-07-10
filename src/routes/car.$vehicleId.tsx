@@ -103,7 +103,7 @@ function CarDetailPage() {
 
       {/* SECTION 02 · Gallery */}
       <section className="bg-[color:var(--color-brand-mist)] py-1">
-        <div className="grid grid-cols-4 grid-rows-2 gap-px">
+        <div className="grid grid-cols-4 grid-rows-2 gap-px [grid-auto-rows:1fr]">
           {gallery.slice(0, 5).map((g, i) => {
             const big = i === 0;
             const isPlusTile = i === 4; // last visible tile becomes the "+more" affordance
@@ -112,7 +112,7 @@ function CarDetailPage() {
               <button
                 key={g.label}
                 onClick={() => setActiveShot(i)}
-                className={`${big ? "col-span-2 row-span-2 aspect-[4/3]" : "aspect-square"} bg-white relative group`}
+                className={`${big ? "col-span-2 row-span-2" : "aspect-square"} bg-white relative group`}
               >
                 {g.src ? (
                   <img
