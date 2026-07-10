@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/vehicles")({
+export const Route = createFileRoute("/admin/vehicles")({
   component: VehiclesPage,
   ssr: false,
 });

@@ -9,169 +9,169 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VehiclesRouteImport } from './routes/vehicles'
-import { Route as PromotionsRouteImport } from './routes/promotions'
-import { Route as DealReportsRouteImport } from './routes/deal-reports'
-import { Route as BrandsRouteImport } from './routes/brands'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
+import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
+import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-reports'
+import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
+import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehicles.$vehicleId'
 
-const VehiclesRoute = VehiclesRouteImport.update({
-  id: '/vehicles',
-  path: '/vehicles',
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PromotionsRoute = PromotionsRouteImport.update({
-  id: '/promotions',
-  path: '/promotions',
+const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
+  id: '/admin/vehicles',
+  path: '/admin/vehicles',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DealReportsRoute = DealReportsRouteImport.update({
-  id: '/deal-reports',
-  path: '/deal-reports',
+const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
+  id: '/admin/promotions',
+  path: '/admin/promotions',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BrandsRoute = BrandsRouteImport.update({
-  id: '/brands',
-  path: '/brands',
+const AdminDealReportsRoute = AdminDealReportsRouteImport.update({
+  id: '/admin/deal-reports',
+  path: '/admin/deal-reports',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminBrandsRoute = AdminBrandsRouteImport.update({
+  id: '/admin/brands',
+  path: '/admin/brands',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
+const AdminVehiclesVehicleIdRoute = AdminVehiclesVehicleIdRouteImport.update({
   id: '/$vehicleId',
   path: '/$vehicleId',
-  getParentRoute: () => VehiclesRoute,
+  getParentRoute: () => AdminVehiclesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/brands': typeof BrandsRoute
-  '/deal-reports': typeof DealReportsRoute
-  '/promotions': typeof PromotionsRoute
-  '/vehicles': typeof VehiclesRouteWithChildren
-  '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/brands': typeof BrandsRoute
-  '/deal-reports': typeof DealReportsRoute
-  '/promotions': typeof PromotionsRoute
-  '/vehicles': typeof VehiclesRouteWithChildren
-  '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
+  '/admin': typeof AdminIndexRoute
+  '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/brands': typeof BrandsRoute
-  '/deal-reports': typeof DealReportsRoute
-  '/promotions': typeof PromotionsRoute
-  '/vehicles': typeof VehiclesRouteWithChildren
-  '/vehicles/$vehicleId': typeof VehiclesVehicleIdRoute
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/brands'
-    | '/deal-reports'
-    | '/promotions'
-    | '/vehicles'
-    | '/vehicles/$vehicleId'
+    | '/admin/brands'
+    | '/admin/deal-reports'
+    | '/admin/promotions'
+    | '/admin/vehicles'
+    | '/admin/'
+    | '/admin/vehicles/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/brands'
-    | '/deal-reports'
-    | '/promotions'
-    | '/vehicles'
-    | '/vehicles/$vehicleId'
+    | '/admin/brands'
+    | '/admin/deal-reports'
+    | '/admin/promotions'
+    | '/admin/vehicles'
+    | '/admin'
+    | '/admin/vehicles/$vehicleId'
   id:
     | '__root__'
-    | '/'
-    | '/brands'
-    | '/deal-reports'
-    | '/promotions'
-    | '/vehicles'
-    | '/vehicles/$vehicleId'
+    | '/admin/brands'
+    | '/admin/deal-reports'
+    | '/admin/promotions'
+    | '/admin/vehicles'
+    | '/admin/'
+    | '/admin/vehicles/$vehicleId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  BrandsRoute: typeof BrandsRoute
-  DealReportsRoute: typeof DealReportsRoute
-  PromotionsRoute: typeof PromotionsRoute
-  VehiclesRoute: typeof VehiclesRouteWithChildren
+  AdminBrandsRoute: typeof AdminBrandsRoute
+  AdminDealReportsRoute: typeof AdminDealReportsRoute
+  AdminPromotionsRoute: typeof AdminPromotionsRoute
+  AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vehicles': {
-      id: '/vehicles'
-      path: '/vehicles'
-      fullPath: '/vehicles'
-      preLoaderRoute: typeof VehiclesRouteImport
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/promotions': {
-      id: '/promotions'
-      path: '/promotions'
-      fullPath: '/promotions'
-      preLoaderRoute: typeof PromotionsRouteImport
+    '/admin/vehicles': {
+      id: '/admin/vehicles'
+      path: '/admin/vehicles'
+      fullPath: '/admin/vehicles'
+      preLoaderRoute: typeof AdminVehiclesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/deal-reports': {
-      id: '/deal-reports'
-      path: '/deal-reports'
-      fullPath: '/deal-reports'
-      preLoaderRoute: typeof DealReportsRouteImport
+    '/admin/promotions': {
+      id: '/admin/promotions'
+      path: '/admin/promotions'
+      fullPath: '/admin/promotions'
+      preLoaderRoute: typeof AdminPromotionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/brands': {
-      id: '/brands'
-      path: '/brands'
-      fullPath: '/brands'
-      preLoaderRoute: typeof BrandsRouteImport
+    '/admin/deal-reports': {
+      id: '/admin/deal-reports'
+      path: '/admin/deal-reports'
+      fullPath: '/admin/deal-reports'
+      preLoaderRoute: typeof AdminDealReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin/brands': {
+      id: '/admin/brands'
+      path: '/admin/brands'
+      fullPath: '/admin/brands'
+      preLoaderRoute: typeof AdminBrandsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/$vehicleId': {
-      id: '/vehicles/$vehicleId'
+    '/admin/vehicles/$vehicleId': {
+      id: '/admin/vehicles/$vehicleId'
       path: '/$vehicleId'
-      fullPath: '/vehicles/$vehicleId'
-      preLoaderRoute: typeof VehiclesVehicleIdRouteImport
-      parentRoute: typeof VehiclesRoute
+      fullPath: '/admin/vehicles/$vehicleId'
+      preLoaderRoute: typeof AdminVehiclesVehicleIdRouteImport
+      parentRoute: typeof AdminVehiclesRoute
     }
   }
 }
 
-interface VehiclesRouteChildren {
-  VehiclesVehicleIdRoute: typeof VehiclesVehicleIdRoute
+interface AdminVehiclesRouteChildren {
+  AdminVehiclesVehicleIdRoute: typeof AdminVehiclesVehicleIdRoute
 }
 
-const VehiclesRouteChildren: VehiclesRouteChildren = {
-  VehiclesVehicleIdRoute: VehiclesVehicleIdRoute,
+const AdminVehiclesRouteChildren: AdminVehiclesRouteChildren = {
+  AdminVehiclesVehicleIdRoute: AdminVehiclesVehicleIdRoute,
 }
 
-const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
-  VehiclesRouteChildren,
+const AdminVehiclesRouteWithChildren = AdminVehiclesRoute._addFileChildren(
+  AdminVehiclesRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  BrandsRoute: BrandsRoute,
-  DealReportsRoute: DealReportsRoute,
-  PromotionsRoute: PromotionsRoute,
-  VehiclesRoute: VehiclesRouteWithChildren,
+  AdminBrandsRoute: AdminBrandsRoute,
+  AdminDealReportsRoute: AdminDealReportsRoute,
+  AdminPromotionsRoute: AdminPromotionsRoute,
+  AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
+  AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

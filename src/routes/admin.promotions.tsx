@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ExternalLink } from "lucide-react";
 
-export const Route = createFileRoute("/promotions")({
+export const Route = createFileRoute("/admin/promotions")({
   component: PromotionsListPage,
   ssr: false,
 });

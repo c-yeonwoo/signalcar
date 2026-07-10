@@ -15,7 +15,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 
-export const Route = createFileRoute("/brands")({
+export const Route = createFileRoute("/admin/brands")({
   component: BrandsPage,
   ssr: false,
 });

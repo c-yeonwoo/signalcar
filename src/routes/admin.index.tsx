@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Car, Tag, FileText, Layers } from "lucide-react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/admin/")({
   component: Index,
   ssr: false,
 });

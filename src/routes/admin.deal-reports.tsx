@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Info } from "lucide-react";
 
-export const Route = createFileRoute("/deal-reports")({
+export const Route = createFileRoute("/admin/deal-reports")({
   component: DealReportsPage,
   ssr: false,
 });

@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const Route = createFileRoute("/vehicles/$vehicleId")({
+export const Route = createFileRoute("/admin/vehicles/$vehicleId")({
   component: VehicleDetail,
   ssr: false,
 });
