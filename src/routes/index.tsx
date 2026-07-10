@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight, Image as ImageIcon } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor, signalLabel, signalEmoji } from "@/lib/mock-cars";
@@ -41,6 +41,13 @@ function HomePage() {
               params={{ vehicleId: c.id }}
               className="block bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(18,32,58,0.04)] border border-slate-100 active:scale-[0.99] transition"
             >
+              <div className={`mb-4 h-32 w-full rounded-xl bg-gradient-to-br ${c.imageColor} opacity-90 flex items-center justify-center relative overflow-hidden`}>
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />
+                <div className="relative flex flex-col items-center text-white/80">
+                  <ImageIcon className="h-6 w-6" strokeWidth={1.5} />
+                  <span className="text-[10px] mt-1 font-medium tracking-wide">차량 이미지</span>
+                </div>
+              </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="text-[12px] text-slate-500">{c.brand} · {c.bodyType}</div>
