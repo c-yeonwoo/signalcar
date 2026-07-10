@@ -266,3 +266,150 @@ function BenefitsSection({ benefits }: { benefits: Benefit[] }) {
     </section>
   );
 }
+function Stars({ value, size = 12 }: { value: number; size?: number }) {
+  const full = Math.round(value);
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <Star
+          key={i}
+          className={i < full ? "fill-amber-400 text-amber-400" : "text-slate-200 fill-slate-200"}
+          style={{ width: size, height: size }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function sourceMeta(src: ReviewItem["source"]) {
+  if (src === "owner")
+    return { label: "실오너", Icon: ShieldCheck, cls: "bg-emerald-50 text-emerald-700" };
+  if (src === "video")
+    return { label: "영상", Icon: PlayCircle, cls: "bg-rose-50 text-rose-600" };
+  return { label: "미디어", Icon: Newspaper, cls: "bg-slate-100 text-slate-600" };
+}
+
+function ReviewsSection({ bundle }: { bundle?: ReviewBundle }) {
+  if (!bundle) return null;
+  const { aiSummary, aspects, items } = bundle;
+
+  return (
+    <section className="px-5 mt-4">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* AI 요약 헤더 */}
+        <div className="px-5 pt-5 pb-4 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
+          <div className="flex items-center gap-1.5 text-[11.5px] text-slate-500">
+            <MessageSquareQuote className="h-3.5 w-3.5" /> 리뷰 · AI 한줄요약
+          </div>
+          <div className="flex items-end gap-2 mt-1.5">
+            <div className="text-[28px] font-extrabold text-[color:var(--color-brand-navy)] leading-none">
+              {aiSummary.overall.toFixed(1)}
+            </div>
+            <div className="pb-1">
+              <Stars value={aiSummary.overall} size={14} />
+              <div className="text-[11px] text-slate-500 mt-0.5">
+                실오너·미디어 리뷰 {aiSummary.sampleSize.toLocaleString()}건 기반
+              </div>
+            </div>
+          </div>
+          <p className="text-[13px] text-slate-700 mt-3 leading-relaxed">{aiSummary.tldr}</p>
+
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <div className="rounded-xl bg-emerald-50 p-3">
+              <div className="text-[10.5px] font-semibold text-emerald-700 mb-1">👍 자주 언급된 장점</div>
+              <ul className="space-y-0.5">
+                {aiSummary.pros.map((p) => (
+                  <li key={p} className="text-[11.5px] text-emerald-900 leading-snug">· {p}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl bg-rose-50 p-3">
+              <div className="text-[10.5px] font-semibold text-rose-700 mb-1">👎 자주 언급된 아쉬움</div>
+              <ul className="space-y-0.5">
+                {aiSummary.cons.map((p) => (
+                  <li key={p} className="text-[11.5px] text-rose-900 leading-snug">· {p}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* 항목별 점수 */}
+        <div className="px-5 py-4 border-b border-slate-100">
+          <div className="text-[11.5px] font-semibold text-slate-600 mb-2">항목별 점수</div>
+          <div className="space-y-2">
+            {aspects.map((a) => (
+              <div key={a.label} className="flex items-center gap-3">
+                <div className="w-20 text-[12px] text-slate-600 shrink-0">{a.label}</div>
+                <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[color:var(--color-brand-blue)]"
+                    style={{ width: `${(a.score / 5) * 100}%` }}
+                  />
+                </div>
+                <div className="w-8 text-right text-[12px] font-semibold text-[color:var(--color-brand-navy)]">
+                  {a.score.toFixed(1)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 개별 리뷰 */}
+        <ul className="divide-y divide-slate-100">
+          {items.map((r) => {
+            const meta = sourceMeta(r.source);
+            const Icon = meta.Icon;
+            return (
+              <li key={r.id} className="px-5 py-4">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold rounded-full px-1.5 py-0.5 ${meta.cls}`}>
+                      <Icon className="h-3 w-3" /> {meta.label}
+                    </span>
+                    <span className="text-[12px] font-medium text-[color:var(--color-brand-navy)]">
+                      {r.author}
+                    </span>
+                    {r.verified && (
+                      <span className="text-[10px] font-semibold rounded-full px-1.5 py-0.5 bg-[color:var(--color-brand-blue)]/10 text-[color:var(--color-brand-blue)]">
+                        시그널카 검증
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[10.5px] text-slate-400 shrink-0">{r.date}</div>
+                </div>
+                <div className="mt-1 flex items-center gap-2">
+                  <Stars value={r.rating} />
+                  {r.ownershipMonths ? (
+                    <span className="text-[10.5px] text-slate-500">보유 {r.ownershipMonths}개월</span>
+                  ) : null}
+                  {r.channel ? (
+                    <span className="text-[10.5px] text-slate-500">· {r.channel}</span>
+                  ) : null}
+                </div>
+                <p className="text-[13px] text-slate-700 mt-2 leading-relaxed">"{r.quote}"</p>
+                {r.url && (
+                  <a
+                    href={r.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-[11.5px] text-[color:var(--color-brand-blue)] mt-2 font-medium"
+                  >
+                    원문 보기 <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[10.5px] text-slate-500 leading-relaxed flex gap-1.5">
+          <Info className="h-3 w-3 mt-0.5 shrink-0" />
+          <span>
+            실오너 리뷰는 시그널카 견적서·계약 제보와 연결된 사용자만 작성할 수 있어요. 외부 미디어/영상은 링크로 원문을 확인하세요.
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
