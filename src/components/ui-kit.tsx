@@ -174,3 +174,45 @@ export function CarThumb({
     </div>
   );
 }
+
+/* ------------------------------------------------------------------
+ * SampleSize — 실거래 표본 크기와 신뢰도를 한 줄 배지로.
+ * 데이터가 얼마나 두꺼운지 매 데이터 카드마다 노출해서
+ * "우리는 진짜 실거래 위에 코칭한다"는 시그널을 보강한다.
+ * ------------------------------------------------------------------ */
+
+export function sampleConfidence(n: number): { level: "low" | "mid" | "high"; label: string; hex: string } {
+  if (n >= 40) return { level: "high", label: "신뢰 충분", hex: "#16a34a" };
+  if (n >= 15) return { level: "mid", label: "신뢰 보통", hex: "#f59e0b" };
+  return { level: "low", label: "표본 부족", hex: "#94a3b8" };
+}
+
+export function SampleSize({
+  count,
+  months = 6,
+  compact = false,
+  className,
+}: {
+  count: number;
+  months?: number;
+  compact?: boolean;
+  className?: string;
+}) {
+  const c = sampleConfidence(count);
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 text-[10.5px] text-slate-500 tabular-nums",
+        className,
+      )}
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ background: c.hex }}
+        aria-hidden
+      />
+      실계약 {count}건 · 최근 {months}개월
+      {!compact && <span className="text-slate-400">· {c.label}</span>}
+    </span>
+  );
+}

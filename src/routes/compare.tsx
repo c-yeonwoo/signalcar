@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor } from "@/lib/mock-cars";
-import { PageHeader, SignalPill } from "@/components/ui-kit";
+import { PageHeader, SignalPill, sampleConfidence } from "@/components/ui-kit";
 import { getCompareList, setCompareList } from "@/lib/compare-store";
 
 export const Route = createFileRoute("/compare")({
@@ -181,7 +181,12 @@ function ComparePage() {
 
             <CompareRow label="제보 표본" hint="많을수록 신뢰도↑">
               {cars.map((c) => (
-                <Cell key={c.id} value={`${c.reports}건`} best={c.reports === bestReports} />
+                <Cell
+                  key={c.id}
+                  value={`${c.reports}건`}
+                  sub={sampleConfidence(c.reports).label}
+                  best={c.reports === bestReports}
+                />
               ))}
             </CompareRow>
 
