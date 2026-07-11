@@ -570,6 +570,9 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
 }
 
 function ProgressBar({ current, total }: { current: number; total: number }) {
+  return _ProgressBarImpl({ current, total });
+}
+function _ProgressBarImpl({ current, total }: { current: number; total: number }) {
   const pct = Math.round((current / total) * 100);
   return (
     <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
