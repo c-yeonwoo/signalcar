@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Minus } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { MOCK_CARS, formatKRW, signalColor, signalLabel, signalEmoji } from "@/lib/mock-cars";
+import { MOCK_CARS, formatKRW, signalColor } from "@/lib/mock-cars";
+import { PageHeader, SignalPill } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/compare")({
   component: ComparePage,
@@ -33,17 +34,13 @@ function ComparePage() {
 
   return (
     <ConsumerShell>
-      <header className="px-5 pt-6 pb-2">
-        <Link to="/" className="inline-flex items-center gap-1 text-[13px] text-slate-500">
-          <ArrowLeft className="h-4 w-4" /> 홈
-        </Link>
-        <h1 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] mt-2">
-          관심 차종 비교
-        </h1>
-        <p className="text-[12.5px] text-slate-500 mt-1">
-          최대 3대까지 나란히 보고, 항목별로 어떤 차가 유리한지 확인해요.
-        </p>
-      </header>
+      <PageHeader
+        backTo="/"
+        backLabel="홈"
+        eyebrow="Compare"
+        title="관심 차종 비교"
+        subtitle="최대 3대까지 나란히 보고, 항목별로 어떤 차가 유리한지 확인해요."
+      />
 
       {/* Picker */}
       <section className="px-5 mt-3">
@@ -82,7 +79,6 @@ function ComparePage() {
               style={{ gridTemplateColumns: `repeat(${cars.length}, minmax(0, 1fr))` }}
             >
               {cars.map((c) => {
-                const sig = signalColor(c.signal);
                 const sparkColor =
                   c.signal === "buy" ? "#16A34A" : c.signal === "wait" ? "#F59E0B" : "#64748B";
                 return (
@@ -90,7 +86,7 @@ function ComparePage() {
                     key={c.id}
                     to="/car/$vehicleId"
                     params={{ vehicleId: c.id }}
-                    className="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm active:scale-[0.99] transition"
+                    className="sc-card p-3 active:scale-[0.99] transition"
                   >
                     <div
                       className="h-20 rounded-xl bg-white border border-slate-100 relative overflow-hidden"
@@ -105,11 +101,9 @@ function ComparePage() {
                     <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] truncate leading-tight">
                       {c.model}
                     </div>
-                    <span
-                      className={`mt-1.5 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${sig.bg} ${sig.text}`}
-                    >
-                      {signalEmoji(c.signal)} {signalLabel(c.signal)}
-                    </span>
+                    <div className="mt-1.5">
+                      <SignalPill signal={c.signal} size="sm" />
+                    </div>
                     <div className="mt-2">
                       <Sparkline values={c.history} color={sparkColor} width={110} height={28} />
                     </div>
@@ -230,7 +224,7 @@ function CompareRow({
 }) {
   const items = Array.isArray(children) ? children : [children];
   return (
-    <div className="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm">
+    <div className="sc-card p-3.5">
       <div className="flex items-baseline justify-between">
         <div className="text-[12px] font-semibold text-slate-700">{label}</div>
         {hint && <div className="text-[10.5px] text-slate-400">{hint}</div>}
