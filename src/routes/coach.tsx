@@ -529,15 +529,7 @@ function BriefingLocked() {
         </div>
       </div>
 
-      <button
-        onClick={async () => {
-          await navigator.clipboard.writeText("코치 PRO 준비 중입니다.");
-          toast("PRO는 준비 중이에요. 대기 목록에 담아둘게요.");
-        }}
-        className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white py-3 text-[13px] font-medium text-slate-600"
-      >
-        <Copy className="h-3.5 w-3.5" /> PRO 오픈 알림 받기
-      </button>
+      <ProSignupCard source="coach-briefing-locked" variant="compact" />
     </section>
   );
 }
