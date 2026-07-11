@@ -1,12 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Compass, MessageCircle, Camera, User } from "lucide-react";
+import { Home, Compass, MessageCircle, GitCompare, User } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs = [
   { to: "/", label: "홈", icon: Home, match: (p: string) => p === "/" || p.startsWith("/car") },
   { to: "/explore", label: "탐색", icon: Compass, match: (p: string) => p.startsWith("/explore") },
   { to: "/coach", label: "코치", icon: MessageCircle, match: (p: string) => p.startsWith("/coach") || p.startsWith("/diagnose") },
-  { to: "/report", label: "제보", icon: Camera, match: (p: string) => p.startsWith("/report") },
+  { to: "/compare", label: "비교", icon: GitCompare, match: (p: string) => p.startsWith("/compare") },
   { to: "/me", label: "마이", icon: User, match: (p: string) => p.startsWith("/me") },
 ] as const;
 
