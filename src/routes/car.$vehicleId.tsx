@@ -7,6 +7,7 @@ import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
+import { SampleSize, sampleConfidence } from "@/components/ui-kit";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -203,9 +204,7 @@ function CarDetailPage() {
       <section className="bg-white px-5 py-6 border-b border-[color:var(--color-brand-mist)]">
         <div className="flex items-center justify-between">
           <h3 className={SECTION_TITLE}>실거래가 분포</h3>
-          <span className="text-[11px] text-[color:var(--color-brand-blue)] font-medium">
-            제보 {car.reports}건
-          </span>
+          <SampleSize count={car.reports} />
         </div>
 
         <div className="mt-6">
