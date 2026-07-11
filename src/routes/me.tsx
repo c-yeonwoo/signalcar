@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +52,8 @@ function MePage() {
       )}
 
       <section className="px-5 space-y-3">
+        <ActionLink to="/report" icon={Camera} title="계약서 제보" desc="1건 제보하면 리포트 열람권을 드려요." />
+        <ActionLink to="/diagnose" icon={ScanLine} title="견적서 진단" desc="딜러 견적서 함정 여부를 사진으로 체크." />
         <Placeholder icon={Clock} title="출고 트래킹" desc="계약 후 생산·배송·출고를 한눈에 볼 수 있어요." />
         <Placeholder icon={Wrench} title="차생활 관리" desc="첫 점검·소모품 교체 시점을 알려드려요." />
         <Placeholder icon={HeartHandshake} title="구매 히스토리" desc="내가 받은 브리핑과 진단 기록을 보관해요." />
@@ -84,5 +86,30 @@ function Placeholder({ icon: Icon, title, desc }: { icon: typeof Clock; title: s
         <div className="text-[12.5px] text-slate-500 mt-1 leading-relaxed">{desc}</div>
       </div>
     </div>
+  );
+}
+
+function ActionLink({
+  to,
+  icon: Icon,
+  title,
+  desc,
+}: {
+  to: string;
+  icon: typeof Clock;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <Link to={to} className="sc-card p-5 flex gap-3 items-center active:scale-[0.99] transition">
+      <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-navy)]/6 grid place-items-center flex-shrink-0">
+        <Icon className="h-5 w-5 text-[color:var(--color-brand-navy)]" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">{title}</div>
+        <div className="text-[12.5px] text-slate-500 mt-0.5 leading-relaxed">{desc}</div>
+      </div>
+      <ChevronRight className="h-4 w-4 text-slate-400" />
+    </Link>
   );
 }

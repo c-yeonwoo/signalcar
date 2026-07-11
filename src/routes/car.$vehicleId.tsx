@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
+import { getCompareList, toggleCompare } from "@/lib/compare-store";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -60,6 +62,19 @@ function CarDetailPage() {
   ];
   const [activeShot, setActiveShot] = useState(0);
   const shot = gallery[activeShot];
+
+  const [inCompare, setInCompare] = useState(false);
+  useEffect(() => {
+    const sync = () => setInCompare(getCompareList().includes(car.id));
+    sync();
+    window.addEventListener("sc:compare-change", sync);
+    return () => window.removeEventListener("sc:compare-change", sync);
+  }, [car.id]);
+
+  const handleCompare = () => {
+    const { added, list } = toggleCompare(car.id);
+    toast.success(added ? `비교함에 담았어요 (${list.length}/3)` : "비교함에서 뺐어요");
+  };
 
   return (
     <ConsumerShell>
@@ -245,14 +260,27 @@ function CarDetailPage() {
 
       <div className="h-4" />
 
-      {/* Fixed CTA */}
-      <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-5 z-30">
-        <Link
-          to="/coach"
-          className={`block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-3.5 rounded-2xl font-semibold text-[14px] shadow-lg shadow-[color:var(--color-brand-navy)]/25 active:opacity-90 transition`}
-        >
-          AI 코치에게 물어보기
-        </Link>
+      {/* Fixed CTA — 견적 + 비교 */}
+      <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-30">
+        <div className="flex gap-2 rounded-2xl bg-white/85 backdrop-blur border border-slate-100 p-2 shadow-[0_10px_30px_rgba(15,27,61,0.18)]">
+          <button
+            onClick={handleCompare}
+            className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-[13px] font-semibold transition ${
+              inCompare
+                ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            {inCompare ? <Check className="h-4 w-4" /> : <GitCompare className="h-4 w-4" />}
+            {inCompare ? "비교함에 담김" : "비교에 담기"}
+          </button>
+          <Link
+            to="/coach"
+            className="flex-[1.4] text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90"
+          >
+            이 차로 견적 →
+          </Link>
+        </div>
       </div>
     </ConsumerShell>
   );
