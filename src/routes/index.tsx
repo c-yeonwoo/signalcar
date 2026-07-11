@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, TrendingUp } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
@@ -99,6 +99,52 @@ function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* 폴백/디스커버리 — 관심 차 외에도 시장 전반을 훑을 수 있게 */}
+      <section className="px-5 mt-6 space-y-3">
+        <SectionTitle
+          right={
+            <Link to="/explore" className="inline-flex items-center gap-1 text-[11px] font-semibold text-[color:var(--color-brand-blue)]">
+              <TrendingUp className="h-3 w-3" /> 전체 보기
+            </Link>
+          }
+        >
+          지금 뜨는 신차
+        </SectionTitle>
+        <div className="sc-card divide-y divide-slate-100">
+          {MOCK_CARS.map((c, i) => (
+            <Link
+              key={c.id}
+              to="/car/$vehicleId"
+              params={{ vehicleId: c.id }}
+              className="flex items-center gap-3 px-4 py-3 active:bg-slate-50 transition"
+            >
+              <span className="text-[13px] font-bold text-slate-400 tabular-nums w-5">{i + 1}</span>
+              <img src={c.image} alt={c.model} className="h-10 w-14 object-contain" />
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)] truncate">{c.model}</div>
+                <div className="text-[11px] text-slate-500 truncate">{c.brand} · {formatKRW(c.medianContract)}</div>
+              </div>
+              <SignalPill signal={c.signal} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 액션 진입 — 제보/진단 (탭에서 빠졌으니 홈에서 접근 확보) */}
+      <section className="px-5 mt-5 grid grid-cols-2 gap-2.5">
+        <Link to="/report" className="sc-card p-3.5 active:scale-[0.99] transition">
+          <Camera className="h-4 w-4 text-[color:var(--color-brand-blue)]" />
+          <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">계약서 제보</div>
+          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">1건 제보 → 리포트 열람권</div>
+        </Link>
+        <Link to="/diagnose" className="sc-card p-3.5 active:scale-[0.99] transition">
+          <ScanLine className="h-4 w-4 text-[color:var(--color-brand-blue)]" />
+          <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">견적서 진단</div>
+          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">사진 한 장으로 함정 체크</div>
+        </Link>
+      </section>
+      <div className="h-6" />
     </ConsumerShell>
   );
 }
