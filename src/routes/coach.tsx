@@ -636,3 +636,26 @@ function CostRow({
     </div>
   );
 }
+
+function TeaserCol({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "buy" | "wait" | "ink";
+}) {
+  const color =
+    tone === "buy"
+      ? "text-[color:var(--color-signal-buy)]"
+      : tone === "wait"
+        ? "text-[color:var(--color-signal-wait)]"
+        : "text-[color:var(--color-brand-navy)]";
+  return (
+    <div className="rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-2.5">
+      <div className="text-[10.5px] text-slate-500">{label}</div>
+      <div className={`text-[13.5px] font-bold mt-1 tabular-nums ${color}`}>{value}</div>
+    </div>
+  );
+}
