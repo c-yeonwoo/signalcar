@@ -19,14 +19,15 @@ function MePage() {
   const { user, loading } = useSession();
   const navigate = useNavigate();
 
-  const [counts, setCounts] = useState({ watch: 0, compare: 0, reviews: 0 });
+  const [counts, setCounts] = useState({ watch: 0, compare: 0, reviews: 0, reports: 0 });
   useEffect(() => {
     const sync = () =>
-      setCounts({
+      setCounts((c) => ({
+        ...c,
         watch: getWatchlist().length,
         compare: getCompareList().length,
         reviews: getMyReviews().length,
-      });
+      }));
     sync();
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:compare-change", sync);
@@ -37,6 +38,21 @@ function MePage() {
       window.removeEventListener("sc:reviews-change", sync);
     };
   }, []);
+
+  // 실 deal_reports 카운트 (로그인 유저만, RLS로 본인 것만 반환)
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    supabase
+      .from("deal_reports")
+      .select("id", { count: "exact", head: true })
+      .then(({ count }) => {
+        if (alive && typeof count === "number") setCounts((c) => ({ ...c, reports: count }));
+      });
+    return () => {
+      alive = false;
+    };
+  }, [user]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -78,7 +94,7 @@ function MePage() {
       <section className="px-5 mb-5 grid grid-cols-2 gap-2.5">
         <HubCard to="/" icon={Heart} title="관심 차종" count={counts.watch} desc="홈에서 시그널 추적 중" />
         <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
-        <HubCard to="/report" icon={FileText} title="내 제보" count={0} desc="계약서로 리포트 언락" />
+        <HubCard to="/report" icon={FileText} title="내 제보" count={counts.reports} desc="계약서로 리포트 언락" />
         <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실오너 배지" />
       </section>
 

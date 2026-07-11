@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { SplashScreen } from "@/components/splash-screen";
 import { supabase } from "@/integrations/supabase/client";
+import { hydrateWatchlistFromServer } from "@/lib/watchlist-store";
 
 function NotFoundComponent() {
   return (
@@ -136,7 +137,10 @@ function RootComponent() {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event === "SIGNED_IN") void hydrateWatchlistFromServer();
     });
+    // 새로고침으로 이미 세션이 있는 경우
+    void hydrateWatchlistFromServer();
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
 
