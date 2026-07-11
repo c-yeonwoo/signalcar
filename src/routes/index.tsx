@@ -3,7 +3,7 @@ import { Plus, ChevronRight, GitCompare, Camera, ScanLine, TrendingUp } from "lu
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
-import { PageHeader, SectionTitle, SignalPill, CarThumb } from "@/components/ui-kit";
+import { PageHeader, SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
 
@@ -76,7 +76,7 @@ function HomePage() {
                   <div className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-none mt-1 tabular-nums">
                     {formatKRW(c.medianContract)}
                   </div>
-                  <div className="text-[11px] text-slate-400 mt-1">제보 {c.reports}건 · 6개월</div>
+                  <SampleSize count={c.reports} className="mt-1.5" />
                 </div>
                 <Sparkline values={c.history} color={sparkColor} width={110} height={44} />
               </div>
