@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, ChevronRight, GitCompare } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { MOCK_CARS, formatKRW, signalColor, signalLabel, signalEmoji } from "@/lib/mock-cars";
+import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
+import { PageHeader, SectionTitle, SignalPill, CarThumb } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
@@ -13,35 +14,37 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <ConsumerShell>
-      <header className="px-5 pt-8 pb-4">
-        <div className="flex items-center gap-2">
-          <img src={logo} alt="시그널카" width={28} height={28} className="h-7 w-7" />
-          <span className="text-[15px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
-          <span className="ml-auto text-[12px] text-slate-400">2026.07</span>
-        </div>
-        <h1 className="text-[26px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
-          안녕하세요 👋<br />
-          어떤 차 보고 계세요?
-        </h1>
-        <button className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-700 shadow-sm active:scale-[0.98] transition">
-          <Plus className="h-3.5 w-3.5" />
-          관심 차종 추가
+      <div className="px-5 pt-6 flex items-center gap-2">
+        <img src={logo} alt="시그널카" width={24} height={24} className="h-6 w-6" />
+        <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
+        <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
+      </div>
+      <PageHeader
+        eyebrow="오늘의 시그널"
+        title={<>어떤 차,<br />보고 계세요?</>}
+        subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
+      />
+      <div className="px-5">
+        <button className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 shadow-sm active:scale-[0.98] transition">
+          <Plus className="h-3.5 w-3.5" /> 관심 차종 추가
         </button>
-      </header>
+      </div>
 
-      <section className="px-5 space-y-3">
-        <div className="flex items-center justify-between pt-2">
-          <h2 className="text-[15px] font-semibold text-slate-700">관심 차종 3</h2>
-          <Link
-            to="/compare"
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[color:var(--color-brand-blue)]"
-          >
-            <GitCompare className="h-3.5 w-3.5" /> 비교하기
-          </Link>
-        </div>
+      <section className="px-5 mt-5 space-y-3">
+        <SectionTitle
+          right={
+            <Link
+              to="/compare"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[color:var(--color-brand-blue)]"
+            >
+              <GitCompare className="h-3 w-3" /> 비교하기
+            </Link>
+          }
+        >
+          관심 차종 {MOCK_CARS.length}
+        </SectionTitle>
 
         {MOCK_CARS.map((c) => {
-          const sig = signalColor(c.signal);
           const sparkColor =
             c.signal === "buy" ? "#16A34A" : c.signal === "wait" ? "#F59E0B" : "#64748B";
           return (
@@ -49,36 +52,26 @@ function HomePage() {
               key={c.id}
               to="/car/$vehicleId"
               params={{ vehicleId: c.id }}
-              className="block bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(18,32,58,0.04)] border border-slate-100 active:scale-[0.99] transition"
+              className="block sc-card p-5 active:scale-[0.99] transition"
             >
-              <div className="mb-4 h-36 w-full rounded-xl bg-white border border-slate-100 relative overflow-hidden">
-                <img
-                  src={c.image}
-                  alt={`${c.model} ${c.trim}`}
-                  loading="lazy"
-                  width={1024}
-                  height={640}
-                  className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.25)] scale-110"
-                />
+              <div className="mb-4">
+                <CarThumb src={c.image} alt={`${c.model} ${c.trim}`} />
               </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12px] text-slate-500">{c.brand} · {c.bodyType}</div>
+                  <div className="text-[11.5px] text-slate-500">{c.brand} · {c.bodyType}</div>
                   <div className="text-[17px] font-bold text-[color:var(--color-brand-navy)] mt-0.5 truncate">
                     {c.model}
                   </div>
-                  <div className="text-[12px] text-slate-500 mt-0.5 truncate">{c.trim}</div>
+                  <div className="text-[11.5px] text-slate-500 mt-0.5 truncate">{c.trim}</div>
                 </div>
-                <span className={`shrink-0 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${sig.bg} ${sig.text}`}>
-                  <span>{signalEmoji(c.signal)}</span>
-                  {signalLabel(c.signal)}
-                </span>
+                <SignalPill signal={c.signal} />
               </div>
 
               <div className="mt-4 flex items-end justify-between gap-3">
                 <div>
                   <div className="text-[11px] text-slate-500">실거래가 중앙값</div>
-                  <div className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-none mt-1">
+                  <div className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-none mt-1 tabular-nums">
                     {formatKRW(c.medianContract)}
                   </div>
                   <div className="text-[11px] text-slate-400 mt-1">제보 {c.reports}건 · 6개월</div>
@@ -86,7 +79,10 @@ function HomePage() {
                 <Sparkline values={c.history} color={sparkColor} width={110} height={44} />
               </div>
 
-              <div className={`mt-4 rounded-xl px-3 py-2.5 text-[12.5px] leading-snug ${sig.bg} ${sig.text}`}>
+              <div
+                className="mt-4 rounded-xl bg-slate-50 pl-3 pr-3 py-2.5 text-[12.5px] leading-snug text-slate-700 border-l-2"
+                style={{ borderColor: sparkColor }}
+              >
                 {c.coach}
               </div>
 
@@ -99,7 +95,7 @@ function HomePage() {
 
         <div className="pt-2 pb-4 text-center">
           <Link to="/coach" className="text-[13px] text-[color:var(--color-brand-blue)] font-medium">
-            협상 브리핑이 필요하다면 →
+            AI 코치와 견적 뽑아보기 →
           </Link>
         </div>
       </section>

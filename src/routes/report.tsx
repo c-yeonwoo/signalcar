@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, ShieldCheck, Gift, LogIn } from "lucide-react";
+import { Camera, ShieldCheck, Gift, LogIn, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { MOCK_CARS, TRIM_ID_MAP } from "@/lib/mock-cars";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
+import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
@@ -80,19 +81,13 @@ function ReportPage() {
   if (!sessionLoading && !user) {
     return (
       <ConsumerShell>
-        <header className="px-5 pt-10 pb-4">
-          <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight">
-            제보하려면<br />로그인이 필요해요
-          </h1>
-          <p className="text-[13.5px] text-slate-500 mt-3 leading-relaxed">
-            익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요.
-          </p>
-        </header>
+        <PageHeader
+          eyebrow="Report"
+          title={<>제보하려면<br />로그인이 필요해요</>}
+          subtitle="익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요."
+        />
         <section className="px-5">
-          <Link
-            to="/auth"
-            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(18,32,58,0.2)]"
-          >
+          <Link to="/auth" className="sc-btn-primary">
             <LogIn className="h-4 w-4" /> 로그인하고 제보하기
           </Link>
         </section>
@@ -104,21 +99,14 @@ function ReportPage() {
     <ConsumerShell>
       {step === "intro" && (
         <>
-          <header className="px-5 pt-10 pb-4">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] px-2.5 py-1 text-[11px] font-semibold">
-              <Gift className="h-3 w-3" /> give-to-get
-            </div>
-            <h1 className="text-[26px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-3">
-              실계약가 하나 알려주면,<br />
-              이 차 진짜 시세<br /> 리포트를 열어드려요
-            </h1>
-            <p className="text-[13.5px] text-slate-500 mt-3 leading-relaxed">
-              계약서/견적서 사진을 올리면 자동으로 값을 읽어드려요. 확인만 하면 끝.
-            </p>
-          </header>
+          <PageHeader
+            eyebrow="Give to Get"
+            title={<>실계약가 하나 알려주면,<br />이 차 진짜 시세를<br />열어드려요</>}
+            subtitle="계약서·견적서 사진을 올리면 자동으로 값을 읽어드려요. 확인만 하면 끝."
+          />
 
           <section className="px-5 space-y-3">
-            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex gap-3">
+            <div className="sc-card p-5 flex gap-3">
               <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-blue)]/10 grid place-items-center flex-shrink-0">
                 <ShieldCheck className="h-5 w-5 text-[color:var(--color-brand-blue)]" />
               </div>
@@ -130,7 +118,7 @@ function ReportPage() {
               </div>
             </div>
 
-            <label className="w-full mt-2 rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.2)] active:scale-[0.99] transition inline-flex items-center justify-center gap-2 cursor-pointer">
+            <label className="sc-btn-primary cursor-pointer mt-2">
               <Camera className="h-4 w-4" /> 견적서/계약서 올리기
               <input
                 type="file"
@@ -156,12 +144,10 @@ function ReportPage() {
 
       {step === "form" && (
         <>
-          <header className="px-5 pt-8 pb-3">
-            <div className="text-[12px] text-slate-500">확인만 하면 끝</div>
-            <h1 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
-              자동으로 읽은 값이 맞나요?
-            </h1>
-          </header>
+          <PageHeader
+            eyebrow="확인만 하면 끝"
+            title="자동으로 읽은 값이 맞나요?"
+          />
 
           <section className="px-5 space-y-3">
             <FormRow label="트림">
@@ -190,21 +176,17 @@ function ReportPage() {
               <input value={finance} onChange={(e) => setFinance(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0" />
             </FormRow>
 
-            <button
-              onClick={submit}
-              disabled={submitting}
-              className="w-full mt-3 rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition disabled:opacity-60"
-            >
+            <PrimaryButton onClick={submit} disabled={submitting} className="mt-3 disabled:opacity-60">
               {submitting ? "제보 중…" : "제보하고 리포트 열기"}
-            </button>
+            </PrimaryButton>
           </section>
         </>
       )}
 
       {step === "done" && (
         <div className="px-5 pt-16 text-center">
-          <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-signal-buy-soft)] grid place-items-center text-3xl">
-            🎁
+          <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-signal-buy-soft)] grid place-items-center">
+            <CheckCircle2 className="h-8 w-8 text-[color:var(--color-signal-buy)]" strokeWidth={2.2} />
           </div>
           <h1 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] mt-4">
             고마워요!

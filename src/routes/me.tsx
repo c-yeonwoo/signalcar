@@ -4,6 +4,7 @@ import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -22,8 +23,9 @@ function MePage() {
 
   return (
     <ConsumerShell>
-      <header className="px-5 pt-10 pb-6">
-        <div className="flex items-center gap-3">
+      <PageHeader eyebrow="마이 시그널카" title="내 정보" />
+      <div className="px-5 -mt-1 pb-4">
+        <div className="sc-card p-4 flex items-center gap-3">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 grid place-items-center">
             <UserIcon className="h-6 w-6 text-slate-500" />
           </div>
@@ -36,14 +38,11 @@ function MePage() {
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       {!user && !loading && (
         <section className="px-5 mb-6">
-          <Link
-            to="/auth"
-            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-3.5 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(18,32,58,0.2)] active:scale-[0.99] transition"
-          >
+          <Link to="/auth" className="sc-btn-primary">
             <LogIn className="h-4 w-4" /> 로그인 / 가입하기
           </Link>
           <p className="text-[11.5px] text-slate-400 text-center mt-3">
@@ -60,10 +59,7 @@ function MePage() {
 
       {user && (
         <section className="px-5 mt-6">
-          <button
-            onClick={handleSignOut}
-            className="w-full rounded-2xl bg-white border border-slate-200 py-3 text-[13.5px] font-semibold text-slate-600 inline-flex items-center justify-center gap-2 active:scale-[0.99] transition"
-          >
+          <button onClick={handleSignOut} className="sc-btn-ghost">
             <LogOut className="h-4 w-4" /> 로그아웃
           </button>
         </section>
@@ -76,7 +72,7 @@ function MePage() {
 
 function Placeholder({ icon: Icon, title, desc }: { icon: typeof Clock; title: string; desc: string }) {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex gap-3 items-start opacity-80">
+    <div className="sc-card p-5 flex gap-3 items-start opacity-90">
       <div className="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center flex-shrink-0">
         <Icon className="h-5 w-5 text-slate-500" />
       </div>

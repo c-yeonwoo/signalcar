@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
+import { PageHeader, TabPills, PrimaryButton, GhostButton } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/coach")({
   component: CoachPage,
@@ -137,22 +138,19 @@ function CoachPage() {
 
   return (
     <ConsumerShell>
-      <header className="px-5 pt-8 pb-3">
-        <div className="text-[12px] text-slate-500">AI 구매 코치</div>
-        <h1 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
-          차 잘 모르셔도 괜찮아요.<br />몇 가지만 여쭤볼게요
-        </h1>
-      </header>
-
+      <PageHeader
+        eyebrow="AI 구매 코치"
+        title={<>차 잘 모르셔도 괜찮아요.<br />몇 가지만 여쭤볼게요</>}
+      />
       <div className="px-5">
-        <div className="flex bg-slate-100 rounded-full p-1 gap-1">
-          <TabBtn active={tab === "interview"} onClick={() => setTab("interview")}>
-            AI 인터뷰
-          </TabBtn>
-          <TabBtn active={tab === "briefing"} onClick={() => setTab("briefing")}>
-            협상 브리핑 <Crown className="inline h-3 w-3 -mt-0.5 ml-0.5" />
-          </TabBtn>
-        </div>
+        <TabPills
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { id: "interview", label: "AI 인터뷰" },
+            { id: "briefing", label: (<span>협상 브리핑 <Crown className="inline h-3 w-3 -mt-0.5 ml-0.5" /></span>) },
+          ]}
+        />
       </div>
 
       {tab === "interview" ? <Interview /> : <BriefingLocked />}

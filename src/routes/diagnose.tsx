@@ -6,6 +6,7 @@ import { formatKRW } from "@/lib/mock-cars";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/diagnose")({
   component: DiagnosePage,
@@ -69,19 +70,13 @@ function DiagnosePage() {
   if (!sessionLoading && !user) {
     return (
       <ConsumerShell>
-        <header className="px-5 pt-10 pb-4">
-          <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight">
-            견적서를 진단하려면<br />로그인이 필요해요
-          </h1>
-          <p className="text-[13.5px] text-slate-500 mt-3 leading-relaxed">
-            업로드한 이미지는 본인만 볼 수 있게 저장돼요.
-          </p>
-        </header>
+        <PageHeader
+          eyebrow="Diagnose"
+          title={<>견적서를 진단하려면<br />로그인이 필요해요</>}
+          subtitle="업로드한 이미지는 본인만 볼 수 있게 저장돼요."
+        />
         <section className="px-5">
-          <Link
-            to="/auth"
-            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(18,32,58,0.2)]"
-          >
+          <Link to="/auth" className="sc-btn-primary">
             <LogIn className="h-4 w-4" /> 로그인
           </Link>
         </section>
@@ -91,15 +86,11 @@ function DiagnosePage() {
 
   return (
     <ConsumerShell>
-      <header className="px-5 pt-8 pb-4">
-        <div className="text-[12px] text-slate-500">견적서 진단</div>
-        <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
-          받은 견적,<br />좋은 조건인지 봐드릴게요
-        </h1>
-        <p className="text-[13px] text-slate-500 mt-2">
-          견적서 사진을 올리면 실거래 분포와 비교해 상/중/하로 알려줘요.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="견적서 진단"
+        title={<>받은 견적,<br />좋은 조건인지 봐드릴게요</>}
+        subtitle="견적서 사진을 올리면 실거래 분포와 비교해 상·중·하로 알려줘요."
+      />
 
       <section className="px-5">
         <label className="block bg-white rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center cursor-pointer active:scale-[0.99] transition">
@@ -129,19 +120,15 @@ function DiagnosePage() {
         </label>
 
         {file && status === "idle" && (
-          <button
-            onClick={submit}
-            disabled={submitting}
-            className="w-full mt-3 rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition disabled:opacity-60"
-          >
+          <PrimaryButton onClick={submit} disabled={submitting} className="mt-3 disabled:opacity-60">
             {submitting ? "업로드 중…" : "진단 요청하기"}
-          </button>
+          </PrimaryButton>
         )}
       </section>
 
       {status === "pending" && (
         <section className="px-5 mt-4">
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+          <div className="sc-card p-6 text-center">
             <Loader2 className="h-6 w-6 mx-auto animate-spin text-[color:var(--color-brand-blue)]" />
             <div className="mt-3 text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
               코치가 분석 중이에요…
@@ -155,7 +142,7 @@ function DiagnosePage() {
 
       {status === "done" && result && (
         <section className="px-5 mt-4 space-y-3">
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <div className="sc-card p-5">
             <div className="text-[20px] font-bold text-[color:var(--color-brand-navy)]">
               {result.headline ?? "진단 완료"}
             </div>
@@ -168,7 +155,7 @@ function DiagnosePage() {
 
       {status === "idle" && fileName && (
         <section className="px-5 mt-4 space-y-3">
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <div className="sc-card p-5">
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-[color:var(--color-signal-wait-soft)] text-[color:var(--color-signal-wait)]">
               데모 미리보기
             </span>

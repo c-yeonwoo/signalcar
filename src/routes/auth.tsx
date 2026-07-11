@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { ConsumerShell } from "@/components/consumer-shell";
+import { PageHeader } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -65,17 +66,13 @@ function AuthPage() {
 
   return (
     <ConsumerShell hideTabs>
-      <header className="px-5 pt-6 pb-2">
-        <Link to="/" className="inline-flex items-center gap-1 text-[13px] text-slate-500">
-          <ArrowLeft className="h-4 w-4" /> 나중에
-        </Link>
-        <h1 className="text-[26px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-6">
-          시그널카에<br />로그인
-        </h1>
-        <p className="text-[13.5px] text-slate-500 mt-2 leading-relaxed">
-          로그인하면 관심 차종 저장, 실계약가 제보, 협상 브리핑 요청을 쓸 수 있어요.
-        </p>
-      </header>
+      <PageHeader
+        backTo="/"
+        backLabel="나중에"
+        eyebrow="Welcome"
+        title={<>시그널카에<br />로그인</>}
+        subtitle="관심 차종 저장, 실계약가 제보, 협상 브리핑 요청은 로그인이 필요해요."
+      />
 
       <section className="px-5 mt-4">
         <button
@@ -111,11 +108,7 @@ function AuthPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-slate-50 rounded-xl px-4 py-3.5 text-[14px] border-0 outline-none focus:ring-2 focus:ring-[color:var(--color-brand-blue)]/30"
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-3.5 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.2)] active:scale-[0.99] transition disabled:opacity-60 inline-flex items-center justify-center gap-2"
-          >
+          <button type="submit" disabled={loading} className="sc-btn-primary disabled:opacity-60">
             <Mail className="h-4 w-4" /> {mode === "signin" ? "로그인" : "가입하기"}
           </button>
         </form>
