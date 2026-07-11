@@ -19,6 +19,7 @@ import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock
 import { PageHeader, TabPills, SampleSize } from "@/components/ui-kit";
 import { Share2, TrendingDown, Percent } from "lucide-react";
 import { getPrefs } from "@/lib/onboarding-store";
+import { ProSignupCard } from "@/components/pro-signup-card";
 
 export const Route = createFileRoute("/coach")({
   component: CoachPage,
