@@ -98,6 +98,48 @@ export function GhostButton({ className, children, ...rest }: BtnProps) {
   );
 }
 
+/* ------------------------------------------------------------------
+ * StickyCTA — 페이지 하단(탭바 위)에 떠 있는 액션 바.
+ * 전 페이지에서 동일한 위치·그림자·배경 흐림 톤을 유지한다.
+ * ------------------------------------------------------------------ */
+
+export function StickyCTA({
+  children,
+  above,
+  className,
+}: {
+  children: ReactNode;
+  above?: ReactNode; // CTA 위 세컨더리 링크 (선택)
+  className?: string;
+}) {
+  return (
+    <div className={cn("fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-30", className)}>
+      {above && <div className="flex justify-center mb-1.5">{above}</div>}
+      <div className="rounded-2xl bg-white/85 backdrop-blur border border-slate-100 p-2 shadow-[0_10px_30px_rgba(15,27,61,0.18)]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function NavyCTA({
+  className,
+  children,
+  ...rest
+}: BtnProps) {
+  return (
+    <button
+      className={cn(
+        "w-full inline-flex items-center justify-center rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 font-semibold text-[13.5px] active:opacity-90 transition",
+        className,
+      )}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+
 const SIGNAL_STYLE: Record<Signal, { dot: string; bg: string; text: string; label: string }> = {
   buy: { dot: "#16a34a", bg: "bg-[color:var(--color-signal-buy-soft)]", text: "text-[color:var(--color-signal-buy)]", label: "지금 사도 좋음" },
   wait: { dot: "#f59e0b", bg: "bg-[color:var(--color-signal-wait-soft)]", text: "text-[color:var(--color-signal-wait)]", label: "조금 더 기다려요" },

@@ -9,7 +9,7 @@ import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars"
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { getMyReviews } from "@/lib/onboarding-store";
-import { SampleSize } from "@/components/ui-kit";
+import { SampleSize, StickyCTA } from "@/components/ui-kit";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -285,17 +285,18 @@ function CarDetailPage() {
 
       <div className="h-4" />
 
-      {/* Fixed CTA — 견적 + 비교 */}
-      <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-30">
-        <div className="flex justify-center mb-1.5">
+      {/* Sticky CTA — 견적 + 비교 (공용 StickyCTA 프리미티브) */}
+      <StickyCTA
+        above={
           <Link
             to="/diagnose"
             className="inline-flex items-center gap-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 px-3 py-1 text-[11px] font-medium text-slate-600 shadow-sm"
           >
             <ScanLine className="h-3 w-3" /> 이 차 견적 함정 체크
           </Link>
-        </div>
-        <div className="flex gap-2 rounded-2xl bg-white/85 backdrop-blur border border-slate-100 p-2 shadow-[0_10px_30px_rgba(15,27,61,0.18)]">
+        }
+      >
+        <div className="flex gap-2">
           <button
             onClick={handleCompare}
             className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-[13px] font-semibold transition ${
@@ -315,7 +316,7 @@ function CarDetailPage() {
             이 차로 견적 →
           </Link>
         </div>
-      </div>
+      </StickyCTA>
     </ConsumerShell>
   );
 }
