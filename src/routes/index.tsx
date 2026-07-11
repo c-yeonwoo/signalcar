@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Map, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -80,14 +80,6 @@ function HomePage() {
         title={<>어떤 차,<br />보고 계세요?</>}
         subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
-      <div className="px-5">
-        <Link
-          to="/explore"
-          className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 shadow-sm active:scale-[0.98] transition"
-        >
-          <Plus className="h-3.5 w-3.5" /> 관심 차종 추가
-        </Link>
-      </div>
 
       <section className="px-5 mt-5 space-y-3">
         <SectionTitle
@@ -113,8 +105,8 @@ function HomePage() {
         {personalized && (
           <p className="text-[12px] text-slate-500 -mt-1 mb-1">
             {prefs
-              ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 마음에 드는 차를 관심에 담아보세요."
-              : "먼저 관심 있는 차를 담아보세요. 시장에서 가장 뜨거운 3대를 추천해드릴게요."}
+              ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 카드의 하트로 관심에 담아보세요."
+              : "관심 있는 차의 하트를 눌러 담아두면, 매일 시그널을 알려드려요."}
           </p>
         )}
 
@@ -212,22 +204,21 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 폴백/디스커버리 — 관심 차 외에도 시장 전반을 훑을 수 있게 */}
-      {/* 시장 지도 진입 — 홈은 "내 시그널", 탐색은 "시장 전체"로 역할 분리 */}
+      {/* 폴백/디스커버리 — 관심 차 외에도 다른 차들을 훑을 수 있게 */}
       <section className="px-5 mt-6">
         <Link
           to="/explore"
           className="flex items-center gap-3 sc-card p-4 active:scale-[0.99] transition"
         >
           <div className="h-10 w-10 rounded-xl bg-[color:var(--color-brand-navy)]/6 grid place-items-center flex-shrink-0">
-            <Map className="h-5 w-5 text-[color:var(--color-brand-navy)]" />
+            <Search className="h-5 w-5 text-[color:var(--color-brand-navy)]" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)]">
-              시장 전체 지도 보기
+              다른 차 둘러보기
             </div>
             <div className="text-[11.5px] text-slate-500 mt-0.5 leading-snug">
-              세그먼트·가격대·판매 TOP10·브랜드까지 한눈에
+              판매 순위·세그먼트·브랜드로 후보 찾기
             </div>
           </div>
           <ChevronRight className="h-4 w-4 text-slate-400" />
