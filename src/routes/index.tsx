@@ -5,6 +5,7 @@ import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
 import { PageHeader, SectionTitle, SignalPill, CarThumb } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
+import { OnboardingModal } from "@/components/onboarding-modal";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <ConsumerShell>
+      <OnboardingModal />
       <div className="px-5 pt-6 flex items-center gap-2">
         <img src={logo} alt="시그널카" width={24} height={24} className="h-6 w-6" />
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
