@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -7,6 +7,7 @@ import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
+import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { SampleSize } from "@/components/ui-kit";
 
 /* ============================================================
@@ -65,16 +66,29 @@ function CarDetailPage() {
   const shot = gallery[activeShot];
 
   const [inCompare, setInCompare] = useState(false);
+  const [watched, setWatched] = useState(false);
   useEffect(() => {
-    const sync = () => setInCompare(getCompareList().includes(car.id));
+    const sync = () => {
+      setInCompare(getCompareList().includes(car.id));
+      setWatched(getWatchlist().includes(car.id));
+    };
     sync();
     window.addEventListener("sc:compare-change", sync);
-    return () => window.removeEventListener("sc:compare-change", sync);
+    window.addEventListener("sc:watchlist-change", sync);
+    return () => {
+      window.removeEventListener("sc:compare-change", sync);
+      window.removeEventListener("sc:watchlist-change", sync);
+    };
   }, [car.id]);
 
   const handleCompare = () => {
     const { added, list } = toggleCompare(car.id);
     toast.success(added ? `비교함에 담았어요 (${list.length}/3)` : "비교함에서 뺐어요");
+  };
+
+  const handleWatch = () => {
+    const { added } = toggleWatch(car.id);
+    toast.success(added ? "관심 차종에 담았어요" : "관심에서 뺐어요");
   };
 
   return (
@@ -84,7 +98,18 @@ function CarDetailPage() {
         <Link to="/" className={`inline-flex items-center gap-1 text-[12px] ${MUTED}`}>
           <ArrowLeft className="h-3.5 w-3.5" /> 홈
         </Link>
-        <div className={`text-[11px] font-semibold ${INK}`}>시그널카</div>
+        <button
+          onClick={handleWatch}
+          aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
+          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+            watched
+              ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+              : "bg-slate-100 text-slate-500"
+          }`}
+        >
+          <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
+          {watched ? "관심 담김" : "관심 담기"}
+        </button>
       </div>
 
       {/* SECTION 01 · Model header */}
@@ -261,6 +286,14 @@ function CarDetailPage() {
 
       {/* Fixed CTA — 견적 + 비교 */}
       <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-30">
+        <div className="flex justify-center mb-1.5">
+          <Link
+            to="/diagnose"
+            className="inline-flex items-center gap-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 px-3 py-1 text-[11px] font-medium text-slate-600 shadow-sm"
+          >
+            <ScanLine className="h-3 w-3" /> 이 차 견적 함정 체크
+          </Link>
+        </div>
         <div className="flex gap-2 rounded-2xl bg-white/85 backdrop-blur border border-slate-100 p-2 shadow-[0_10px_30px_rgba(15,27,61,0.18)]">
           <button
             onClick={handleCompare}

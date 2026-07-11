@@ -1,10 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight } from "lucide-react";
+import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui-kit";
+import { getWatchlist } from "@/lib/watchlist-store";
+import { getCompareList } from "@/lib/compare-store";
+import { getMyReviews } from "@/lib/onboarding-store";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -14,6 +18,25 @@ export const Route = createFileRoute("/me")({
 function MePage() {
   const { user, loading } = useSession();
   const navigate = useNavigate();
+
+  const [counts, setCounts] = useState({ watch: 0, compare: 0, reviews: 0 });
+  useEffect(() => {
+    const sync = () =>
+      setCounts({
+        watch: getWatchlist().length,
+        compare: getCompareList().length,
+        reviews: getMyReviews().length,
+      });
+    sync();
+    window.addEventListener("sc:watchlist-change", sync);
+    window.addEventListener("sc:compare-change", sync);
+    window.addEventListener("sc:reviews-change", sync);
+    return () => {
+      window.removeEventListener("sc:watchlist-change", sync);
+      window.removeEventListener("sc:compare-change", sync);
+      window.removeEventListener("sc:reviews-change", sync);
+    };
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -51,6 +74,14 @@ function MePage() {
         </section>
       )}
 
+      {/* 나의 활동 허브 */}
+      <section className="px-5 mb-5 grid grid-cols-2 gap-2.5">
+        <HubCard to="/" icon={Heart} title="관심 차종" count={counts.watch} desc="홈에서 시그널 추적 중" />
+        <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
+        <HubCard to="/report" icon={FileText} title="내 제보" count={0} desc="계약서로 리포트 언락" />
+        <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실오너 배지" />
+      </section>
+
       <section className="px-5 space-y-3">
         <ActionLink to="/report" icon={Camera} title="계약서 제보" desc="1건 제보하면 리포트 열람권을 드려요." />
         <ActionLink to="/diagnose" icon={ScanLine} title="견적서 진단" desc="딜러 견적서 함정 여부를 사진으로 체크." />
@@ -69,6 +100,35 @@ function MePage() {
 
       <p className="text-[11.5px] text-slate-400 text-center mt-8">시그널카 v0</p>
     </ConsumerShell>
+  );
+}
+
+function HubCard({
+  to,
+  icon: Icon,
+  title,
+  count,
+  desc,
+}: {
+  to: string;
+  icon: typeof Clock;
+  title: string;
+  count: number;
+  desc: string;
+}) {
+  return (
+    <Link to={to} className="sc-card p-3.5 active:scale-[0.99] transition">
+      <div className="flex items-center justify-between">
+        <div className="w-8 h-8 rounded-lg bg-[color:var(--color-brand-navy)]/6 grid place-items-center">
+          <Icon className="h-4 w-4 text-[color:var(--color-brand-navy)]" />
+        </div>
+        <div className="text-[18px] font-bold text-[color:var(--color-brand-navy)] tabular-nums leading-none">
+          {count}
+        </div>
+      </div>
+      <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)] mt-2.5">{title}</div>
+      <div className="text-[10.5px] text-slate-500 mt-0.5 leading-snug">{desc}</div>
+    </Link>
   );
 }
 
