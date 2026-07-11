@@ -276,6 +276,7 @@ function CarDetailPage() {
           </button>
           <Link
             to="/coach"
+            search={{ carId: car.id }}
             className="flex-[1.4] text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90"
           >
             이 차로 견적 →
