@@ -1,9 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, ShieldCheck, Gift } from "lucide-react";
+import { Camera, ShieldCheck, Gift, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { MOCK_CARS } from "@/lib/mock-cars";
+import { MOCK_CARS, TRIM_ID_MAP } from "@/lib/mock-cars";
+import { useSession } from "@/hooks/use-session";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
@@ -11,12 +13,92 @@ export const Route = createFileRoute("/report")({
 });
 
 function ReportPage() {
+  const { user, loading: sessionLoading } = useSession();
+  const navigate = useNavigate();
   const [step, setStep] = useState<"intro" | "form" | "done">("intro");
   const [trim, setTrim] = useState(MOCK_CARS[0].id);
   const [discount, setDiscount] = useState("220");
   const [month, setMonth] = useState("2026-07");
   const [region, setRegion] = useState("수도권");
   const [finance, setFinance] = useState("할부");
+  const [file, setFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    if (!user) {
+      toast.error("로그인이 필요해요");
+      return;
+    }
+    const trimId = TRIM_ID_MAP[trim];
+    if (!trimId) {
+      toast.error("이 트림은 아직 준비 중이에요");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      // 이미지가 있으면 quote-docs 버킷에 업로드 (본인 폴더)
+      let rawPath: string | null = null;
+      if (file) {
+        const path = `${user.id}/${Date.now()}-${file.name}`;
+        const { error: upErr } = await supabase.storage.from("quote-docs").upload(path, file);
+        if (upErr) throw upErr;
+        rawPath = path;
+      }
+
+      const car = MOCK_CARS.find((c) => c.id === trim)!;
+      const discountWon = Number(discount) * 10000;
+      const { error } = await supabase.from("deal_reports").insert({
+        trim_id: trimId,
+        user_id: user.id,
+        contract_price: car.listPrice - discountWon,
+        list_price: car.listPrice,
+        discount_amount: discountWon,
+        finance_type: (finance.includes("리스")
+          ? "lease"
+          : finance.includes("현금")
+            ? "cash"
+            : finance.includes("렌트")
+              ? "rent"
+              : "installment") as any,
+        region,
+        contract_month: `${month}-01`,
+        source: file ? ("receipt_ocr" as any) : ("manual" as any),
+        // raw_doc_ref는 인서트 정책상 유저가 못 넣음 → 외부 워커가 upload된 파일 검증 후 채움.
+        // 파일 경로는 별도로 관리하거나 워커가 storage 이벤트로 알림. 여기선 클라 참조만.
+      });
+      if (error) throw error;
+      setStep("done");
+      toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요" : "고마워요! 리포트가 열렸어요");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "제보 실패");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // 비로그인 게이트
+  if (!sessionLoading && !user) {
+    return (
+      <ConsumerShell>
+        <header className="px-5 pt-10 pb-4">
+          <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight">
+            제보하려면<br />로그인이 필요해요
+          </h1>
+          <p className="text-[13.5px] text-slate-500 mt-3 leading-relaxed">
+            익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요.
+          </p>
+        </header>
+        <section className="px-5">
+          <Link
+            to="/auth"
+            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(18,32,58,0.2)]"
+          >
+            <LogIn className="h-4 w-4" /> 로그인하고 제보하기
+          </Link>
+        </section>
+      </ConsumerShell>
+    );
+  }
 
   return (
     <ConsumerShell>
@@ -48,12 +130,22 @@ function ReportPage() {
               </div>
             </div>
 
-            <button
-              onClick={() => setStep("form")}
-              className="w-full mt-2 rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.2)] active:scale-[0.99] transition inline-flex items-center justify-center gap-2"
-            >
+            <label className="w-full mt-2 rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.2)] active:scale-[0.99] transition inline-flex items-center justify-center gap-2 cursor-pointer">
               <Camera className="h-4 w-4" /> 견적서/계약서 올리기
-            </button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  setFile(f);
+                  if (f) setStep("form");
+                }}
+              />
+            </label>
+            {file && (
+              <div className="text-center text-[12px] text-slate-500">첨부: {file.name}</div>
+            )}
 
             <button onClick={() => setStep("form")} className="w-full text-[13px] text-slate-500 py-2">
               사진 없이 직접 입력하기
@@ -99,10 +191,11 @@ function ReportPage() {
             </FormRow>
 
             <button
-              onClick={() => { setStep("done"); toast.success("고마워요! 리포트가 열렸어요"); }}
-              className="w-full mt-3 rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition"
+              onClick={submit}
+              disabled={submitting}
+              className="w-full mt-3 rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition disabled:opacity-60"
             >
-              제보하고 리포트 열기
+              {submitting ? "제보 중…" : "제보하고 리포트 열기"}
             </button>
           </section>
         </>

@@ -1,8 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Upload, FileImage, CheckCircle2 } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Upload, FileImage, CheckCircle2, LogIn, Loader2 } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { formatKRW } from "@/lib/mock-cars";
+import { useSession } from "@/hooks/use-session";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/diagnose")({
   component: DiagnosePage,
@@ -10,7 +13,81 @@ export const Route = createFileRoute("/diagnose")({
 });
 
 function DiagnosePage() {
-  const [fileName, setFileName] = useState<string | null>(null);
+  const { user, loading: sessionLoading } = useSession();
+  const [file, setFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [diagnosisId, setDiagnosisId] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "pending" | "done" | "failed">("idle");
+  const [result, setResult] = useState<any>(null);
+
+  const fileName = file?.name ?? null;
+
+  const submit = async () => {
+    if (!user || !file) return;
+    setSubmitting(true);
+    try {
+      const path = `${user.id}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("quote-docs").upload(path, file);
+      if (upErr) throw upErr;
+      const { data, error } = await supabase
+        .from("quote_diagnoses")
+        .insert({ user_id: user.id, doc_path: path })
+        .select("id")
+        .single();
+      if (error) throw error;
+      setDiagnosisId(data.id);
+      setStatus("pending");
+      toast.success("분석 대기열에 올렸어요");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "업로드 실패");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // 진단 결과 realtime 구독
+  useEffect(() => {
+    if (!diagnosisId) return;
+    const channel = supabase
+      .channel(`diag-${diagnosisId}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "quote_diagnoses", filter: `id=eq.${diagnosisId}` },
+        (payload) => {
+          const row = payload.new as any;
+          setStatus(row.status);
+          setResult(row.result);
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [diagnosisId]);
+
+  // 비로그인 게이트
+  if (!sessionLoading && !user) {
+    return (
+      <ConsumerShell>
+        <header className="px-5 pt-10 pb-4">
+          <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight">
+            견적서를 진단하려면<br />로그인이 필요해요
+          </h1>
+          <p className="text-[13.5px] text-slate-500 mt-3 leading-relaxed">
+            업로드한 이미지는 본인만 볼 수 있게 저장돼요.
+          </p>
+        </header>
+        <section className="px-5">
+          <Link
+            to="/auth"
+            className="w-full rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(18,32,58,0.2)]"
+          >
+            <LogIn className="h-4 w-4" /> 로그인
+          </Link>
+        </section>
+      </ConsumerShell>
+    );
+  }
 
   return (
     <ConsumerShell>
@@ -30,7 +107,12 @@ function DiagnosePage() {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+            onChange={(e) => {
+              setFile(e.target.files?.[0] ?? null);
+              setStatus("idle");
+              setResult(null);
+              setDiagnosisId(null);
+            }}
           />
           <div className="mx-auto w-14 h-14 rounded-full bg-[color:var(--color-brand-blue)]/10 grid place-items-center">
             <Upload className="h-6 w-6 text-[color:var(--color-brand-blue)]" />
@@ -45,34 +127,61 @@ function DiagnosePage() {
             </div>
           )}
         </label>
+
+        {file && status === "idle" && (
+          <button
+            onClick={submit}
+            disabled={submitting}
+            className="w-full mt-3 rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition disabled:opacity-60"
+          >
+            {submitting ? "업로드 중…" : "진단 요청하기"}
+          </button>
+        )}
       </section>
 
-      {fileName && (
+      {status === "pending" && (
+        <section className="px-5 mt-4">
+          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+            <Loader2 className="h-6 w-6 mx-auto animate-spin text-[color:var(--color-brand-blue)]" />
+            <div className="mt-3 text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
+              코치가 분석 중이에요…
+            </div>
+            <p className="text-[12.5px] text-slate-500 mt-1">
+              실거래 분포와 비교해서 상/중/하 판정을 준비하고 있어요. 보통 1~2분이면 끝나요.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {status === "done" && result && (
+        <section className="px-5 mt-4 space-y-3">
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="text-[20px] font-bold text-[color:var(--color-brand-navy)]">
+              {result.headline ?? "진단 완료"}
+            </div>
+            <p className="text-[13px] text-slate-600 mt-2 leading-relaxed">
+              {result.summary ?? "결과가 도착했어요."}
+            </p>
+          </div>
+        </section>
+      )}
+
+      {status === "idle" && fileName && (
         <section className="px-5 mt-4 space-y-3">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-[color:var(--color-signal-wait-soft)] text-[color:var(--color-signal-wait)]">
-              중간 · 개선 여지 있음
+              데모 미리보기
             </span>
             <div className="text-[20px] font-bold text-[color:var(--color-brand-navy)] mt-3">
-              실거래 분포의 상위 45%
+              진단 요청 전 예시 결과
             </div>
             <p className="text-[13px] text-slate-600 mt-2 leading-relaxed">
               나쁘진 않지만 평균보다 조금 비싸요. 실거래 중앙값 {formatKRW(36800000)} 대비{" "}
               <b>약 30만원</b> 더 깎을 여지가 있어 보여요.
             </p>
           </div>
-
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)]">이렇게 해보세요</div>
-            <ul className="mt-2 space-y-1.5 text-[12.5px] text-slate-600">
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5 text-[color:var(--color-signal-buy)]" /> 사은품(블박·매트) → 현금 30만원 전환 요청</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5 text-[color:var(--color-signal-buy)]" /> 운반비/등록대행 실비 청구인지 확인</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5 text-[color:var(--color-signal-buy)]" /> "저리 할부 vs 현금할인" 두 가지 견적을 모두 받아 비교</li>
-            </ul>
-          </div>
-
           <p className="text-[11.5px] text-slate-400 text-center py-2">
-            * 실제 OCR·정밀 진단은 다음 스프린트에서 도입돼요. 현재는 데모 결과입니다.
+            * 실제 OCR·판정은 외부 워커가 처리해요. "진단 요청하기"를 눌러야 실제 접수됩니다.
           </p>
         </section>
       )}
