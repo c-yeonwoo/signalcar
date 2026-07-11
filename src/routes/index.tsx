@@ -1,11 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, TrendingUp } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, TrendingUp, Check, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
 import { PageHeader, SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
+import { getWatchlist } from "@/lib/watchlist-store";
+import { getCompareList, toggleCompare } from "@/lib/compare-store";
+import { getPrefs } from "@/lib/onboarding-store";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -13,6 +18,55 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const [watchIds, setWatchIds] = useState<string[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [personalized, setPersonalized] = useState(false);
+
+  useEffect(() => {
+    const sync = () => {
+      const w = getWatchlist();
+      setWatchIds(w);
+      setCompareIds(getCompareList());
+      setPersonalized(w.length === 0);
+    };
+    sync();
+    window.addEventListener("sc:watchlist-change", sync);
+    window.addEventListener("sc:compare-change", sync);
+    window.addEventListener("sc:prefs-change", sync);
+    return () => {
+      window.removeEventListener("sc:watchlist-change", sync);
+      window.removeEventListener("sc:compare-change", sync);
+      window.removeEventListener("sc:prefs-change", sync);
+    };
+  }, []);
+
+  // 워치리스트 있으면 그것만, 없으면 온보딩 취향 기반 추천 3대
+  const prefs = getPrefs();
+  const watched = watchIds
+    .map((id) => MOCK_CARS.find((c) => c.id === id))
+    .filter((c): c is (typeof MOCK_CARS)[number] => !!c);
+  const recommend = (() => {
+    if (watched.length > 0) return watched;
+    if (!prefs) return MOCK_CARS.slice(0, 3);
+    // 아주 러프한 취향 정렬 데모
+    const familyish = prefs.purpose === "family" || prefs.purpose === "leisure";
+    return [...MOCK_CARS]
+      .sort((a, b) => {
+        const aScore = (familyish && a.bodyType.includes("SUV") ? 2 : 0) + (a.signal === "buy" ? 1 : 0);
+        const bScore = (familyish && b.bodyType.includes("SUV") ? 2 : 0) + (b.signal === "buy" ? 1 : 0);
+        return bScore - aScore;
+      })
+      .slice(0, 3);
+  })();
+
+  const handleCompareToggle = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { added, list } = toggleCompare(id);
+    setCompareIds(list);
+    toast.success(added ? "비교함에 담았어요" : "비교함에서 뺐어요");
+  };
+
   return (
     <ConsumerShell>
       <OnboardingModal />
@@ -27,9 +81,12 @@ function HomePage() {
         subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
       <div className="px-5">
-        <button className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 shadow-sm active:scale-[0.98] transition">
+        <Link
+          to="/explore"
+          className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 shadow-sm active:scale-[0.98] transition"
+        >
           <Plus className="h-3.5 w-3.5" /> 관심 차종 추가
-        </button>
+        </Link>
       </div>
 
       <section className="px-5 mt-5 space-y-3">
@@ -39,16 +96,32 @@ function HomePage() {
               to="/compare"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[color:var(--color-brand-blue)]"
             >
-              <GitCompare className="h-3 w-3" /> 비교하기
+              <GitCompare className="h-3 w-3" /> 비교함 {compareIds.length > 0 && `(${compareIds.length})`}
             </Link>
           }
         >
-          관심 차종 {MOCK_CARS.length}
+          {personalized ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-brand-blue)]" />
+              취향 기반 추천
+            </span>
+          ) : (
+            <>관심 차종 {recommend.length}</>
+          )}
         </SectionTitle>
 
-        {MOCK_CARS.map((c) => {
+        {personalized && (
+          <p className="text-[12px] text-slate-500 -mt-1 mb-1">
+            {prefs
+              ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 마음에 드는 차를 관심에 담아보세요."
+              : "먼저 관심 있는 차를 담아보세요. 시장에서 가장 뜨거운 3대를 추천해드릴게요."}
+          </p>
+        )}
+
+        {recommend.map((c) => {
           const sparkColor =
             c.signal === "buy" ? "#16A34A" : c.signal === "wait" ? "#F59E0B" : "#64748B";
+          const inCompare = compareIds.includes(c.id);
           return (
             <Link
               key={c.id}
@@ -88,8 +161,21 @@ function HomePage() {
                 {c.coach}
               </div>
 
-              <div className="mt-3 flex items-center justify-end text-[12px] text-slate-400">
-                자세히 보기 <ChevronRight className="h-3.5 w-3.5" />
+              <div className="mt-3 flex items-center justify-between text-[12px]">
+                <button
+                  onClick={(e) => handleCompareToggle(c.id, e)}
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
+                    inCompare
+                      ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                      : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {inCompare ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+                  비교
+                </button>
+                <span className="inline-flex items-center gap-0.5 text-slate-400">
+                  자세히 보기 <ChevronRight className="h-3.5 w-3.5" />
+                </span>
               </div>
             </Link>
           );
@@ -114,22 +200,37 @@ function HomePage() {
           지금 뜨는 신차
         </SectionTitle>
         <div className="sc-card divide-y divide-slate-100">
-          {MOCK_CARS.map((c, i) => (
-            <Link
-              key={c.id}
-              to="/car/$vehicleId"
-              params={{ vehicleId: c.id }}
-              className="flex items-center gap-3 px-4 py-3 active:bg-slate-50 transition"
-            >
-              <span className="text-[13px] font-bold text-slate-400 tabular-nums w-5">{i + 1}</span>
-              <img src={c.image} alt={c.model} className="h-10 w-14 object-contain" />
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)] truncate">{c.model}</div>
-                <div className="text-[11px] text-slate-500 truncate">{c.brand} · {formatKRW(c.medianContract)}</div>
+          {MOCK_CARS.map((c, i) => {
+            const inCompare = compareIds.includes(c.id);
+            return (
+              <div key={c.id} className="flex items-center gap-3 px-4 py-3">
+                <Link
+                  to="/car/$vehicleId"
+                  params={{ vehicleId: c.id }}
+                  className="flex items-center gap-3 flex-1 min-w-0 active:opacity-70"
+                >
+                  <span className="text-[13px] font-bold text-slate-400 tabular-nums w-5">{i + 1}</span>
+                  <img src={c.image} alt={c.model} className="h-10 w-14 object-contain" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)] truncate">{c.model}</div>
+                    <div className="text-[11px] text-slate-500 truncate">{c.brand} · {formatKRW(c.medianContract)}</div>
+                  </div>
+                  <SignalPill signal={c.signal} size="sm" />
+                </Link>
+                <button
+                  onClick={(e) => handleCompareToggle(c.id, e)}
+                  aria-label={inCompare ? "비교함에서 빼기" : "비교함에 담기"}
+                  className={`h-8 w-8 rounded-full grid place-items-center flex-shrink-0 transition ${
+                    inCompare
+                      ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {inCompare ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                </button>
               </div>
-              <SignalPill signal={c.signal} size="sm" />
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </section>
 
