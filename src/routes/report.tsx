@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, ShieldCheck, Gift, LogIn, CheckCircle2 } from "lucide-react";
+import { Camera, ShieldCheck, LogIn, CheckCircle2, Star } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { MOCK_CARS, TRIM_ID_MAP } from "@/lib/mock-cars";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, PrimaryButton } from "@/components/ui-kit";
+import { addMyReview } from "@/lib/onboarding-store";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
@@ -184,20 +185,122 @@ function ReportPage() {
       )}
 
       {step === "done" && (
-        <div className="px-5 pt-16 text-center">
-          <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-signal-buy-soft)] grid place-items-center">
-            <CheckCircle2 className="h-8 w-8 text-[color:var(--color-signal-buy)]" strokeWidth={2.2} />
-          </div>
-          <h1 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] mt-4">
-            고마워요!
-          </h1>
-          <p className="text-[13.5px] text-slate-500 mt-2 leading-relaxed">
-            제보 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.<br />
-            홈에서 열린 리포트를 확인해보세요.
-          </p>
-        </div>
+        <ReportDone carId={trim} onSkip={() => navigate({ to: "/" })} />
       )}
     </ConsumerShell>
+  );
+}
+
+/* ============ 제보 완료 → 리뷰 남기기 트리거 ============ */
+
+function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
+  const car = MOCK_CARS.find((c) => c.id === carId);
+  const [rating, setRating] = useState(0);
+  const [pros, setPros] = useState("");
+  const [cons, setCons] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  const save = () => {
+    if (!car) return;
+    if (rating === 0) {
+      toast.error("별점을 남겨주세요");
+      return;
+    }
+    addMyReview({ carId: car.id, rating, pros: pros.trim(), cons: cons.trim() });
+    setSaved(true);
+    toast.success("리뷰가 저장됐어요 · 실오너 배지가 붙어요");
+  };
+
+  return (
+    <div className="px-5 pt-10 pb-4">
+      <div className="mx-auto w-14 h-14 rounded-full bg-[color:var(--color-signal-buy-soft)] grid place-items-center">
+        <CheckCircle2 className="h-7 w-7 text-[color:var(--color-signal-buy)]" strokeWidth={2.2} />
+      </div>
+      <h1 className="text-center text-[22px] font-bold text-[color:var(--color-brand-navy)] mt-4">
+        고마워요!
+      </h1>
+      <p className="text-center text-[13px] text-slate-500 mt-1.5 leading-relaxed">
+        제보 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
+      </p>
+
+      {!saved ? (
+        <section className="mt-7 sc-card p-5">
+          <div className="text-[11px] font-semibold text-[color:var(--color-brand-blue)]">
+            실오너 리뷰
+          </div>
+          <h2 className="text-[16px] font-bold text-[color:var(--color-brand-navy)] mt-1 leading-snug">
+            {car ? `${car.model} 실사용, ` : ""}한 줄만 남겨주실래요?
+          </h2>
+          <p className="text-[11.5px] text-slate-500 mt-1.5 leading-relaxed">
+            계약이 확인된 리뷰만 노출돼요. 다음 구매자에게 큰 도움이 됩니다.
+          </p>
+
+          <div className="mt-4 flex items-center gap-1.5">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                onClick={() => setRating(n)}
+                className="p-0.5"
+                aria-label={`${n}점`}
+              >
+                <Star
+                  className={`h-7 w-7 ${
+                    n <= rating
+                      ? "fill-[color:var(--color-signal-wait)] text-[color:var(--color-signal-wait)]"
+                      : "text-slate-200"
+                  }`}
+                  strokeWidth={1.6}
+                />
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <textarea
+              value={pros}
+              onChange={(e) => setPros(e.target.value)}
+              placeholder="좋았던 점 (예: 승차감이 안정적이에요)"
+              rows={2}
+              className="w-full bg-slate-50 rounded-xl px-3.5 py-2.5 text-[13px] border-0 resize-none placeholder:text-slate-400"
+            />
+            <textarea
+              value={cons}
+              onChange={(e) => setCons(e.target.value)}
+              placeholder="아쉬웠던 점 (예: 뒷좌석 소음이 있어요)"
+              rows={2}
+              className="w-full bg-slate-50 rounded-xl px-3.5 py-2.5 text-[13px] border-0 resize-none placeholder:text-slate-400"
+            />
+          </div>
+
+          <PrimaryButton onClick={save} className="mt-4">
+            리뷰 남기기
+          </PrimaryButton>
+          <button onClick={onSkip} className="w-full mt-2 py-2 text-[12.5px] text-slate-400">
+            나중에 할게요
+          </button>
+        </section>
+      ) : (
+        <section className="mt-7 sc-card p-5 text-center">
+          <p className="text-[13.5px] text-slate-600">
+            소중한 리뷰가 등록됐어요.<br />마이 탭에서 확인할 수 있어요.
+          </p>
+          <div className="mt-4 flex gap-2">
+            <Link to="/" className="flex-1 rounded-xl bg-slate-100 py-2.5 text-[13px] font-medium text-slate-700 text-center">
+              홈으로
+            </Link>
+            {car && (
+              <Link
+                to="/car/$vehicleId"
+                params={{ vehicleId: car.id }}
+                className="flex-1 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-2.5 text-[13px] font-semibold text-center"
+              >
+                내 차 상세 보기
+              </Link>
+            )}
+          </div>
+        </section>
+      )}
+    </div>
   );
 }
 
