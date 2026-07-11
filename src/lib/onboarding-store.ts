@@ -10,6 +10,7 @@ export type BuyerPrefs = {
   seats: "1-2" | "3-4" | "5+";
   mileage: "low" | "mid" | "high";
   budgetMax?: number; // 만원
+  timing?: "now" | "1-3m" | "3-6m" | "browsing";
   createdAt: number;
 };
 
