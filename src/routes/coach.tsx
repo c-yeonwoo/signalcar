@@ -309,8 +309,8 @@ function Interview() {
                 {formatKRW(estimatedContractLow)} ~ {formatKRW(estimatedContractHigh)}
               </span>
             </div>
-            <div className="text-[10.5px] text-slate-400 pt-1">
-              최근 6개월 실제 계약 데이터 {car.reports}건 기반 · 프로모션 강도 반영
+            <div className="pt-1">
+              <SampleSize count={car.reports} />
             </div>
           </div>
         </div>
@@ -367,12 +367,37 @@ function Interview() {
           </div>
         )}
 
-        <button
-          onClick={() => toast.success("견적서를 마이 탭에 저장했어요")}
-          className="w-full rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition"
-        >
-          이 견적서 저장하기
-        </button>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => toast.success("견적서를 마이 탭에 저장했어요")}
+            className="rounded-2xl bg-[color:var(--color-brand-blue)] text-white py-3.5 font-semibold text-[14px] shadow-[0_10px_30px_rgba(46,107,255,0.3)] active:scale-[0.99] transition"
+          >
+            견적서 저장
+          </button>
+          <button
+            onClick={async () => {
+              const lines = [
+                `[시그널카 견적] ${car.model} ${car.trim}`,
+                `차량가 ${formatKRW(car.listPrice)}`,
+                picks.length
+                  ? `옵션 ${picks.map((t) => OPTION_CATALOG[t].name).join(", ")}`
+                  : "옵션 없이 기본형",
+                `옵션 합계 ${formatKRW(optionsTotal)}`,
+                `희망 실계약가 ${formatKRW(estimatedContractLow)} ~ ${formatKRW(estimatedContractHigh)}`,
+                `기준: 최근 6개월 실계약 ${car.reports}건 중앙값 · 이달 프로모션 반영`,
+              ].join("\n");
+              try {
+                await navigator.clipboard.writeText(lines);
+                toast.success("딜러 공유용 포맷을 복사했어요");
+              } catch {
+                toast("복사에 실패했어요");
+              }
+            }}
+            className="rounded-2xl border border-slate-200 bg-white text-slate-700 py-3.5 font-semibold text-[14px] inline-flex items-center justify-center gap-1.5 active:scale-[0.99] transition"
+          >
+            <Share2 className="h-3.5 w-3.5" /> 매장 공유용 복사
+          </button>
+        </div>
 
         {/* Upsell → 협상 브리핑 */}
         <div className="rounded-2xl bg-[color:var(--color-brand-navy)] text-white p-5">
