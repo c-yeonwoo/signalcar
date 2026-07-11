@@ -401,6 +401,14 @@ export function signalEmoji(s: Signal) {
   return s === "buy" ? "🟢" : s === "wait" ? "🟡" : "⚪";
 }
 
+/* ============ Supabase 시드 트림 ID 매핑 ============ */
+// 앱은 MOCK_CARS의 id로 라우팅하지만, DB에 insert할 때는 실제 trims.id가 필요하다.
+export const TRIM_ID_MAP: Record<string, string> = {
+  "grand-koleos-inspire": "22222222-2222-2222-2222-222222220001",
+  "santafe-calligraphy":  "22222222-2222-2222-2222-222222220002",
+  "sorento-noblesse":     "22222222-2222-2222-2222-222222220003",
+};
+
 /* ============ 유지비 추정 ============ */
 
 // 2026년 7월 기준 (mock)
