@@ -3,6 +3,7 @@ import { useState } from "react";
 import { TrendingUp, TrendingDown, Minus, ArrowUpRight } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
+import { PageHeader, SectionTitle, TabPills } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/explore")({
   component: ExplorePage,
@@ -153,42 +154,22 @@ function ExplorePage() {
 
   return (
     <ConsumerShell>
-      <header className="px-5 pt-8 pb-4">
-        <div className="text-[11px] tracking-[0.14em] text-slate-400 uppercase">Explore</div>
-        <h1 className="text-[24px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1">
-          자동차 지도
-        </h1>
-        <p className="text-[12.5px] text-slate-500 mt-1 leading-relaxed">
-          국산 신차 기준 · 예산과 차종부터 좁혀 보세요.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Explore"
+        title="자동차 지도"
+        subtitle="국산 신차 기준 · 예산과 차종부터 좁혀 보세요."
+      />
 
-      {/* Tab switcher */}
       <div className="px-5">
-        <div className="inline-flex bg-slate-100 rounded-full p-1 w-full">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex-1 text-[12.5px] py-1.5 rounded-full font-semibold transition ${
-                tab === t.id ? "bg-white text-[color:var(--color-brand-navy)] shadow-sm" : "text-slate-500"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <TabPills value={tab} onChange={setTab} tabs={TABS} />
       </div>
 
       {tab === "map" && (
         <>
           {/* Matrix */}
           <section className="px-5 mt-4">
-            <div className="flex items-baseline justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-slate-700">차종 × 가격대</h2>
-              <span className="text-[10.5px] text-slate-400">색상 = 인기</span>
-            </div>
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <SectionTitle right="색상 = 인기">차종 × 가격대</SectionTitle>
+            <div className="sc-card overflow-hidden">
               <div className="grid grid-cols-[56px_repeat(4,minmax(0,1fr))] text-[10px] border-b border-slate-100">
                 <div />
                 {PRICE_BANDS.map((p) => (
@@ -221,11 +202,8 @@ function ExplorePage() {
 
           {/* Segment trends */}
           <section className="px-5 mt-6">
-            <div className="flex items-baseline justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-slate-700">세그먼트 가격 추세</h2>
-              <span className="text-[10.5px] text-slate-400">최근 3개월</span>
-            </div>
-            <div className="bg-white rounded-2xl border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+            <SectionTitle right="최근 3개월">세그먼트 가격 추세</SectionTitle>
+            <div className="sc-card divide-y divide-slate-100 overflow-hidden">
               {SEGMENTS.map((s) => (
                 <div key={s.id} className="px-4 py-3 flex items-center gap-3">
                   <div className="flex-1 min-w-0">
@@ -251,11 +229,8 @@ function ExplorePage() {
 
       {tab === "rank" && (
         <section className="px-5 mt-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-[13px] font-semibold text-slate-700">이번 달 판매 TOP 10</h2>
-            <span className="text-[10.5px] text-slate-400">2026.06</span>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+          <SectionTitle right="2026.06">이번 달 판매 TOP 10</SectionTitle>
+          <div className="sc-card divide-y divide-slate-100 overflow-hidden">
             {SALES_RANK.map((r) => (
               <div key={r.rank} className="px-4 py-3 flex items-center gap-3">
                 <div className="w-6 text-center">
@@ -287,11 +262,8 @@ function ExplorePage() {
 
       {tab === "brand" && (
         <section className="px-5 mt-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-[13px] font-semibold text-slate-700">국내 판매 브랜드</h2>
-            <span className="text-[10.5px] text-slate-400">수입 브랜드 준비중</span>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+          <SectionTitle right="수입 브랜드 준비중">국내 판매 브랜드</SectionTitle>
+          <div className="sc-card divide-y divide-slate-100 overflow-hidden">
             {BRANDS.map((b) => (
               <div key={b.id} className="px-4 py-3 flex items-center gap-3">
                 <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-[13px] font-extrabold text-[color:var(--color-brand-navy)]">
