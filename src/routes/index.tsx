@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, TrendingUp, Check, Sparkles } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Map, Check, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -189,49 +189,25 @@ function HomePage() {
       </section>
 
       {/* 폴백/디스커버리 — 관심 차 외에도 시장 전반을 훑을 수 있게 */}
-      <section className="px-5 mt-6 space-y-3">
-        <SectionTitle
-          right={
-            <Link to="/explore" className="inline-flex items-center gap-1 text-[11px] font-semibold text-[color:var(--color-brand-blue)]">
-              <TrendingUp className="h-3 w-3" /> 전체 보기
-            </Link>
-          }
+      {/* 시장 지도 진입 — 홈은 "내 시그널", 탐색은 "시장 전체"로 역할 분리 */}
+      <section className="px-5 mt-6">
+        <Link
+          to="/explore"
+          className="flex items-center gap-3 sc-card p-4 active:scale-[0.99] transition"
         >
-          지금 뜨는 신차
-        </SectionTitle>
-        <div className="sc-card divide-y divide-slate-100">
-          {MOCK_CARS.map((c, i) => {
-            const inCompare = compareIds.includes(c.id);
-            return (
-              <div key={c.id} className="flex items-center gap-3 px-4 py-3">
-                <Link
-                  to="/car/$vehicleId"
-                  params={{ vehicleId: c.id }}
-                  className="flex items-center gap-3 flex-1 min-w-0 active:opacity-70"
-                >
-                  <span className="text-[13px] font-bold text-slate-400 tabular-nums w-5">{i + 1}</span>
-                  <img src={c.image} alt={c.model} className="h-10 w-14 object-contain" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)] truncate">{c.model}</div>
-                    <div className="text-[11px] text-slate-500 truncate">{c.brand} · {formatKRW(c.medianContract)}</div>
-                  </div>
-                  <SignalPill signal={c.signal} size="sm" />
-                </Link>
-                <button
-                  onClick={(e) => handleCompareToggle(c.id, e)}
-                  aria-label={inCompare ? "비교함에서 빼기" : "비교함에 담기"}
-                  className={`h-8 w-8 rounded-full grid place-items-center flex-shrink-0 transition ${
-                    inCompare
-                      ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
-                >
-                  {inCompare ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-                </button>
-              </div>
-            );
-          })}
-        </div>
+          <div className="h-10 w-10 rounded-xl bg-[color:var(--color-brand-navy)]/6 grid place-items-center flex-shrink-0">
+            <Map className="h-5 w-5 text-[color:var(--color-brand-navy)]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)]">
+              시장 전체 지도 보기
+            </div>
+            <div className="text-[11.5px] text-slate-500 mt-0.5 leading-snug">
+              세그먼트·가격대·판매 TOP10·브랜드까지 한눈에
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-slate-400" />
+        </Link>
       </section>
 
       {/* 액션 진입 — 제보/진단 (탭에서 빠졌으니 홈에서 접근 확보) */}

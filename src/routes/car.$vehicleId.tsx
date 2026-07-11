@@ -8,6 +8,7 @@ import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
+import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize } from "@/components/ui-kit";
 
 /* ============================================================
@@ -263,7 +264,7 @@ function CarDetailPage() {
       <BenefitsSection benefits={car.benefits} accentHex={accent.hex} />
 
       {/* SECTION 06 · Reviews */}
-      <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} />
+      <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} carId={car.id} />
 
       {/* SECTION 07 · Facelift timeline */}
       <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
@@ -471,9 +472,31 @@ function reviewSourceLabel(src: ReviewItem["source"]) {
   return src === "owner" ? "실오너" : src === "video" ? "영상" : "미디어";
 }
 
-function ReviewsSection({ bundle }: { bundle?: ReviewBundle }) {
+function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: string }) {
+  const [myItems, setMyItems] = useState<ReviewItem[]>([]);
+  useEffect(() => {
+    const sync = () => {
+      const mine = getMyReviews()
+        .filter((r) => r.carId === carId)
+        .map<ReviewItem>((r) => ({
+          id: `my-${r.id}`,
+          source: "owner",
+          author: "나",
+          rating: r.rating,
+          date: new Date(r.createdAt).toISOString().slice(0, 7),
+          quote: [r.pros && `👍 ${r.pros}`, r.cons && `👎 ${r.cons}`].filter(Boolean).join("  ·  ") || "리뷰를 남겼어요.",
+          verified: true,
+        }));
+      setMyItems(mine);
+    };
+    sync();
+    window.addEventListener("sc:reviews-change", sync);
+    return () => window.removeEventListener("sc:reviews-change", sync);
+  }, [carId]);
+
   if (!bundle) return null;
-  const { aiSummary, aspects, items } = bundle;
+  const { aiSummary, aspects, items: baseItems } = bundle;
+  const items = [...myItems, ...baseItems];
 
   return (
     <>
