@@ -75,8 +75,8 @@
   font-size: 14.5px;
   box-shadow: var(--shadow-cta);
   transition: transform 120ms ease, opacity 120ms ease;
+  &:active { transform: scale(0.99); opacity: 0.95; }
 }
-@utility sc-btn-primary:active { transform: scale(0.99); opacity: 0.95; }
 @utility sc-btn-ghost {
   display: inline-flex;
   align-items: center;
