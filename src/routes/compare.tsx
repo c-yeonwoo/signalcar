@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Minus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor } from "@/lib/mock-cars";
 import { PageHeader, SignalPill } from "@/components/ui-kit";
+import { getCompareList, setCompareList } from "@/lib/compare-store";
 
 export const Route = createFileRoute("/compare")({
   component: ComparePage,
@@ -12,7 +13,19 @@ export const Route = createFileRoute("/compare")({
 });
 
 function ComparePage() {
-  const [selected, setSelected] = useState<string[]>(MOCK_CARS.slice(0, 2).map((c) => c.id));
+  const [selected, setSelected] = useState<string[]>([]);
+
+  // 초기 하이드레이션: 비교함(로컬스토리지) → 없으면 관심 차종 2대 기본
+  useEffect(() => {
+    const stored = getCompareList();
+    if (stored.length >= 1) setSelected(stored);
+    else setSelected(MOCK_CARS.slice(0, 2).map((c) => c.id));
+  }, []);
+
+  // 선택 변경 → 비교함 동기화
+  useEffect(() => {
+    if (selected.length > 0) setCompareList(selected);
+  }, [selected]);
 
   const cars = useMemo(
     () => selected.map((id) => MOCK_CARS.find((c) => c.id === id)!).filter(Boolean),
