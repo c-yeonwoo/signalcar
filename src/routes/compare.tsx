@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, signalColor } from "@/lib/mock-cars";
-import { PageHeader, SignalPill, sampleConfidence } from "@/components/ui-kit";
+import { PageHeader, SignalPill, sampleConfidence, StickyCTA } from "@/components/ui-kit";
 import { getCompareList, setCompareList } from "@/lib/compare-store";
 
 export const Route = createFileRoute("/compare")({
