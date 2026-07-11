@@ -217,14 +217,14 @@ function ComparePage() {
 
           <div className="h-6" />
 
-          <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[480px] px-5 z-30">
+          <StickyCTA>
             <Link
               to="/coach"
-              className="block w-full text-center rounded-2xl bg-[color:var(--color-brand-navy)] text-white py-4 font-semibold text-[15px] shadow-[0_10px_30px_rgba(18,32,58,0.25)] active:scale-[0.99] transition"
+              className="block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90 transition"
             >
               AI 코치와 최종 결정하기 →
             </Link>
-          </div>
+          </StickyCTA>
         </>
       )}
     </ConsumerShell>
