@@ -482,7 +482,12 @@ function Interview() {
 
 function BriefingLocked() {
   const previewCar = MOCK_CARS[0];
-  const script = `안녕하세요, ${previewCar.model} ${previewCar.trim} 견적 문의드립니다.\n최근 실계약가 중앙값 기준으로 협의 원합니다.\n옵션은 인터뷰로 뽑은 필수 구성만, 현금할인 우선 부탁드려요.`;
+  // 딜러 첫 제시가 예측: 정가 - (정가-중앙값)*0.35 러프 (실제는 서버 모델)
+  const predictedFirstAsk = Math.round(
+    (previewCar.listPrice - (previewCar.listPrice - previewCar.medianContract) * 0.35) / 10000,
+  ) * 10000;
+  const targetPrice = previewCar.medianContract - 500000;
+  const gap = predictedFirstAsk - targetPrice;
 
   return (
     <section className="px-5 mt-5 space-y-4">
@@ -504,20 +509,35 @@ function BriefingLocked() {
         </button>
       </div>
 
-      {/* Blurred preview */}
-      <div className="relative rounded-2xl border border-slate-100 bg-white p-5 overflow-hidden">
-        <div className="text-[12px] text-slate-500">협상 스크립트 (예시)</div>
-        <p className="text-[13px] text-slate-700 leading-relaxed mt-2 whitespace-pre-line select-none blur-[3px]">
-          {script}
-        </p>
-        <div className="mt-3 flex gap-2 blur-[3px] select-none">
-          <span className="text-[11px] rounded-full bg-slate-100 px-2 py-1">딜러 첫 제시가 예측</span>
-          <span className="text-[11px] rounded-full bg-slate-100 px-2 py-1">현금할인 전환 팁</span>
+      {/* 티저 1 — 딜러 첫 제시가 예측 (오픈) */}
+      <div className="rounded-2xl border border-slate-100 bg-white p-5">
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+          <TrendingDown className="h-3.5 w-3.5" /> 딜러 첫 제시가 예측 · {previewCar.model} 예시
         </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-[1px]">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/95 border border-slate-200 px-3 py-1.5 text-[11.5px] font-medium text-slate-600 shadow-sm">
-            <Lock className="h-3 w-3" /> PRO 잠금
-          </div>
+        <div className="mt-3 grid grid-cols-3 gap-2 items-end">
+          <TeaserCol label="딜러 첫 제시" value={formatKRW(predictedFirstAsk)} tone="wait" />
+          <TeaserCol label="내 목표가" value={formatKRW(targetPrice)} tone="buy" />
+          <TeaserCol label="협상 여지" value={`−${formatKRW(gap)}`} tone="ink" />
+        </div>
+        <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
+          최근 실계약 중앙값과 이달 프로모션을 기준으로 계산한 러프 예측이에요.
+          <br />PRO에서는 매장·시기별 시나리오 3가지가 함께 제공돼요.
+        </p>
+      </div>
+
+      {/* 티저 2 — 실질금리 미니 (오픈 → 상세는 잠금) */}
+      <div className="rounded-2xl border border-slate-100 bg-white p-5">
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+          <Percent className="h-3.5 w-3.5" /> 저리 할부 실질금리 체크
+        </div>
+        <p className="text-[13px] text-slate-800 mt-2 leading-relaxed">
+          "무이자 60개월"이 진짜인지, 현금할인 대비 실질금리로 뒤집어 보여드려요.
+        </p>
+        <div className="mt-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 text-[12px] text-slate-600 flex items-center justify-between">
+          <span>예: 300만원 현금할인 포기 시</span>
+          <span className="font-bold text-[color:var(--color-signal-wait)] blur-[3px] select-none">
+            연 5.4%
+          </span>
         </div>
       </div>
 
