@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText } from "lucide-react";
+import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText, Crown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui-kit";
 import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList } from "@/lib/compare-store";
 import { getMyReviews } from "@/lib/onboarding-store";
+import { hasSignedUpForPro } from "@/components/pro-signup-card";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -20,6 +21,7 @@ function MePage() {
   const navigate = useNavigate();
 
   const [counts, setCounts] = useState({ watch: 0, compare: 0, reviews: 0, reports: 0 });
+  const [proSignedUp, setProSignedUp] = useState(false);
   useEffect(() => {
     const sync = () =>
       setCounts((c) => ({
@@ -29,13 +31,17 @@ function MePage() {
         reviews: getMyReviews().length,
       }));
     sync();
+    const syncPro = () => setProSignedUp(hasSignedUpForPro());
+    syncPro();
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:reviews-change", sync);
+    window.addEventListener("sc:pro-signup-change", syncPro);
     return () => {
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:reviews-change", sync);
+      window.removeEventListener("sc:pro-signup-change", syncPro);
     };
   }, []);
 
@@ -96,6 +102,35 @@ function MePage() {
         <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
         <HubCard to="/report" icon={FileText} title="내 제보" count={counts.reports} desc="계약서로 리포트 언락" />
         <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실오너 배지" />
+      </section>
+
+      {/* PRO 얼리버드 상태 */}
+      <section className="px-5 mb-5">
+        <Link
+          to="/coach"
+          className="sc-card p-4 flex items-center gap-3 active:scale-[0.99] transition"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-navy)] grid place-items-center flex-shrink-0">
+            <Crown className="h-5 w-5 text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
+              코치 PRO 얼리버드
+            </div>
+            <div className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">
+              {proSignedUp
+                ? "명단에 등록됨 · 런칭 시 얼리버드가로 알림"
+                : "런칭 알림 받고 얼리버드가로 먼저 열기"}
+            </div>
+          </div>
+          {proSignedUp ? (
+            <span className="text-[11px] px-2 py-1 rounded-full bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] font-semibold">
+              등록됨
+            </span>
+          ) : (
+            <ChevronRight className="h-4 w-4 text-slate-400" />
+          )}
+        </Link>
       </section>
 
       <section className="px-5 space-y-3">
