@@ -10,10 +10,10 @@ export const Route = createFileRoute("/explore")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "자동차 세계관 · 시그널카" },
-      { name: "description", content: "브랜드·세그먼트·가격대·인기 순위까지 초보자도 한눈에 보는 자동차 지도" },
-      { property: "og:title", content: "자동차 세계관 · 시그널카" },
-      { property: "og:description", content: "브랜드·세그먼트·가격대·인기 순위까지 초보자도 한눈에 보는 자동차 지도" },
+      { title: "차 둘러보기 · 시그널카" },
+      { name: "description", content: "판매 순위·세그먼트·브랜드로 관심 있는 신차 후보를 찾아보세요." },
+      { property: "og:title", content: "차 둘러보기 · 시그널카" },
+      { property: "og:description", content: "판매 순위·세그먼트·브랜드로 관심 있는 신차 후보를 찾아보세요." },
     ],
   }),
 });
@@ -144,20 +144,20 @@ function RankDelta({ rank, prev }: { rank: number; prev: number }) {
 
 type Tab = "map" | "rank" | "brand";
 const TABS: { id: Tab; label: string }[] = [
-  { id: "map", label: "지도" },
   { id: "rank", label: "판매 순위" },
   { id: "brand", label: "브랜드" },
+  { id: "map", label: "세그먼트" },
 ];
 
 function ExplorePage() {
-  const [tab, setTab] = useState<Tab>("map");
+  const [tab, setTab] = useState<Tab>("rank");
 
   return (
     <ConsumerShell>
       <PageHeader
-        eyebrow="Explore"
-        title="자동차 지도"
-        subtitle="국산 신차 기준 · 예산과 차종부터 좁혀 보세요."
+        eyebrow="탐색"
+        title="차 둘러보기"
+        subtitle="판매 순위·브랜드·세그먼트로 후보를 좁혀 보세요."
       />
 
       <div className="px-5">
