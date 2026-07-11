@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 import {
   Copy,
   Sparkles,
@@ -16,10 +17,12 @@ import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
 import { PageHeader, TabPills, PrimaryButton, GhostButton } from "@/components/ui-kit";
+import { getPrefs } from "@/lib/onboarding-store";
 
 export const Route = createFileRoute("/coach")({
   component: CoachPage,
   ssr: false,
+  validateSearch: z.object({ carId: z.string().optional() }).parse,
 });
 
 /* ============ Interview definition ============ */
@@ -163,9 +166,25 @@ function CoachPage() {
 /* ============ Interview flow ============ */
 
 function Interview() {
-  const [carId, setCarId] = useState<string | null>(null);
-  const [step, setStep] = useState(0); // 0 = 차 선택, 1..N = 질문, N+1 = 결과
+  const { carId: seedCarId } = Route.useSearch();
+  const [carId, setCarId] = useState<string | null>(seedCarId ?? null);
+  const [step, setStep] = useState(seedCarId ? 1 : 0); // 상세에서 넘어오면 질문부터
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
+  const [prefilled, setPrefilled] = useState(false);
+
+  // 온보딩 취향으로 관련 질문 사전 채움 (사용자는 언제든 이전 버튼으로 수정 가능)
+  useEffect(() => {
+    if (prefilled) return;
+    const p = getPrefs();
+    if (!p) return;
+    setAnswers((prev) => ({
+      purpose: p.purpose,
+      seats: p.seats,
+      mileage: p.mileage,
+      ...prev,
+    }));
+    setPrefilled(true);
+  }, [prefilled]);
 
   const car = MOCK_CARS.find((c) => c.id === carId) ?? null;
   const totalSteps = QUESTIONS.length + 1; // +1 for 차 선택
