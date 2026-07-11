@@ -400,21 +400,8 @@ function Interview() {
           </button>
         </div>
 
-        {/* Upsell → 협상 브리핑 */}
-        <div className="rounded-2xl bg-[color:var(--color-brand-navy)] text-white p-5">
-          <div className="flex items-center gap-1.5 text-[12px] opacity-80">
-            <Crown className="h-3.5 w-3.5" /> PRO
-          </div>
-          <div className="text-[15px] font-semibold mt-1">
-            매장 가시기 전에 협상 브리핑도 받아보세요
-          </div>
-          <div className="text-[12.5px] opacity-80 mt-1.5 leading-relaxed">
-            이 견적서 기준으로 딜러 첫 제시가 예측, 협상 스크립트, 금융 함정 체크리스트까지 코치가 정리해드려요.
-          </div>
-          <button className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white text-[color:var(--color-brand-navy)] px-4 py-2 text-[12.5px] font-semibold">
-            <Lock className="h-3.5 w-3.5" /> 브리핑 잠금 해제
-          </button>
-        </div>
+        {/* Upsell → 협상 브리핑 (얼리버드 이메일 캡처) */}
+        <ProSignupCard source="coach-result" carId={car.id} />
 
         <button
           onClick={restart}
