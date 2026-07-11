@@ -5,7 +5,8 @@ import { getPrefs, setPrefs, type BuyerPrefs } from "@/lib/onboarding-store";
 /* 첫 방문자에게 3단계 짧은 취향 인터뷰를 노출.
  * 완료 시 코치 인터뷰가 자동 프리필되고, 홈 상단 카피가 이름을 얻는다. */
 
-type Step = 0 | 1 | 2;
+type Step = 0 | 1 | 2 | 3 | 4;
+const TOTAL_STEPS = 5;
 
 const PURPOSES: { v: BuyerPrefs["purpose"]; label: string; sub: string }[] = [
   { v: "commute", label: "출퇴근 위주", sub: "매일 왕복·주차 편의 우선" },
@@ -26,12 +27,28 @@ const MILEAGE: { v: BuyerPrefs["mileage"]; label: string; sub: string }[] = [
   { v: "high", label: "많이 타요", sub: "연 2만km 이상" },
 ];
 
+const BUDGET: { v: number; label: string; sub: string }[] = [
+  { v: 3000, label: "3천만원 이하", sub: "소형·준중형 위주" },
+  { v: 4500, label: "3천~4천5백", sub: "중형 SUV·세단" },
+  { v: 6000, label: "4천5백~6천", sub: "상위 트림·프리미엄 진입" },
+  { v: 9000, label: "6천만원 이상", sub: "럭셔리·수입 검토" },
+];
+
+const TIMING: { v: NonNullable<BuyerPrefs["timing"]>; label: string; sub: string }[] = [
+  { v: "now", label: "이번 달 안에", sub: "지금 시그널이 가장 중요" },
+  { v: "1-3m", label: "1~3개월 내", sub: "협상 시점 코칭" },
+  { v: "3-6m", label: "3~6개월 내", sub: "연식변경·재고 흐름 참고" },
+  { v: "browsing", label: "아직 둘러보는 중", sub: "부담 없이 트래킹만" },
+];
+
 export function OnboardingModal() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>(0);
   const [purpose, setPurpose] = useState<BuyerPrefs["purpose"] | null>(null);
   const [seats, setSeats] = useState<BuyerPrefs["seats"] | null>(null);
   const [mileage, setMileage] = useState<BuyerPrefs["mileage"] | null>(null);
+  const [budgetMax, setBudgetMax] = useState<number | null>(null);
+  const [timing, setTiming] = useState<BuyerPrefs["timing"] | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -40,7 +57,14 @@ export function OnboardingModal() {
 
   const close = (save: boolean) => {
     if (save && purpose && seats && mileage) {
-      setPrefs({ purpose, seats, mileage, createdAt: Date.now() });
+      setPrefs({
+        purpose,
+        seats,
+        mileage,
+        budgetMax: budgetMax ?? undefined,
+        timing: timing ?? undefined,
+        createdAt: Date.now(),
+      });
     }
     setOpen(false);
   };
@@ -52,10 +76,10 @@ export function OnboardingModal() {
       <div className="w-full max-w-[480px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom">
         <div className="px-5 pt-5 flex items-center justify-between">
           <div className="flex gap-1">
-            {[0, 1, 2].map((i) => (
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
-                className={`h-1 w-8 rounded-full ${i <= step ? "bg-[color:var(--color-brand-blue)]" : "bg-slate-200"}`}
+                className={`h-1 w-6 rounded-full ${i <= step ? "bg-[color:var(--color-brand-blue)]" : "bg-slate-200"}`}
               />
             ))}
           </div>
@@ -121,7 +145,7 @@ export function OnboardingModal() {
           {step === 2 && (
             <>
               <p className="text-[11.5px] font-semibold text-[color:var(--color-brand-blue)]">
-                마지막 질문이에요
+                거의 다 왔어요
               </p>
               <h2 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1.5">
                 1년에 얼마나<br />타실 것 같으세요?
@@ -133,7 +157,7 @@ export function OnboardingModal() {
                     active={mileage === o.v}
                     onClick={() => {
                       setMileage(o.v);
-                      setTimeout(() => close(true), 200);
+                      setTimeout(() => setStep(3), 120);
                     }}
                     label={o.label}
                     sub={o.sub}
@@ -145,6 +169,68 @@ export function OnboardingModal() {
                 className="mt-4 w-full text-[12px] text-slate-400"
               >
                 나중에 할게요
+              </button>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <p className="text-[11.5px] font-semibold text-[color:var(--color-brand-blue)]">
+                예산을 알려주세요
+              </p>
+              <h2 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1.5">
+                실구매가 기준,<br />어느 정도 생각하세요?
+              </h2>
+              <div className="mt-5 space-y-2">
+                {BUDGET.map((o) => (
+                  <Option
+                    key={o.v}
+                    active={budgetMax === o.v}
+                    onClick={() => {
+                      setBudgetMax(o.v);
+                      setTimeout(() => setStep(4), 120);
+                    }}
+                    label={o.label}
+                    sub={o.sub}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => setStep(4)}
+                className="mt-4 w-full text-[12px] text-slate-400"
+              >
+                건너뛸게요
+              </button>
+            </>
+          )}
+
+          {step === 4 && (
+            <>
+              <p className="text-[11.5px] font-semibold text-[color:var(--color-brand-blue)]">
+                마지막 질문이에요
+              </p>
+              <h2 className="text-[22px] font-bold text-[color:var(--color-brand-navy)] leading-tight mt-1.5">
+                언제쯤<br />구매하실 계획이세요?
+              </h2>
+              <div className="mt-5 space-y-2">
+                {TIMING.map((o) => (
+                  <Option
+                    key={o.v}
+                    active={timing === o.v}
+                    onClick={() => {
+                      setTiming(o.v);
+                      setTimeout(() => close(true), 200);
+                    }}
+                    label={o.label}
+                    sub={o.sub}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => close(true)}
+                className="mt-4 w-full text-[12px] text-slate-400"
+              >
+                건너뛰고 시작할게요
               </button>
             </>
           )}

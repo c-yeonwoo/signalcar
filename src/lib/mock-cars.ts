@@ -447,3 +447,34 @@ export function estimateOwnership(car: MockCar, annualKm: number) {
     annualTotal: monthlyTotal * 12,
   };
 }
+
+/* ============ 주간 변화 요약 (홈 재방문 훅) ============ */
+
+export type WeeklyChange = {
+  priceDelta: number;         // 만원 단위, - 이면 하락
+  priceDeltaPct: number;      // % (소수 1자리)
+  direction: "down" | "up" | "flat";
+  promoRefreshed: boolean;    // 이번 달 프로모션이 유의미하게 갱신됐는지
+  headline: string;           // 카드 상단에 그대로 노출할 한 줄
+};
+
+export function weeklyChangeFor(car: MockCar): WeeklyChange {
+  const h = car.history;
+  const last = h[h.length - 1] ?? 0;
+  const prev = h[h.length - 2] ?? last;
+  const delta = last - prev; // 만원 단위 저장돼 있음
+  const pct = prev === 0 ? 0 : Math.round((delta / prev) * 1000) / 10;
+  const dir: WeeklyChange["direction"] = delta < 0 ? "down" : delta > 0 ? "up" : "flat";
+  const promoRefreshed = car.promoThisMonth.amount >= 1500000 || car.promoPercentile >= 80;
+  let headline: string;
+  if (dir === "down") {
+    headline = `이번주 -${Math.abs(delta)}만 · 실거래 ${Math.abs(pct)}% ↓`;
+  } else if (dir === "up") {
+    headline = `이번주 +${delta}만 · 실거래 ${pct}% ↑`;
+  } else if (promoRefreshed) {
+    headline = `이번달 프로모션 갱신 · ${car.promoThisMonth.label}`;
+  } else {
+    headline = "이번주 변동 없음 · 지켜보는 중";
+  }
+  return { priceDelta: delta, priceDeltaPct: pct, direction: dir, promoRefreshed, headline };
+}

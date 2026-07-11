@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Map, Check, Sparkles } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Map, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { MOCK_CARS, formatKRW } from "@/lib/mock-cars";
+import { MOCK_CARS, formatKRW, weeklyChangeFor } from "@/lib/mock-cars";
 import { PageHeader, SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -122,6 +122,24 @@ function HomePage() {
           const sparkColor =
             c.signal === "buy" ? "#16A34A" : c.signal === "wait" ? "#F59E0B" : "#64748B";
           const inCompare = compareIds.includes(c.id);
+          const isWatched = watchIds.includes(c.id);
+          const wk = weeklyChangeFor(c);
+          const wkTone =
+            wk.direction === "down"
+              ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+              : wk.direction === "up"
+                ? "bg-[color:var(--color-signal-wait-soft)] text-[color:var(--color-signal-wait)]"
+                : wk.promoRefreshed
+                  ? "bg-[color:var(--color-brand-blue)]/10 text-[color:var(--color-brand-blue)]"
+                  : "bg-slate-100 text-slate-500";
+          const WkIcon =
+            wk.direction === "down"
+              ? TrendingDown
+              : wk.direction === "up"
+                ? TrendingUp
+                : wk.promoRefreshed
+                  ? Tag
+                  : Minus;
           return (
             <Link
               key={c.id}
@@ -129,6 +147,12 @@ function HomePage() {
               params={{ vehicleId: c.id }}
               className="block sc-card p-5 active:scale-[0.99] transition"
             >
+              {isWatched && (
+                <div className={`mb-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${wkTone}`}>
+                  <WkIcon className="h-3 w-3" />
+                  {wk.headline}
+                </div>
+              )}
               <div className="mb-4">
                 <CarThumb src={c.image} alt={`${c.model} ${c.trim}`} />
               </div>
