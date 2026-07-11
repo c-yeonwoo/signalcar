@@ -7,7 +7,7 @@ import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
-import { SampleSize, sampleConfidence } from "@/components/ui-kit";
+import { SampleSize } from "@/components/ui-kit";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
