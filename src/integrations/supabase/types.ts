@@ -54,10 +54,12 @@ export type Database = {
           id: string
           list_price: number | null
           options_taken: Json | null
+          raw_doc_ref: string | null
           region: string | null
           source: Database["public"]["Enums"]["deal_source"]
           trim_id: string
           updated_at: string
+          user_id: string | null
           verification_status: Database["public"]["Enums"]["verification_status"]
         }
         Insert: {
@@ -69,10 +71,12 @@ export type Database = {
           id?: string
           list_price?: number | null
           options_taken?: Json | null
+          raw_doc_ref?: string | null
           region?: string | null
           source?: Database["public"]["Enums"]["deal_source"]
           trim_id: string
           updated_at?: string
+          user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Update: {
@@ -84,15 +88,70 @@ export type Database = {
           id?: string
           list_price?: number | null
           options_taken?: Json | null
+          raw_doc_ref?: string | null
           region?: string | null
           source?: Database["public"]["Enums"]["deal_source"]
           trim_id?: string
           updated_at?: string
+          user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Relationships: [
           {
             foreignKeyName: "deal_reports_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      negotiation_briefs: {
+        Row: {
+          budget: number | null
+          created_at: string
+          finance_pref: string | null
+          id: string
+          llm_output: Json | null
+          model_version: string | null
+          region: string | null
+          status: Database["public"]["Enums"]["brief_status"]
+          target_options: Json
+          trim_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          finance_pref?: string | null
+          id?: string
+          llm_output?: Json | null
+          model_version?: string | null
+          region?: string | null
+          status?: Database["public"]["Enums"]["brief_status"]
+          target_options?: Json
+          trim_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          finance_pref?: string | null
+          id?: string
+          llm_output?: Json | null
+          model_version?: string | null
+          region?: string | null
+          status?: Database["public"]["Enums"]["brief_status"]
+          target_options?: Json
+          trim_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "negotiation_briefs_trim_id_fkey"
             columns: ["trim_id"]
             isOneToOne: false
             referencedRelation: "trims"
@@ -140,6 +199,176 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "official_promotions_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      price_signals: {
+        Row: {
+          computed_at: string
+          id: string
+          median_deal_price: number | null
+          month: string
+          promo_percentile: number | null
+          sample_size: number
+          timing_verdict: Database["public"]["Enums"]["timing_verdict"] | null
+          trim_id: string
+        }
+        Insert: {
+          computed_at?: string
+          id?: string
+          median_deal_price?: number | null
+          month: string
+          promo_percentile?: number | null
+          sample_size?: number
+          timing_verdict?: Database["public"]["Enums"]["timing_verdict"] | null
+          trim_id: string
+        }
+        Update: {
+          computed_at?: string
+          id?: string
+          median_deal_price?: number | null
+          month?: string
+          promo_percentile?: number | null
+          sample_size?: number
+          timing_verdict?: Database["public"]["Enums"]["timing_verdict"] | null
+          trim_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_signals_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nickname: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nickname?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nickname?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quote_diagnoses: {
+        Row: {
+          created_at: string
+          doc_path: string
+          id: string
+          result: Json | null
+          status: Database["public"]["Enums"]["brief_status"]
+          trim_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc_path: string
+          id?: string
+          result?: Json | null
+          status?: Database["public"]["Enums"]["brief_status"]
+          trim_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doc_path?: string
+          id?: string
+          result?: Json | null
+          status?: Database["public"]["Enums"]["brief_status"]
+          trim_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_diagnoses_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_unlocks: {
+        Row: {
+          id: string
+          source: Database["public"]["Enums"]["unlock_source"]
+          trim_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          source: Database["public"]["Enums"]["unlock_source"]
+          trim_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          source?: Database["public"]["Enums"]["unlock_source"]
+          trim_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_unlocks_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_stats: {
+        Row: {
+          created_at: string
+          id: string
+          month: string
+          registered_count: number
+          source: string | null
+          trim_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: string
+          registered_count?: number
+          source?: string | null
+          trim_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: string
+          registered_count?: number
+          source?: string | null
+          trim_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_stats_trim_id_fkey"
             columns: ["trim_id"]
             isOneToOne: false
             referencedRelation: "trims"
@@ -285,6 +514,35 @@ export type Database = {
           },
         ]
       }
+      watchlist: {
+        Row: {
+          created_at: string
+          id: string
+          trim_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          trim_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          trim_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlist_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -304,6 +562,7 @@ export type Database = {
         | "van"
         | "minivan"
         | "other"
+      brief_status: "pending" | "done" | "failed"
       deal_source: "manual" | "receipt_ocr" | "community"
       finance_type: "cash" | "installment" | "lease" | "rent"
       fuel_type:
@@ -324,6 +583,8 @@ export type Database = {
         | "package"
         | "other"
       promotion_type: "cash" | "finance" | "trade_in" | "other"
+      timing_verdict: "buy" | "wait" | "neutral"
+      unlock_source: "deal_report" | "purchase"
       verification_status: "unverified" | "receipt_verified" | "flagged"
     }
     CompositeTypes: {
@@ -464,6 +725,7 @@ export const Constants = {
         "minivan",
         "other",
       ],
+      brief_status: ["pending", "done", "failed"],
       deal_source: ["manual", "receipt_ocr", "community"],
       finance_type: ["cash", "installment", "lease", "rent"],
       fuel_type: [
@@ -486,6 +748,8 @@ export const Constants = {
         "other",
       ],
       promotion_type: ["cash", "finance", "trade_in", "other"],
+      timing_verdict: ["buy", "wait", "neutral"],
+      unlock_source: ["deal_report", "purchase"],
       verification_status: ["unverified", "receipt_verified", "flagged"],
     },
   },
