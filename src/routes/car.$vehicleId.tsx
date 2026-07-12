@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -57,17 +57,6 @@ function CarDetailPage() {
   const accent = signalAccent(car.signal);
   const savings = car.listPrice - car.medianContract;
   const discountPct = Math.round((savings / car.listPrice) * 100);
-
-  const gallery: { label: string; src?: string }[] = [
-    { label: "정면", src: car.image },
-    { label: "측면" },
-    { label: "후면" },
-    { label: "실내" },
-    { label: "대시보드" },
-    { label: "트렁크" },
-  ];
-  const [activeShot, setActiveShot] = useState(0);
-  const shot = gallery[activeShot];
 
   const [inCompare, setInCompare] = useState(false);
   const [watched, setWatched] = useState(false);
@@ -168,55 +157,19 @@ function CarDetailPage() {
         </div>
       </section>
 
-      {/* SECTION 02 · Gallery */}
-      <section className="bg-[color:var(--color-brand-mist)] py-1">
-        <div className="grid grid-cols-4 grid-rows-2 gap-px [grid-auto-rows:1fr]">
-          {gallery.slice(0, 5).map((g, i) => {
-            const big = i === 0;
-            const isPlusTile = i === 4; // last visible tile becomes the "+more" affordance
-            const isActive = i === activeShot;
-            return (
-              <button
-                key={g.label}
-                onClick={() => setActiveShot(i)}
-                className={`${big ? "col-span-2 row-span-2" : "aspect-square"} bg-white relative group`}
-              >
-                {g.src ? (
-                  <img
-                    src={g.src}
-                    alt={`${car.model} ${g.label}`}
-                    className="absolute inset-0 h-full w-full object-contain p-3 scale-105"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-slate-300">
-                    <ImageOff className="h-5 w-5" strokeWidth={1.4} />
-                    <span className="text-[9.5px] tracking-wider uppercase">{g.label}</span>
-                  </div>
-                )}
-                {big && (
-                  <span className={`absolute left-3 bottom-2 text-[9.5px] font-bold tracking-[0.15em] uppercase ${INK}`}>
-                    {g.label}
-                  </span>
-                )}
-                {isActive && (
-                  <span className="absolute inset-0 ring-2 ring-inset ring-[color:var(--color-brand-navy)]" />
-                )}
-                {isPlusTile && (
-                  <span className="absolute inset-0 bg-[color:var(--color-brand-navy)]/85 flex flex-col items-center justify-center text-white">
-                    <span className={`${DISPLAY} text-lg font-bold`}>+{gallery.length - 4}</span>
-                    <span className="text-[9px] tracking-[0.2em] uppercase mt-0.5">More</span>
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-        <div className="px-5 py-2 flex items-center justify-between">
-          <span className={`text-[10px] tracking-[0.15em] uppercase font-semibold ${MUTED}`}>
-            {shot.label}
+      {/* SECTION 02 · Hero image */}
+      <section className="bg-[color:var(--color-brand-mist)]/50 border-y border-[color:var(--color-brand-mist)]">
+        <div className="relative aspect-[16/10] w-full flex items-center justify-center overflow-hidden">
+          <img
+            src={car.image}
+            alt={`${car.brand} ${car.model}`}
+            className="max-h-full max-w-full object-contain px-6"
+          />
+          <span className={`absolute left-4 top-3 text-[9.5px] font-semibold tracking-[0.18em] uppercase ${MUTED}`}>
+            {car.brand}
           </span>
-          <span className={`text-[10px] tabular-nums ${MUTED}`}>
-            {String(activeShot + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}
+          <span className={`absolute right-4 bottom-3 inline-flex items-center gap-1 text-[10px] ${MUTED}`}>
+            <Camera className="h-3 w-3" strokeWidth={1.6} /> 공식 이미지
           </span>
         </div>
       </section>
@@ -385,25 +338,25 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
         <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
       </div>
 
-      {/* Hero: Max savings block */}
+      {/* Hero: Max savings — editorial mist card with signal accent bar */}
       <div className="px-5">
-        <div
-          className="relative rounded-2xl p-5 overflow-hidden text-white"
-          style={{
-            background: `linear-gradient(135deg, ${accentHex} 0%, color-mix(in oklab, ${accentHex} 70%, #0f1b3d) 100%)`,
-          }}
-        >
-          <div
-            className="absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-20"
-            style={{ background: "white" }}
+        <div className="relative rounded-2xl border border-[color:var(--color-brand-mist)] bg-[color:var(--color-brand-mist)]/40 p-5 overflow-hidden">
+          <span
+            aria-hidden
+            className="absolute left-0 top-0 bottom-0 w-[3px]"
+            style={{ backgroundColor: accentHex }}
           />
-          <p className="text-[11.5px] uppercase tracking-[0.14em] opacity-80">최대 예상 혜택</p>
-          <p className={`${DISPLAY} text-[34px] font-extrabold tabular-nums leading-none mt-2`}>
+          <p className={`text-[11px] uppercase tracking-[0.14em] ${MUTED}`}>최대 예상 혜택</p>
+          <p className={`${DISPLAY} ${NAVY} text-[32px] font-extrabold tabular-nums leading-none mt-2`}>
             −{formatKRW(maxTotal)}
           </p>
-          <div className="mt-3 flex items-center gap-2 text-[11.5px] opacity-90">
-            <span className="px-2 py-0.5 rounded-full bg-white/15">중복 {formatKRW(stackTotal)}</span>
-            <span className="px-2 py-0.5 rounded-full bg-white/15">택1 최대 {formatKRW(exclusiveBest)}</span>
+          <div className={`mt-3 flex items-center gap-1.5 text-[11px] ${MUTED} tabular-nums`}>
+            <span className="px-2 py-0.5 rounded-full bg-white border border-[color:var(--color-brand-mist)]">
+              중복 {formatKRW(stackTotal)}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-white border border-[color:var(--color-brand-mist)]">
+              택1 최대 {formatKRW(exclusiveBest)}
+            </span>
           </div>
         </div>
       </div>
@@ -423,10 +376,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                 <span className={`text-[10.5px] ${MUTED} tabular-nums`}>{items.length}개</span>
               </div>
               {catTotal > 0 && (
-                <p
-                  className="text-[15px] font-bold tabular-nums mt-1"
-                  style={{ color: accentHex }}
-                >
+                <p className={`${NAVY} text-[15px] font-bold tabular-nums mt-1`}>
                   −{formatKRW(catTotal)}
                 </p>
               )}
@@ -476,7 +426,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                 </div>
                 <div className="whitespace-nowrap pt-0.5">
                   {b.amount > 0 ? (
-                    <span className="text-[13px] font-bold tabular-nums" style={{ color: accentHex }}>
+                    <span className={`${NAVY} text-[13px] font-bold tabular-nums`}>
                       −{formatKRW(b.amount)}
                     </span>
                   ) : (
@@ -587,7 +537,7 @@ function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: strin
               <span className={`text-[12px] ${INK} w-16 shrink-0`}>{a.label}</span>
               <div className="flex-1 h-1.5 rounded-full bg-[color:var(--color-brand-mist)] overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[color:var(--color-brand-blue)]"
+                  className="h-full rounded-full bg-[color:var(--color-brand-navy)]/85"
                   style={{ width: `${(a.score / 5) * 100}%` }}
                 />
               </div>
