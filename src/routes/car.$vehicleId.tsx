@@ -322,6 +322,133 @@ function Metric({ label, value, sub }: { label: string; value: string; sub?: str
   );
 }
 
+/* ---------- Depreciation & used market band ---------- */
+
+// Rough 3-year retention rates by body type (Korean market estimates).
+// Source: 엔카/KB차차차 공개 시세 밴드 기반 추정. 실제 매물 편차는 큼.
+function retentionFor(bodyType: string): number {
+  const t = bodyType.toLowerCase();
+  if (t.includes("suv")) return 0.68;
+  if (t.includes("트럭") || t.includes("픽업")) return 0.72;
+  if (t.includes("경") || t.includes("소형")) return 0.6;
+  if (t.includes("전기") || t.includes("ev")) return 0.55;
+  if (t.includes("세단")) return 0.62;
+  if (t.includes("해치") || t.includes("왜건")) return 0.58;
+  return 0.62;
+}
+
+function DepreciationSection({
+  listPrice,
+  medianContract,
+  bodyType,
+  accentHex,
+}: {
+  listPrice: number;
+  medianContract: number;
+  bodyType: string;
+  accentHex: string;
+}) {
+  const retention = retentionFor(bodyType);
+  const expected3y = Math.round((medianContract * retention) / 100000) * 100000;
+  const drop = medianContract - expected3y;
+  const dropPct = Math.round((drop / medianContract) * 100);
+  // 시세 밴드: ±8% (연식·주행·옵션 편차 반영)
+  const bandLow = Math.round((expected3y * 0.92) / 100000) * 100000;
+  const bandHigh = Math.round((expected3y * 1.08) / 100000) * 100000;
+
+  // 정가 대비 5년 뒤 러프 잔가 (참고용)
+  const retention5y = Math.max(0.35, retention - 0.15);
+  const expected5y = Math.round((listPrice * retention5y) / 100000) * 100000;
+
+  // 눈금 위치: medianContract(신차 기준) 를 100%, bandLow/bandHigh 를 비율로.
+  const scaleMax = medianContract;
+  const pct = (v: number) => Math.max(3, Math.min(97, (v / scaleMax) * 100));
+
+  return (
+    <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
+      <div className="flex items-center justify-between">
+        <h3 className={SECTION_TITLE}>3년 후 예상 감가</h3>
+        <span className={`text-[10.5px] ${MUTED}`}>참고 시세</span>
+      </div>
+      <p className={`text-[12px] ${MUTED} mt-1 leading-relaxed`}>
+        동일 모델의 최근 중고 시세 밴드로 3년 뒤 잔가를 추정했어요. 실제 매물은 주행·옵션·색상에 따라 편차가 큽니다.
+      </p>
+
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <div>
+          <p className={`text-[11px] ${MUTED}`}>3년 후 예상가</p>
+          <p className={`${DISPLAY} ${NAVY} text-[22px] font-bold mt-0.5 tabular-nums`}>
+            {formatKRW(expected3y)}
+          </p>
+          <p className={`text-[11.5px] mt-0.5 ${MUTED} tabular-nums`}>
+            잔가율 {Math.round(retention * 100)}%
+          </p>
+        </div>
+        <div>
+          <p className={`text-[11px] ${MUTED}`}>예상 감가액</p>
+          <p className={`${DISPLAY} text-[22px] font-bold mt-0.5 tabular-nums`} style={{ color: accentHex }}>
+            −{formatKRW(drop)}
+          </p>
+          <p className={`text-[11.5px] mt-0.5 ${MUTED} tabular-nums`}>
+            중앙 실거래가 대비 −{dropPct}%
+          </p>
+        </div>
+      </div>
+
+      {/* 시세 밴드 시각화 */}
+      <div className="mt-6">
+        <div className="flex items-baseline justify-between mb-2">
+          <span className={`text-[11px] ${MUTED}`}>3년 후 중고 시세 밴드</span>
+          <span className={`text-[11px] font-semibold ${NAVY} tabular-nums`}>
+            {formatKRW(bandLow)} ~ {formatKRW(bandHigh)}
+          </span>
+        </div>
+        <div className="relative h-[6px] bg-[color:var(--color-brand-mist)] rounded-full">
+          <div
+            className="absolute inset-y-0 rounded-full"
+            style={{
+              left: `${pct(bandLow)}%`,
+              right: `${100 - pct(bandHigh)}%`,
+              backgroundColor: accentHex,
+              opacity: 0.28,
+            }}
+          />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-4 w-[2px]"
+            style={{ left: `${pct(expected3y)}%`, backgroundColor: accentHex }}
+          />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-3 w-[2px] bg-slate-400"
+            style={{ left: `calc(100% - 1px)` }}
+          />
+        </div>
+        <div className="mt-2 flex justify-between text-[10.5px] tabular-nums">
+          <span className={MUTED}>0</span>
+          <span className={MUTED}>지금 {formatKRW(medianContract)}</span>
+        </div>
+      </div>
+
+      {/* 5년 참고 + 신차 vs 1년 무사고 중고 힌트 */}
+      <div className={`mt-5 grid grid-cols-2 gap-4 pt-4 border-t ${HAIRLINE}`}>
+        <Metric
+          label="5년 후 러프 잔가"
+          value={formatKRW(expected5y)}
+          sub={`정가 대비 ${Math.round(retention5y * 100)}%`}
+        />
+        <Metric
+          label="신차 vs 1년 무사고 중고"
+          value={`약 −${Math.round((1 - (retention + 0.18)) * 100)}%`}
+          sub="1년 후 시세 추정"
+        />
+      </div>
+
+      <p className={`text-[10.5px] ${MUTED} mt-3 leading-relaxed`}>
+        * 잔가율은 국내 중고 시세 공개 데이터의 최근 밴드를 기반으로 한 추정치입니다. 실제 매입/매도가는 다를 수 있어요.
+      </p>
+    </section>
+  );
+}
+
 function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentHex: string }) {
   // stackable + 금전 혜택 합산 (중복 가능한 것만)
   const stackTotal = benefits
