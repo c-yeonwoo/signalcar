@@ -91,7 +91,7 @@ function MePage() {
             <LogIn className="h-4 w-4" /> 로그인 / 가입하기
           </Link>
           <p className="text-[11.5px] text-slate-400 text-center mt-3">
-            관심 차종·제보·협상 브리핑은 로그인이 필요해요.
+            관심 차량·계약 공유·상담 요약은 로그인이 필요해요.
           </p>
         </section>
       )}
