@@ -206,6 +206,33 @@ export type Database = {
           },
         ]
       }
+      price_alerts: {
+        Row: {
+          created_at: string
+          id: string
+          target_price: number
+          trim_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          target_price: number
+          trim_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          target_price?: number
+          trim_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       price_signals: {
         Row: {
           computed_at: string

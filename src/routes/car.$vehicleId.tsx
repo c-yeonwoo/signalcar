@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -8,6 +8,8 @@ import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
+import { alertStatus, getAlert } from "@/lib/alerts-store";
+import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
 
@@ -68,17 +70,22 @@ function CarDetailPage() {
 
   const [inCompare, setInCompare] = useState(false);
   const [watched, setWatched] = useState(false);
+  const [alertPrice, setAlertPrice] = useState<number | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
   useEffect(() => {
     const sync = () => {
       setInCompare(getCompareList().includes(car.id));
       setWatched(getWatchlist().includes(car.id));
+      setAlertPrice(getAlert(car.id)?.targetPrice ?? null);
     };
     sync();
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:watchlist-change", sync);
+    window.addEventListener("sc:alerts-change", sync);
     return () => {
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:watchlist-change", sync);
+      window.removeEventListener("sc:alerts-change", sync);
     };
   }, [car.id]);
 
@@ -92,6 +99,8 @@ function CarDetailPage() {
     toast.success(added ? "관심 차종에 담았어요" : "관심에서 뺐어요");
   };
 
+  const alertHit = alertPrice ? alertStatus(car.medianContract, alertPrice) : null;
+
   return (
     <ConsumerShell>
       {/* Top bar */}
@@ -99,18 +108,34 @@ function CarDetailPage() {
         <Link to="/" className={`inline-flex items-center gap-1 text-[12px] ${MUTED}`}>
           <ArrowLeft className="h-3.5 w-3.5" /> 홈
         </Link>
-        <button
-          onClick={handleWatch}
-          aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
-            watched
-              ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
-              : "bg-slate-100 text-slate-500"
-          }`}
-        >
-          <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
-          {watched ? "관심 담김" : "관심 담기"}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setAlertOpen(true)}
+            aria-label="목표가 알림 설정"
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+              alertHit?.hit
+                ? "bg-[color:var(--color-signal-buy)] text-white"
+                : alertPrice
+                  ? "bg-[color:var(--color-brand-blue)]/12 text-[color:var(--color-brand-blue)]"
+                  : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            {alertHit?.hit ? <Target className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
+            {alertHit?.hit ? "목표가 도달" : alertPrice ? "알림 켜짐" : "목표가 알림"}
+          </button>
+          <button
+            onClick={handleWatch}
+            aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+              watched
+                ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
+            {watched ? "관심 담김" : "관심 담기"}
+          </button>
+        </div>
       </div>
 
       {/* SECTION 01 · Model header */}
@@ -317,6 +342,7 @@ function CarDetailPage() {
           </Link>
         </div>
       </StickyCTA>
+      <PriceAlertSheet car={car} open={alertOpen} onOpenChange={setAlertOpen} />
     </ConsumerShell>
   );
 }

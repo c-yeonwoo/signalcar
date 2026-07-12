@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -11,6 +11,11 @@ import { OnboardingModal } from "@/components/onboarding-modal";
 import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
+import { DiscoveryCarousel } from "@/components/discovery-carousel";
+import { PriceAlertSheet } from "@/components/price-alert-sheet";
+import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
+import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
+import type { MockCar } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -21,6 +26,9 @@ function HomePage() {
   const [watchIds, setWatchIds] = useState<string[]>([]);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [personalized, setPersonalized] = useState(false);
+  const [alerts, setAlerts] = useState<Record<string, PriceAlert>>({});
+  const [alertCar, setAlertCar] = useState<MockCar | null>(null);
+  const [lastVisit, setLastVisit] = useState<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -28,15 +36,21 @@ function HomePage() {
       setWatchIds(w);
       setCompareIds(getCompareList());
       setPersonalized(w.length === 0);
+      setAlerts(getAlerts());
     };
     sync();
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:prefs-change", sync);
+    window.addEventListener("sc:alerts-change", sync);
+    // "지난 방문 이후" 계산은 방문 스탬프를 갱신하기 전 값이어야 함
+    setLastVisit(getLastVisit());
+    stampLastVisit();
     return () => {
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:prefs-change", sync);
+      window.removeEventListener("sc:alerts-change", sync);
     };
   }, []);
 
@@ -67,6 +81,26 @@ function HomePage() {
     toast.success(added ? "비교함에 담았어요" : "비교함에서 뺐어요");
   };
 
+  const handleAlertOpen = (car: MockCar, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAlertCar(car);
+  };
+
+  // 관심차 다이제스트 요약
+  const digest = (() => {
+    if (watched.length === 0) return null;
+    const withChange = watched
+      .map((c) => ({ car: c, wk: weeklyChangeFor(c) }))
+      .filter((x) => x.wk.direction !== "flat" || x.wk.promoRefreshed);
+    if (withChange.length === 0) {
+      return { quiet: true as const, count: watched.length };
+    }
+    return { quiet: false as const, count: watched.length, changed: withChange };
+  })();
+
+  const revisit = daysSince(lastVisit) >= 1 && lastVisit !== null;
+
   return (
     <ConsumerShell>
       <OnboardingModal />
@@ -80,6 +114,49 @@ function HomePage() {
         title={<>어떤 차,<br />보고 계세요?</>}
         subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
+
+      {/* 주간 시그널 다이제스트 배너 (관심차 있을 때만) */}
+      {digest && (
+        <section className="px-5 mt-4">
+          <div
+            className={`rounded-2xl border p-4 ${
+              digest.quiet
+                ? "border-slate-200 bg-slate-50"
+                : "border-[color:var(--color-brand-blue)]/20 bg-[color:var(--color-brand-blue)]/6"
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <BellRing
+                className={`h-3.5 w-3.5 ${
+                  digest.quiet ? "text-slate-400" : "text-[color:var(--color-brand-blue)]"
+                }`}
+              />
+              <span className="text-[11px] font-semibold text-slate-500">
+                {revisit ? "지난 방문 이후" : "이번주 시그널"}
+              </span>
+            </div>
+            {digest.quiet ? (
+              <p className="mt-1.5 text-[13px] text-slate-600 leading-snug">
+                관심 {digest.count}대 · 이번주 유의미한 변화 없음. 조용해요.
+              </p>
+            ) : (
+              <div className="mt-1.5">
+                <p className="text-[13px] font-semibold text-[color:var(--color-brand-navy)]">
+                  관심 {digest.count}대 중 {digest.changed.length}대에 변화가 있어요
+                </p>
+                <ul className="mt-1.5 space-y-1">
+                  {digest.changed.slice(0, 3).map(({ car, wk }) => (
+                    <li key={car.id} className="text-[12px] text-slate-600 leading-snug">
+                      · <span className="font-semibold text-slate-800">{car.model}</span>{" "}
+                      <span className="text-slate-500">{wk.headline}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="px-5 mt-5 space-y-3">
         <SectionTitle
@@ -116,6 +193,8 @@ function HomePage() {
           const inCompare = compareIds.includes(c.id);
           const isWatched = watchIds.includes(c.id);
           const wk = weeklyChangeFor(c);
+          const alert = alerts[c.id];
+          const alertHit = alert ? alertStatus(c.medianContract, alert.targetPrice) : null;
           const wkTone =
             wk.direction === "down"
               ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
@@ -140,9 +219,29 @@ function HomePage() {
               className="block sc-card p-5 active:scale-[0.99] transition"
             >
               {isWatched && (
-                <div className={`mb-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${wkTone}`}>
-                  <WkIcon className="h-3 w-3" />
-                  {wk.headline}
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${wkTone}`}>
+                    <WkIcon className="h-3 w-3" />
+                    {wk.headline}
+                  </div>
+                  <button
+                    onClick={(e) => handleAlertOpen(c, e)}
+                    aria-label="목표가 알림 설정"
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10.5px] font-semibold transition ${
+                      alertHit?.hit
+                        ? "bg-[color:var(--color-signal-buy)] text-white"
+                        : alert
+                          ? "bg-[color:var(--color-brand-blue)]/12 text-[color:var(--color-brand-blue)]"
+                          : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {alertHit?.hit ? <Target className="h-3 w-3" /> : <Bell className="h-3 w-3" />}
+                    {alertHit?.hit
+                      ? "목표가 도달"
+                      : alert
+                        ? `${formatKRW(alert.targetPrice)} 목표`
+                        : "목표가 알림"}
+                  </button>
                 </div>
               )}
               <div className="mb-4">
@@ -204,6 +303,9 @@ function HomePage() {
         </div>
       </section>
 
+      {/* 발견 — 구경하다 담기 */}
+      <DiscoveryCarousel />
+
       {/* 폴백/디스커버리 — 관심 차 외에도 다른 차들을 훑을 수 있게 */}
       <section className="px-5 mt-6">
         <Link
@@ -239,6 +341,13 @@ function HomePage() {
         </Link>
       </section>
       <div className="h-6" />
+      {alertCar && (
+        <PriceAlertSheet
+          car={alertCar}
+          open={!!alertCar}
+          onOpenChange={(v) => { if (!v) setAlertCar(null); }}
+        />
+      )}
     </ConsumerShell>
   );
 }
