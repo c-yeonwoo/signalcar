@@ -11,6 +11,16 @@ import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 export const Route = createFileRoute("/diagnose")({
   component: DiagnosePage,
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "견적서 진단 · 시그널카" },
+      { name: "description", content: "받은 견적서 사진을 올리면 항목·할인·옵션을 AI가 검토해드려요." },
+      { property: "og:title", content: "견적서 진단 · 시그널카" },
+      { property: "og:description", content: "AI가 받은 견적서를 검토합니다." },
+      { property: "og:url", content: "/diagnose" },
+    ],
+    links: [{ rel: "canonical", href: "/diagnose" }],
+  }),
 });
 
 function DiagnosePage() {

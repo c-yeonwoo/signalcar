@@ -25,6 +25,16 @@ export const Route = createFileRoute("/coach/options")({
   component: CoachPage,
   ssr: false,
   validateSearch: z.object({ carId: z.string().optional() }).parse,
+  head: () => ({
+    meta: [
+      { title: "옵션·견적 상담 · 시그널카" },
+      { name: "description", content: "받은 견적서를 AI가 항목별로 진단하고, 협상 포인트를 짚어드려요." },
+      { property: "og:title", content: "옵션·견적 상담 · 시그널카" },
+      { property: "og:description", content: "AI가 견적서를 항목별로 진단합니다." },
+      { property: "og:url", content: "/coach/options" },
+    ],
+    links: [{ rel: "canonical", href: "/coach/options" }],
+  }),
 });
 
 /* ============ Interview definition ============ */

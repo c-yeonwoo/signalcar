@@ -14,6 +14,16 @@ import { Ticket, BadgeCheck, Users } from "lucide-react";
 export const Route = createFileRoute("/report")({
   component: ReportPage,
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "계약 공유하기 · 시그널카" },
+      { name: "description", content: "내 계약서를 공유하면 다른 사람의 협상 리포트를 열어볼 열람권이 쌓여요." },
+      { property: "og:title", content: "계약 공유하기 · 시그널카" },
+      { property: "og:description", content: "공유하고 리포트 열람권 받기." },
+      { property: "og:url", content: "/report" },
+    ],
+    links: [{ rel: "canonical", href: "/report" }],
+  }),
 });
 
 function ReportPage() {
