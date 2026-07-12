@@ -130,12 +130,15 @@ function HomePage() {
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
         <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
       </div>
-      <NewsHero />
-      <PageHeader
-        eyebrow="오늘의 시그널"
-        title={<>어떤 차,<br />보고 계세요?</>}
-        subtitle="관심 차량의 실거래·프로모션·타이밍을 매일 갱신해드려요."
-      />
+      {/* 관심차 없는 초기 유저에게만 상단에 신차 소식 배너 노출 */}
+      {personalized && <NewsHero />}
+      {personalized && (
+        <PageHeader
+          eyebrow="오늘의 시그널"
+          title={<>어떤 차,<br />보고 계세요?</>}
+          subtitle="관심 차량의 실거래·프로모션·타이밍을 매일 갱신해드려요."
+        />
+      )}
 
       {/* 가격 상승 알림 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
       {riseTriggers.length > 0 && (
@@ -282,49 +285,6 @@ function HomePage() {
         </div>
       )}
 
-      {/* 주간 시그널 다이제스트 배너 (관심차 있을 때만) */}
-      {digest && (
-        <section className="px-5 mt-4">
-          <div
-            className={`rounded-2xl border p-4 ${
-              digest.quiet
-                ? "border-slate-200 bg-slate-50"
-                : "border-[color:var(--color-brand-blue)]/20 bg-[color:var(--color-brand-blue)]/6"
-            }`}
-          >
-            <div className="flex items-center gap-1.5">
-              <BellRing
-                className={`h-3.5 w-3.5 ${
-                  digest.quiet ? "text-slate-400" : "text-[color:var(--color-brand-blue)]"
-                }`}
-              />
-              <span className="text-[11px] font-semibold text-slate-500">
-                {revisit ? "지난 방문 이후" : "이번주 시그널"}
-              </span>
-            </div>
-            {digest.quiet ? (
-              <p className="mt-1.5 text-[13px] text-slate-600 leading-snug">
-                관심 {digest.count}대 · 이번주 유의미한 변화 없음. 조용해요.
-              </p>
-            ) : (
-              <div className="mt-1.5">
-                <p className="text-[13px] font-semibold text-[color:var(--color-brand-navy)]">
-                  관심 {digest.count}대 중 {digest.changed.length}대에 변화가 있어요
-                </p>
-                <ul className="mt-1.5 space-y-1">
-                  {digest.changed.slice(0, 3).map(({ car, wk }) => (
-                    <li key={car.id} className="text-[12px] text-slate-600 leading-snug">
-                      · <span className="font-semibold text-slate-800">{car.model}</span>{" "}
-                      <span className="text-slate-500">{wk.headline}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       <section className="px-5 mt-5 space-y-3">
         <SectionTitle
           right={
@@ -342,9 +302,31 @@ function HomePage() {
               취향 기반 추천
             </span>
           ) : (
-            <>관심 차량 {recommend.length}</>
+            <>오늘의 시그널 · 관심 {recommend.length}대</>
           )}
         </SectionTitle>
+
+        {/* 관심차 있을 때: 한 줄 다이제스트 서브헤더 */}
+        {!personalized && digest && (
+          <div className="-mt-1 flex items-start gap-1.5 text-[11.5px] text-slate-500 leading-snug">
+            <BellRing
+              className={`h-3 w-3 mt-[3px] shrink-0 ${
+                digest.quiet ? "text-slate-400" : "text-[color:var(--color-brand-blue)]"
+              }`}
+            />
+            <span className="min-w-0">
+              <span className="font-semibold text-slate-600">
+                {revisit ? "지난 방문 이후" : "이번주"}:
+              </span>{" "}
+              {digest.quiet
+                ? "유의미한 변화 없음, 조용해요."
+                : digest.changed
+                    .slice(0, 2)
+                    .map(({ car, wk }) => `${car.model} ${wk.headline}`)
+                    .join(" · ")}
+            </span>
+          </div>
+        )}
 
         {personalized && (
           <div className="-mt-1 mb-2 space-y-2">
@@ -516,6 +498,9 @@ function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* 관심차 있는 유저: 신차 소식 배너를 관심차 아래에 노출 */}
+      {!personalized && <NewsHero />}
 
       {/* 발견 — 구경하다 담기 */}
       <DiscoveryCarousel />
