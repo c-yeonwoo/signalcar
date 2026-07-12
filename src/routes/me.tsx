@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText, Crown } from "lucide-react";
+import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText, Crown, Bell, Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
@@ -10,6 +10,8 @@ import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList } from "@/lib/compare-store";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { hasSignedUpForPro } from "@/components/pro-signup-card";
+import { getAllSnapshots } from "@/lib/watch-snapshot";
+import { getRiseState } from "@/lib/rise-alerts";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -22,6 +24,8 @@ function MePage() {
 
   const [counts, setCounts] = useState({ watch: 0, compare: 0, reviews: 0, reports: 0 });
   const [proSignedUp, setProSignedUp] = useState(false);
+  const [snapCount, setSnapCount] = useState(0);
+  const [thresholdPct, setThresholdPct] = useState(2);
   useEffect(() => {
     const sync = () =>
       setCounts((c) => ({
@@ -31,17 +35,26 @@ function MePage() {
         reviews: getMyReviews().length,
       }));
     sync();
+    const syncAlerts = () => {
+      setSnapCount(Object.keys(getAllSnapshots()).length);
+      setThresholdPct(getRiseState().defaultPct);
+    };
+    syncAlerts();
     const syncPro = () => setProSignedUp(hasSignedUpForPro());
     syncPro();
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:reviews-change", sync);
     window.addEventListener("sc:pro-signup-change", syncPro);
+    window.addEventListener("sc:watch-snapshot-change", syncAlerts);
+    window.addEventListener("sc:rise-alerts-change", syncAlerts);
     return () => {
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:reviews-change", sync);
       window.removeEventListener("sc:pro-signup-change", syncPro);
+      window.removeEventListener("sc:watch-snapshot-change", syncAlerts);
+      window.removeEventListener("sc:rise-alerts-change", syncAlerts);
     };
   }, []);
 
@@ -102,6 +115,28 @@ function MePage() {
         <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
         <HubCard to="/report" icon={FileText} title="내가 공유한 계약" count={counts.reports} desc="계약서로 리포트 언락" />
         <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실제 구매자 배지" />
+      </section>
+
+      {/* 담은 시점 가격 · 가격 상승 알림 상태 */}
+      <section className="px-5 mb-5">
+        <Link
+          to="/"
+          className="sc-card p-4 flex items-center gap-3 active:scale-[0.99] transition"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-navy)]/6 grid place-items-center flex-shrink-0">
+            <Bell className="h-5 w-5 text-[color:var(--color-brand-navy)]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
+              가격 상승 알림
+            </div>
+            <div className="text-[12px] text-slate-500 mt-0.5 leading-relaxed flex items-center gap-1.5">
+              <Bookmark className="h-3 w-3 text-slate-400" />
+              담은 시점 가격 {snapCount}대 저장 · 기준 {thresholdPct}% 이상 오르면 홈 배너
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-slate-400" />
+        </Link>
       </section>
 
       {/* PRO 얼리버드 상태 */}
