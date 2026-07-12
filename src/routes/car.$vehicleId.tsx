@@ -338,25 +338,25 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
         <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
       </div>
 
-      {/* Hero: Max savings block */}
+      {/* Hero: Max savings — editorial mist card with signal accent bar */}
       <div className="px-5">
-        <div
-          className="relative rounded-2xl p-5 overflow-hidden text-white"
-          style={{
-            background: `linear-gradient(135deg, ${accentHex} 0%, color-mix(in oklab, ${accentHex} 70%, #0f1b3d) 100%)`,
-          }}
-        >
-          <div
-            className="absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-20"
-            style={{ background: "white" }}
+        <div className="relative rounded-2xl border border-[color:var(--color-brand-mist)] bg-[color:var(--color-brand-mist)]/40 p-5 overflow-hidden">
+          <span
+            aria-hidden
+            className="absolute left-0 top-0 bottom-0 w-[3px]"
+            style={{ backgroundColor: accentHex }}
           />
-          <p className="text-[11.5px] uppercase tracking-[0.14em] opacity-80">최대 예상 혜택</p>
-          <p className={`${DISPLAY} text-[34px] font-extrabold tabular-nums leading-none mt-2`}>
+          <p className={`text-[11px] uppercase tracking-[0.14em] ${MUTED}`}>최대 예상 혜택</p>
+          <p className={`${DISPLAY} ${NAVY} text-[32px] font-extrabold tabular-nums leading-none mt-2`}>
             −{formatKRW(maxTotal)}
           </p>
-          <div className="mt-3 flex items-center gap-2 text-[11.5px] opacity-90">
-            <span className="px-2 py-0.5 rounded-full bg-white/15">중복 {formatKRW(stackTotal)}</span>
-            <span className="px-2 py-0.5 rounded-full bg-white/15">택1 최대 {formatKRW(exclusiveBest)}</span>
+          <div className={`mt-3 flex items-center gap-1.5 text-[11px] ${MUTED} tabular-nums`}>
+            <span className="px-2 py-0.5 rounded-full bg-white border border-[color:var(--color-brand-mist)]">
+              중복 {formatKRW(stackTotal)}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-white border border-[color:var(--color-brand-mist)]">
+              택1 최대 {formatKRW(exclusiveBest)}
+            </span>
           </div>
         </div>
       </div>
