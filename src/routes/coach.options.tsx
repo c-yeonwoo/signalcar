@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
+import { SnapshotBadge } from "@/components/snapshot-badge";
 import { PageHeader, TabPills, SampleSize } from "@/components/ui-kit";
 import { Share2, TrendingDown, Percent } from "lucide-react";
 import { getPrefs } from "@/lib/onboarding-store";
