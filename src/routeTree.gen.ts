@@ -18,6 +18,7 @@ import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CoachIndexRouteImport } from './routes/coach.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CoachOptionsRouteImport } from './routes/coach.options'
 import { Route as CarVehicleIdRouteImport } from './routes/car.$vehicleId'
@@ -71,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CoachIndexRoute = CoachIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CoachRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -130,12 +136,12 @@ export interface FileRoutesByFullPath {
   '/car/$vehicleId': typeof CarVehicleIdRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
+  '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/coach': typeof CoachRouteWithChildren
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
@@ -148,6 +154,7 @@ export interface FileRoutesByTo {
   '/car/$vehicleId': typeof CarVehicleIdRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin': typeof AdminIndexRoute
+  '/coach': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesById {
@@ -168,6 +175,7 @@ export interface FileRoutesById {
   '/car/$vehicleId': typeof CarVehicleIdRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
+  '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRouteTypes {
@@ -189,12 +197,12 @@ export interface FileRouteTypes {
     | '/car/$vehicleId'
     | '/coach/options'
     | '/admin/'
+    | '/coach/'
     | '/admin/vehicles/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/coach'
     | '/compare'
     | '/diagnose'
     | '/explore'
@@ -207,6 +215,7 @@ export interface FileRouteTypes {
     | '/car/$vehicleId'
     | '/coach/options'
     | '/admin'
+    | '/coach'
     | '/admin/vehicles/$vehicleId'
   id:
     | '__root__'
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/car/$vehicleId'
     | '/coach/options'
     | '/admin/'
+    | '/coach/'
     | '/admin/vehicles/$vehicleId'
   fileRoutesById: FileRoutesById
 }
@@ -306,6 +316,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/coach/': {
+      id: '/coach/'
+      path: '/'
+      fullPath: '/coach/'
+      preLoaderRoute: typeof CoachIndexRouteImport
+      parentRoute: typeof CoachRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -398,10 +415,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CoachRouteChildren {
   CoachOptionsRoute: typeof CoachOptionsRoute
+  CoachIndexRoute: typeof CoachIndexRoute
 }
 
 const CoachRouteChildren: CoachRouteChildren = {
   CoachOptionsRoute: CoachOptionsRoute,
+  CoachIndexRoute: CoachIndexRoute,
 }
 
 const CoachRouteWithChildren = CoachRoute._addFileChildren(CoachRouteChildren)
