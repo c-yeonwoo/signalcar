@@ -312,7 +312,7 @@ function HomePage() {
         })}
 
         <div className="pt-2 pb-4 text-center">
-          <Link to="/coach" className="text-[13px] text-[color:var(--color-brand-blue)] font-medium">
+          <Link to="/coach/options" className="text-[13px] text-[color:var(--color-brand-blue)] font-medium">
             AI 코치와 견적 뽑아보기 →
           </Link>
         </div>
