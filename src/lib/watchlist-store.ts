@@ -7,6 +7,7 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 import { TRIM_ID_MAP } from "@/lib/mock-cars";
+import { removeSnapshot, setSnapshotIfAbsent } from "@/lib/watch-snapshot";
 
 const KEY = "sc.watchlist.v1";
 const MAX = 5;
@@ -33,16 +34,21 @@ export function setWatchlist(ids: string[]) {
   window.dispatchEvent(new CustomEvent("sc:watchlist-change"));
 }
 
-export function toggleWatch(id: string): { added: boolean; list: string[] } {
+export function toggleWatch(
+  id: string,
+  opts?: { price?: number },
+): { added: boolean; list: string[] } {
   const cur = getWatchlist();
   if (cur.includes(id)) {
     const next = cur.filter((x) => x !== id);
     setWatchlist(next);
+    removeSnapshot(id);
     void mirrorRemove(id);
     return { added: false, list: next };
   }
   const next = cur.length >= MAX ? [...cur.slice(1), id] : [...cur, id];
   setWatchlist(next);
+  if (typeof opts?.price === "number") setSnapshotIfAbsent(id, opts.price);
   void mirrorAdd(id);
   return { added: true, list: next };
 }
