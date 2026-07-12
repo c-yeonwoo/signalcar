@@ -140,8 +140,8 @@ function HomePage() {
         />
       )}
 
-      {/* 가격 상승 알림 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
-      {riseTriggers.length > 0 && (
+      {/* 가격 상승 알림 — 재방문자에게, 스냅샷 대비 임계값 이상 오른 관심차가 있을 때만 */}
+      {revisit && riseTriggers.length > 0 && (
         <section className="px-5 mt-4">
           <div className="rounded-2xl border border-[color:var(--color-signal-wait)]/40 bg-[color:var(--color-signal-wait-soft)] p-4">
             <div className="flex items-center justify-between gap-2">
