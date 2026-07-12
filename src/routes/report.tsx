@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 import { addMyReview } from "@/lib/onboarding-store";
 import { earnCredit, getCreditBalance } from "@/lib/report-credits";
-import { Ticket, BadgeCheck, Users, ChevronRight } from "lucide-react";
+import { Ticket, BadgeCheck, Users } from "lucide-react";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
@@ -285,6 +285,19 @@ function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
       <p className="text-center text-[13px] text-slate-500 mt-1.5 leading-relaxed">
         계약 공유 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
       </p>
+
+      <div className="mt-4 mx-auto w-fit inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] px-3 py-1.5 text-[12.5px] font-bold">
+        <Ticket className="h-3.5 w-3.5" /> 협상 리포트 열람권 +1장 지급
+      </div>
+      {car && (
+        <Link
+          to="/car/$vehicleId"
+          params={{ vehicleId: car.id }}
+          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 text-[13.5px] font-semibold active:opacity-90"
+        >
+          지금 {car.model} 리포트 열러 가기
+        </Link>
+      )}
 
       {!saved ? (
         <section className="mt-7 sc-card p-5">
