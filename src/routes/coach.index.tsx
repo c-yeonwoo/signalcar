@@ -6,6 +6,16 @@ import { PageHeader } from "@/components/ui-kit";
 export const Route = createFileRoute("/coach/")({
   component: CoachHub,
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "AI 구매 상담 · 시그널카" },
+      { name: "description", content: "차종 추천·옵션 견적 상담을 AI가 도와드려요. 예산·주행환경 몇 가지로 지금 살 만한 차를 찾아보세요." },
+      { property: "og:title", content: "AI 구매 상담 · 시그널카" },
+      { property: "og:description", content: "차종 추천·옵션 견적을 AI가 상담해드려요." },
+      { property: "og:url", content: "/coach" },
+    ],
+    links: [{ rel: "canonical", href: "/coach" }],
+  }),
 });
 
 function CoachHub() {

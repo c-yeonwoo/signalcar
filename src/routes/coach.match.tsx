@@ -53,6 +53,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/coach/match")({
   component: MatchCoach,
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "차종 추천 상담 · 시그널카" },
+      { name: "description", content: "예산·주행환경·좌석수 6가지 답만으로 지금 살 만한 차 3대를 추려드려요." },
+      { property: "og:title", content: "차종 추천 상담 · 시그널카" },
+      { property: "og:description", content: "6가지 답으로 나에게 맞는 차 3대를 추려드려요." },
+      { property: "og:url", content: "/coach/match" },
+    ],
+    links: [{ rel: "canonical", href: "/coach/match" }],
+  }),
 });
 
 /* ============ Interview definition ============ */

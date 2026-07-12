@@ -15,6 +15,23 @@ export const Route = createFileRoute("/car/$vehicleId/history")({
     if (!car) throw notFound();
     return { car };
   },
+  head: ({ loaderData, params }) => {
+    const car = loaderData?.car;
+    const title = car ? `${car.model} 가격·프로모션 히스토리 · 시그널카` : "가격 히스토리 · 시그널카";
+    const desc = car
+      ? `${car.brand} ${car.model}의 계약가·할인 흐름을 한눈에.`
+      : "계약가·할인 흐름을 한눈에.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: `/car/${params.vehicleId}/history` },
+      ],
+      links: [{ rel: "canonical", href: `/car/${params.vehicleId}/history` }],
+    };
+  },
   notFoundComponent: () => (
     <ConsumerShell>
       <div className="p-10 text-center text-slate-500">차종을 찾을 수 없어요.</div>

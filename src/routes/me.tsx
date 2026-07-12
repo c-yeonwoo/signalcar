@@ -17,6 +17,16 @@ import { getCreditBalance, getUnlockedIds } from "@/lib/report-credits";
 export const Route = createFileRoute("/me")({
   component: MePage,
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "마이 · 시그널카" },
+      { name: "description", content: "관심 차량, 비교함, 열람권, 계약 제보 이력을 한 곳에서 관리해요." },
+      { property: "og:title", content: "마이 · 시그널카" },
+      { property: "og:description", content: "내 관심 차·열람권·제보 이력." },
+      { property: "og:url", content: "/me" },
+    ],
+    links: [{ rel: "canonical", href: "/me" }],
+  }),
 });
 
 function MePage() {

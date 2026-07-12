@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ReportRouteImport } from './routes/report'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as DiagnoseRouteImport } from './routes/diagnose'
@@ -30,9 +32,19 @@ import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as CarVehicleIdHistoryRouteImport } from './routes/car.$vehicleId.history'
 import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehicles.$vehicleId'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportRoute = ReportRouteImport.update({
   id: '/report',
   path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeRoute = MeRouteImport.update({
@@ -140,7 +152,9 @@ export interface FileRoutesByFullPath {
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/report': typeof ReportRoute
+  '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -160,7 +174,9 @@ export interface FileRoutesByTo {
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/report': typeof ReportRoute
+  '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -183,7 +199,9 @@ export interface FileRoutesById {
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/report': typeof ReportRoute
+  '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -207,7 +225,9 @@ export interface FileRouteTypes {
     | '/diagnose'
     | '/explore'
     | '/me'
+    | '/privacy'
     | '/report'
+    | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -227,7 +247,9 @@ export interface FileRouteTypes {
     | '/diagnose'
     | '/explore'
     | '/me'
+    | '/privacy'
     | '/report'
+    | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -249,7 +271,9 @@ export interface FileRouteTypes {
     | '/diagnose'
     | '/explore'
     | '/me'
+    | '/privacy'
     | '/report'
+    | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/promotions'
@@ -272,17 +296,33 @@ export interface RootRouteChildren {
   DiagnoseRoute: typeof DiagnoseRoute
   ExploreRoute: typeof ExploreRoute
   MeRoute: typeof MeRoute
+  PrivacyRoute: typeof PrivacyRoute
   ReportRoute: typeof ReportRoute
+  TermsRoute: typeof TermsRoute
   CarVehicleIdRoute: typeof CarVehicleIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/report': {
       id: '/report'
       path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/me': {
@@ -486,7 +526,9 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnoseRoute: DiagnoseRoute,
   ExploreRoute: ExploreRoute,
   MeRoute: MeRoute,
+  PrivacyRoute: PrivacyRoute,
   ReportRoute: ReportRoute,
+  TermsRoute: TermsRoute,
   CarVehicleIdRoute: CarVehicleIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
