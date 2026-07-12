@@ -143,7 +143,7 @@ function CoachPage() {
   return (
     <ConsumerShell>
       <PageHeader
-        eyebrow="AI 구매 코치"
+        eyebrow="옵션·견적 코치"
         title={<>차 잘 모르셔도 괜찮아요.<br />몇 가지만 여쭤볼게요</>}
       />
       <div className="px-5">
