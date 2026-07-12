@@ -47,6 +47,7 @@ import {
 } from "@/lib/mock-cars";
 import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
+import { NewVsUsedBadge } from "@/components/new-vs-used-badge";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/coach/match")({
@@ -574,6 +575,9 @@ function HeroCard({ rec, pop }: { rec: Rec; pop: boolean }) {
           </div>
           <div className="mt-2">
             <SnapshotBadge carId={car.id} currentPrice={car.priceFrom * 10000} variant="inline" />
+          </div>
+          <div className="mt-1.5">
+            <NewVsUsedBadge newPrice={car.priceFrom * 10000} bodyType={car.bodyType} variant="chip" />
           </div>
         </div>
         <MatchRing value={match} pop={pop} />
