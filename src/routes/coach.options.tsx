@@ -144,7 +144,7 @@ function CoachPage() {
   return (
     <ConsumerShell>
       <PageHeader
-        eyebrow="옵션·견적 코치"
+        eyebrow="옵션·견적 상담"
         title={<>차 잘 모르셔도 괜찮아요.<br />몇 가지만 여쭤볼게요</>}
       />
       <div className="px-5">
@@ -153,7 +153,7 @@ function CoachPage() {
           onChange={setTab}
           tabs={[
             { id: "interview", label: "AI 인터뷰" },
-            { id: "briefing", label: (<span>협상 브리핑 <Crown className="inline h-3 w-3 -mt-0.5 ml-0.5" /></span>) },
+            { id: "briefing", label: (<span>협상 리포트 <Crown className="inline h-3 w-3 -mt-0.5 ml-0.5" /></span>) },
           ]}
         />
       </div>
