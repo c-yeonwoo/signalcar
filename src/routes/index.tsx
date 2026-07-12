@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { MOCK_CARS, formatKRW, weeklyChangeFor } from "@/lib/mock-cars";
-import { PageHeader, SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
+import { SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import { getWatchlist } from "@/lib/watchlist-store";
@@ -132,13 +132,6 @@ function HomePage() {
       </div>
       {/* 관심차 없는 초기 유저에게만 상단에 신차 소식 배너 노출 */}
       {personalized && <NewsHero />}
-      {personalized && (
-        <PageHeader
-          eyebrow="오늘의 시그널"
-          title={<>어떤 차,<br />보고 계세요?</>}
-          subtitle="관심 차량의 실거래·프로모션·타이밍을 매일 갱신해드려요."
-        />
-      )}
 
       {/* 가격 상승 알림 — 재방문자에게, 스냅샷 대비 임계값 이상 오른 관심차가 있을 때만 */}
       {revisit && riseTriggers.length > 0 && (
@@ -299,10 +292,10 @@ function HomePage() {
           {personalized ? (
             <span className="inline-flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-brand-blue)]" />
-              취향 기반 추천
+              오늘의 시그널 · 추천 {recommend.length}대
             </span>
           ) : (
-            <>오늘의 시그널 · 관심 {recommend.length}대</>
+            <>내 관심 차 ({recommend.length})</>
           )}
         </SectionTitle>
 
