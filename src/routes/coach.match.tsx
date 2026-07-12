@@ -576,6 +576,9 @@ function HeroCard({ rec, pop }: { rec: Rec; pop: boolean }) {
           <div className="mt-2">
             <SnapshotBadge carId={car.id} currentPrice={car.priceFrom * 10000} variant="inline" />
           </div>
+          <div className="mt-1.5">
+            <NewVsUsedBadge newPrice={car.priceFrom * 10000} bodyType={car.bodyType} variant="chip" />
+          </div>
         </div>
         <MatchRing value={match} pop={pop} />
       </div>
