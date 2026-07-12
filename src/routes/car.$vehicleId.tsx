@@ -70,17 +70,22 @@ function CarDetailPage() {
 
   const [inCompare, setInCompare] = useState(false);
   const [watched, setWatched] = useState(false);
+  const [alertPrice, setAlertPrice] = useState<number | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
   useEffect(() => {
     const sync = () => {
       setInCompare(getCompareList().includes(car.id));
       setWatched(getWatchlist().includes(car.id));
+      setAlertPrice(getAlert(car.id)?.targetPrice ?? null);
     };
     sync();
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:watchlist-change", sync);
+    window.addEventListener("sc:alerts-change", sync);
     return () => {
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:watchlist-change", sync);
+      window.removeEventListener("sc:alerts-change", sync);
     };
   }, [car.id]);
 
@@ -93,6 +98,8 @@ function CarDetailPage() {
     const { added } = toggleWatch(car.id);
     toast.success(added ? "관심 차종에 담았어요" : "관심에서 뺐어요");
   };
+
+  const alertHit = alertPrice ? alertStatus(car.medianContract, alertPrice) : null;
 
   return (
     <ConsumerShell>
