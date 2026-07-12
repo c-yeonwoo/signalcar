@@ -163,6 +163,9 @@ function CarDetailPage() {
             </p>
           </div>
         </div>
+        <div className="mt-2">
+          <SnapshotBadge carId={car.id} currentPrice={car.medianContract} variant="hero" />
+        </div>
       </section>
 
       {/* SECTION 02 · Gallery */}
