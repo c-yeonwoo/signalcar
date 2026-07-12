@@ -146,7 +146,7 @@ function HomePage() {
                   가격 상승 알림
                 </span>
                 <span className="text-[10.5px] text-slate-500 truncate">
-                  · 임계값 {riseState.defaultPct}%
+                  · 기준 {riseState.defaultPct}%
                 </span>
               </div>
               <button
@@ -226,7 +226,7 @@ function HomePage() {
                   key={p}
                   onClick={() => {
                     setDefaultPct(p);
-                    toast.success(`임계값 ${p}%로 저장했어요`);
+                    toast.success(`알림 기준 ${p}%로 저장했어요`);
                   }}
                   className={`rounded-xl border py-2.5 text-[13px] font-bold tabular-nums transition ${
                     riseState.defaultPct === p
