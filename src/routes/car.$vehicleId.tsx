@@ -334,7 +334,7 @@ function CarDetailPage() {
             {inCompare ? "비교함에 담김" : "비교에 담기"}
           </button>
           <Link
-            to="/coach"
+            to="/coach/options"
             search={{ carId: car.id }}
             className="flex-[1.4] text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90"
           >
