@@ -12,14 +12,14 @@ function CoachHub() {
   return (
     <ConsumerShell>
       <PageHeader
-        eyebrow="AI 구매 코치"
+        eyebrow="AI 구매 상담"
         title={<>어떤 도움이<br />필요하세요?</>}
       />
 
       <section className="px-5 mt-5 space-y-3">
         <HubCard
           to="/coach/match"
-          eyebrow="차종 추천 인터뷰"
+          eyebrow="차종 추천 상담"
           title="아직 어떤 차 살지 모르겠어요"
           desc="라이프스타일·예산·주행환경 몇 가지만 답하면, 지금 살 만한 차 3대를 추려드려요."
           icon={<Compass className="h-5 w-5" />}
@@ -27,7 +27,7 @@ function CoachHub() {
         />
         <HubCard
           to="/coach/options"
-          eyebrow="옵션·견적 코치"
+          eyebrow="옵션·견적 상담"
           title="이미 찍어둔 차가 있어요"
           desc="그 차 기준으로 꼭 필요한 옵션만 골라 맞춤 견적서를 만들어드려요."
           icon={<SlidersHorizontal className="h-5 w-5" />}

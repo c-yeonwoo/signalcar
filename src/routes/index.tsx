@@ -358,7 +358,7 @@ function HomePage() {
               <div className="flex items-center gap-2 min-w-0">
                 <Search className="h-4 w-4 text-[color:var(--color-brand-blue)] shrink-0" />
                 <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)]">전체 전체 차량에서 찾기</div>
+                  <div className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)]">전체 차량에서 찾기</div>
                   <div className="text-[10.5px] text-slate-500 truncate">브랜드·바디·연료로 필터해 하트로 담기</div>
                 </div>
               </div>
