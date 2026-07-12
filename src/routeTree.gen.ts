@@ -27,6 +27,7 @@ import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
 import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-reports'
 import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
+import { Route as CarVehicleIdHistoryRouteImport } from './routes/car.$vehicleId.history'
 import { Route as AdminVehiclesVehicleIdRouteImport } from './routes/admin.vehicles.$vehicleId'
 
 const ReportRoute = ReportRouteImport.update({
@@ -119,6 +120,11 @@ const AdminBrandsRoute = AdminBrandsRouteImport.update({
   path: '/brands',
   getParentRoute: () => AdminRoute,
 } as any)
+const CarVehicleIdHistoryRoute = CarVehicleIdHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => CarVehicleIdRoute,
+} as any)
 const AdminVehiclesVehicleIdRoute = AdminVehiclesVehicleIdRouteImport.update({
   id: '/$vehicleId',
   path: '/$vehicleId',
@@ -139,12 +145,13 @@ export interface FileRoutesByFullPath {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
-  '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
   '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
+  '/car/$vehicleId/history': typeof CarVehicleIdHistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -158,12 +165,13 @@ export interface FileRoutesByTo {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
-  '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin': typeof AdminIndexRoute
   '/coach': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
+  '/car/$vehicleId/history': typeof CarVehicleIdHistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -180,12 +188,13 @@ export interface FileRoutesById {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
-  '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
   '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
   '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
+  '/car/$vehicleId/history': typeof CarVehicleIdHistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/coach/'
     | '/admin/vehicles/$vehicleId'
+    | '/car/$vehicleId/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/coach'
     | '/admin/vehicles/$vehicleId'
+    | '/car/$vehicleId/history'
   id:
     | '__root__'
     | '/'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/coach/'
     | '/admin/vehicles/$vehicleId'
+    | '/car/$vehicleId/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -261,7 +273,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   MeRoute: typeof MeRoute
   ReportRoute: typeof ReportRoute
-  CarVehicleIdRoute: typeof CarVehicleIdRoute
+  CarVehicleIdRoute: typeof CarVehicleIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -392,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBrandsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/car/$vehicleId/history': {
+      id: '/car/$vehicleId/history'
+      path: '/history'
+      fullPath: '/car/$vehicleId/history'
+      preLoaderRoute: typeof CarVehicleIdHistoryRouteImport
+      parentRoute: typeof CarVehicleIdRoute
+    }
     '/admin/vehicles/$vehicleId': {
       id: '/admin/vehicles/$vehicleId'
       path: '/$vehicleId'
@@ -446,6 +465,18 @@ const CoachRouteChildren: CoachRouteChildren = {
 
 const CoachRouteWithChildren = CoachRoute._addFileChildren(CoachRouteChildren)
 
+interface CarVehicleIdRouteChildren {
+  CarVehicleIdHistoryRoute: typeof CarVehicleIdHistoryRoute
+}
+
+const CarVehicleIdRouteChildren: CarVehicleIdRouteChildren = {
+  CarVehicleIdHistoryRoute: CarVehicleIdHistoryRoute,
+}
+
+const CarVehicleIdRouteWithChildren = CarVehicleIdRoute._addFileChildren(
+  CarVehicleIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -456,7 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   MeRoute: MeRoute,
   ReportRoute: ReportRoute,
-  CarVehicleIdRoute: CarVehicleIdRoute,
+  CarVehicleIdRoute: CarVehicleIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

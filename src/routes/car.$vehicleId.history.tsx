@@ -49,7 +49,7 @@ function HistoryPage() {
 
   // 월별 시계열 (오래된 → 최근). history[i]는 만원 단위 → 원 변환.
   const now = new Date();
-  const points = car.history.map((v, i) => {
+  const points = (car.history as number[]).map((v: number, i: number) => {
     const monthsAgo = car.history.length - 1 - i;
     const d = new Date(now.getFullYear(), now.getMonth() - monthsAgo, 1);
     const median = v * 10_000;
