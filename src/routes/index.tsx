@@ -13,6 +13,7 @@ import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
 import { DiscoveryCarousel } from "@/components/discovery-carousel";
 import { NewsHero } from "@/components/news-hero";
+import { WatchlistAddSheet } from "@/components/watchlist-add-sheet";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
@@ -35,6 +36,7 @@ function HomePage() {
   const [snaps, setSnaps] = useState<Record<string, WatchSnapshot>>({});
   const [riseTick, setRiseTick] = useState(0);
   const [showThresholdSheet, setShowThresholdSheet] = useState(false);
+  const [showAddSheet, setShowAddSheet] = useState(false);
 
   useEffect(() => {
     const sync = () => {
