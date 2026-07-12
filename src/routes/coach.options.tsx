@@ -20,7 +20,7 @@ import { Share2, TrendingDown, Percent } from "lucide-react";
 import { getPrefs } from "@/lib/onboarding-store";
 import { ProSignupCard } from "@/components/pro-signup-card";
 
-export const Route = createFileRoute("/coach")({
+export const Route = createFileRoute("/coach/options")({
   component: CoachPage,
   ssr: false,
   validateSearch: z.object({ carId: z.string().optional() }).parse,
