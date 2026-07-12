@@ -360,87 +360,123 @@ function DepreciationSection({
   bodyType: string;
   accentHex: string;
 }) {
-  const retention = retentionFor(bodyType);
-  const expected3y = Math.round((medianContract * retention) / 100000) * 100000;
-  const drop = medianContract - expected3y;
-  const dropPct = Math.round((drop / medianContract) * 100);
-  // 시세 밴드: ±8% (연식·주행·옵션 편차 반영)
-  const bandLow = Math.round((expected3y * 0.92) / 100000) * 100000;
-  const bandHigh = Math.round((expected3y * 1.08) / 100000) * 100000;
+  const nvu = computeNewVsUsed({ newPrice: medianContract, bodyType });
+  const { used1y, used3y, band1y, band3y, retention3y, verdict, headline, detail } = nvu;
 
-  // 정가 대비 5년 뒤 러프 잔가 (참고용)
-  const retention5y = Math.max(0.35, retention - 0.15);
-  const expected5y = Math.round((listPrice * retention5y) / 100000) * 100000;
-
-  // 눈금 위치: medianContract(신차 기준) 를 100%, bandLow/bandHigh 를 비율로.
+  // 3구간 앵커를 하나의 스케일 위에 배치
   const scaleMax = medianContract;
   const pct = (v: number) => Math.max(3, Math.min(97, (v / scaleMax) * 100));
+
+  const tone = VERDICT_TONE[verdict];
+  const toneVar =
+    tone === "buy"
+      ? "var(--color-signal-buy)"
+      : tone === "wait"
+        ? "var(--color-signal-wait)"
+        : "var(--color-brand-blue)";
+  const toneSoft =
+    tone === "buy"
+      ? "var(--color-signal-buy-soft)"
+      : tone === "wait"
+        ? "var(--color-signal-wait-soft)"
+        : "var(--color-brand-mist)";
+
+  // 정가 대비 5년 뒤 러프 잔가 (참고용)
+  const retention5y = Math.max(0.35, retention3y - 0.15);
+  const expected5y = Math.round((listPrice * retention5y) / 100000) * 100000;
 
   return (
     <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
       <div className="flex items-center justify-between">
-        <h3 className={SECTION_TITLE}>3년 후 예상 감가</h3>
+        <h3 className={SECTION_TITLE}>신차 vs 중고 · 지금 사도 될까?</h3>
         <span className={`text-[10.5px] ${MUTED}`}>참고 시세</span>
       </div>
       <p className={`text-[12px] ${MUTED} mt-1 leading-relaxed`}>
-        동일 모델의 최근 중고 시세 밴드로 3년 뒤 잔가를 추정했어요. 실제 매물은 주행·옵션·색상에 따라 편차가 큽니다.
+        이 차의 신차 실거래가와 무사고 중고 시세 밴드를 비교해 결정을 도와드려요.
       </p>
 
-      <div className="mt-5 grid grid-cols-2 gap-4">
-        <div>
-          <p className={`text-[11px] ${MUTED}`}>3년 후 예상가</p>
-          <p className={`${DISPLAY} ${NAVY} text-[22px] font-bold mt-0.5 tabular-nums`}>
-            {formatKRW(expected3y)}
-          </p>
-          <p className={`text-[11.5px] mt-0.5 ${MUTED} tabular-nums`}>
-            잔가율 {Math.round(retention * 100)}%
-          </p>
+      {/* 결정 배너 */}
+      <div
+        className="mt-4 rounded-2xl p-4 border"
+        style={{ backgroundColor: `color-mix(in oklab, ${toneVar} 8%, white)`, borderColor: `color-mix(in oklab, ${toneVar} 25%, transparent)` }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10.5px] font-bold tracking-wider"
+            style={{ backgroundColor: toneSoft, color: toneVar }}
+          >
+            {VERDICT_LABEL[verdict]}
+          </span>
+          <span className={`text-[13.5px] font-bold ${NAVY}`}>{headline}</span>
         </div>
-        <div>
-          <p className={`text-[11px] ${MUTED}`}>예상 감가액</p>
-          <p className={`${DISPLAY} text-[22px] font-bold mt-0.5 tabular-nums`} style={{ color: accentHex }}>
-            −{formatKRW(drop)}
-          </p>
-          <p className={`text-[11.5px] mt-0.5 ${MUTED} tabular-nums`}>
-            중앙 실거래가 대비 −{dropPct}%
-          </p>
-        </div>
+        <p className="text-[12.5px] text-slate-700 mt-2 leading-relaxed">{detail}</p>
+      </div>
+
+      {/* 3구간 앵커 */}
+      <div className="mt-5 grid grid-cols-3 gap-2">
+        <PriceAnchor label="신차 실거래" value={formatKRW(medianContract)} sub="지금" strong />
+        <PriceAnchor
+          label="1년 무사고 중고"
+          value={formatKRW(used1y)}
+          sub={`−${Math.round(((medianContract - used1y) / medianContract) * 100)}%`}
+          highlight={verdict === "used1y"}
+          highlightHex={toneVar}
+        />
+        <PriceAnchor
+          label="3년 무사고 중고"
+          value={formatKRW(used3y)}
+          sub={`잔가 ${Math.round(retention3y * 100)}%`}
+        />
       </div>
 
       {/* 시세 밴드 시각화 */}
       <div className="mt-6">
         <div className="flex items-baseline justify-between mb-2">
-          <span className={`text-[11px] ${MUTED}`}>3년 후 중고 시세 밴드</span>
+          <span className={`text-[11px] ${MUTED}`}>중고 시세 밴드 (1년 · 3년)</span>
           <span className={`text-[11px] font-semibold ${NAVY} tabular-nums`}>
-            {formatKRW(bandLow)} ~ {formatKRW(bandHigh)}
+            {formatKRW(band3y[0])} ~ {formatKRW(band1y[1])}
           </span>
         </div>
-        <div className="relative h-[6px] bg-[color:var(--color-brand-mist)] rounded-full">
+        <div className="relative h-[8px] bg-[color:var(--color-brand-mist)] rounded-full">
+          {/* 3년 밴드 (연한 회색) */}
+          <div
+            className="absolute inset-y-0 rounded-full bg-slate-300/70"
+            style={{ left: `${pct(band3y[0])}%`, right: `${100 - pct(band3y[1])}%` }}
+          />
+          {/* 1년 밴드 (accent) */}
           <div
             className="absolute inset-y-0 rounded-full"
             style={{
-              left: `${pct(bandLow)}%`,
-              right: `${100 - pct(bandHigh)}%`,
+              left: `${pct(band1y[0])}%`,
+              right: `${100 - pct(band1y[1])}%`,
               backgroundColor: accentHex,
-              opacity: 0.28,
+              opacity: 0.35,
             }}
           />
+          {/* 3년 중앙값 마커 */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-4 w-[2px] bg-slate-500"
+            style={{ left: `${pct(used3y)}%` }}
+          />
+          {/* 1년 중앙값 마커 */}
           <div
             className="absolute top-1/2 -translate-y-1/2 h-4 w-[2px]"
-            style={{ left: `${pct(expected3y)}%`, backgroundColor: accentHex }}
+            style={{ left: `${pct(used1y)}%`, backgroundColor: accentHex }}
           />
+          {/* 신차 마커 */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 h-3 w-[2px] bg-slate-400"
-            style={{ left: `calc(100% - 1px)` }}
+            className="absolute top-1/2 -translate-y-1/2 h-4 w-[2px]"
+            style={{ left: `calc(100% - 1px)`, backgroundColor: "var(--color-brand-navy)" }}
           />
         </div>
         <div className="mt-2 flex justify-between text-[10.5px] tabular-nums">
-          <span className={MUTED}>0</span>
-          <span className={MUTED}>지금 {formatKRW(medianContract)}</span>
+          <span className={MUTED}>3년</span>
+          <span className={MUTED}>1년</span>
+          <span className={NAVY + " font-semibold"}>신차 {formatKRW(medianContract)}</span>
         </div>
       </div>
 
-      {/* 5년 참고 + 신차 vs 1년 무사고 중고 힌트 */}
+      {/* 5년 참고 */}
       <div className={`mt-5 grid grid-cols-2 gap-4 pt-4 border-t ${HAIRLINE}`}>
         <Metric
           label="5년 후 러프 잔가"
@@ -448,16 +484,45 @@ function DepreciationSection({
           sub={`정가 대비 ${Math.round(retention5y * 100)}%`}
         />
         <Metric
-          label="신차 vs 1년 무사고 중고"
-          value={`약 −${Math.round((1 - (retention + 0.18)) * 100)}%`}
-          sub="1년 후 시세 추정"
+          label="3년 감가액"
+          value={`−${formatKRW(medianContract - used3y)}`}
+          sub={`중앙 실거래 대비 −${Math.round(((medianContract - used3y) / medianContract) * 100)}%`}
         />
       </div>
 
       <p className={`text-[10.5px] ${MUTED} mt-3 leading-relaxed`}>
-        * 잔가율은 국내 중고 시세 공개 데이터의 최근 밴드를 기반으로 한 추정치입니다. 실제 매입/매도가는 다를 수 있어요.
+        * 잔가율은 국내 중고 시세 공개 데이터의 최근 밴드를 기반으로 한 추정치입니다. 매물 주행·옵션·색상에 따라 편차가 커요.
       </p>
     </section>
+  );
+}
+
+function PriceAnchor({
+  label, value, sub, strong, highlight, highlightHex,
+}: {
+  label: string; value: string; sub?: string;
+  strong?: boolean; highlight?: boolean; highlightHex?: string;
+}) {
+  return (
+    <div
+      className={`rounded-xl border p-2.5 ${
+        highlight ? "" : "border-[color:var(--color-brand-mist)] bg-white"
+      }`}
+      style={
+        highlight
+          ? {
+              borderColor: `color-mix(in oklab, ${highlightHex} 40%, transparent)`,
+              backgroundColor: `color-mix(in oklab, ${highlightHex} 8%, white)`,
+            }
+          : undefined
+      }
+    >
+      <p className={`text-[10.5px] ${MUTED} leading-tight`}>{label}</p>
+      <p className={`${DISPLAY} ${strong ? NAVY : "text-slate-700"} text-[15px] font-bold mt-1 tabular-nums leading-none`}>
+        {value}
+      </p>
+      {sub && <p className={`text-[10.5px] mt-1 ${MUTED} tabular-nums`}>{sub}</p>}
+    </div>
   );
 }
 
