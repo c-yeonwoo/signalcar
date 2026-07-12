@@ -28,16 +28,16 @@ function DealReportsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">실계약가 제보</h1>
-        <p className="text-sm text-muted-foreground">사용자가 자발적으로 제보한 실계약가 (읽기 전용 · 다음 스프린트에서 제보 폼 추가)</p>
+        <h1 className="text-2xl font-bold tracking-tight">공유된 실계약가</h1>
+        <p className="text-sm text-muted-foreground">사용자가 자발적으로 공유한 실계약가 (읽기 전용 · 다음 스프린트에서 공유 폼 추가)</p>
       </div>
 
       <Card className="border-dashed">
         <CardContent className="p-4 flex gap-3 text-sm">
           <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-muted-foreground" />
           <div className="text-muted-foreground">
-            실계약가 데이터는 <strong>오직 사용자가 자발적으로 제보한 1차 데이터</strong>로만 구축합니다.
-            경쟁사(겟차·다나와·엔카) 크롤링은 금지되어 있습니다. 제보 폼과 OCR 파이프라인은 다음 스프린트에서 추가됩니다.
+            실계약가 데이터는 <strong>오직 사용자가 자발적으로 공유한 1차 데이터</strong>로만 구축합니다.
+            경쟁사(겟차·다나와·엔카) 크롤링은 금지되어 있습니다. 계약 공유 폼과 OCR 파이프라인은 다음 스프린트에서 추가됩니다.
           </div>
         </CardContent>
       </Card>
@@ -59,7 +59,7 @@ function DealReportsPage() {
             {isLoading ? (
               <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">불러오는 중…</TableCell></TableRow>
             ) : data.length === 0 ? (
-              <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">아직 제보된 실계약가가 없습니다.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">아직 공유된 실계약가가 없습니다.</TableCell></TableRow>
             ) : data.map((d) => (
               <TableRow key={d.id}>
                 <TableCell>{d.contract_month?.slice(0, 7) ?? "-"}</TableCell>

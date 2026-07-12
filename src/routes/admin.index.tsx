@@ -35,15 +35,15 @@ function Index() {
     { title: "차종", value: data?.vehicles, icon: Car, to: "/vehicles" as const },
     { title: "트림", value: data?.trims, icon: Layers, to: "/vehicles" as const },
     { title: "공식 프로모션", value: data?.promotions, icon: Tag, to: "/promotions" as const },
-    { title: "실계약가 제보", value: data?.deals, icon: FileText, to: "/deal-reports" as const },
+    { title: "공유된 실계약가", value: data?.deals, icon: FileText, to: "/deal-reports" as const },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">카탈로그 대시보드</h1>
+        <h1 className="text-2xl font-bold tracking-tight">전체 차량 대시보드</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          브랜드부터 실계약가 제보까지 한눈에 확인하세요.
+          브랜드부터 공유된 실계약가까지 한눈에 확인하세요.
         </p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
