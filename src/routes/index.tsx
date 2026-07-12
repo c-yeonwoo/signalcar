@@ -180,11 +180,26 @@ function HomePage() {
         </SectionTitle>
 
         {personalized && (
-          <p className="text-[12px] text-slate-500 -mt-1 mb-1">
-            {prefs
-              ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 카드의 하트로 관심에 담아보세요."
-              : "관심 있는 차의 하트를 눌러 담아두면, 매일 시그널을 알려드려요."}
-          </p>
+          <div className="-mt-1 mb-2 space-y-2">
+            <p className="text-[12px] text-slate-500">
+              {prefs
+                ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 카드의 하트로 관심에 담아보세요."
+                : "관심 있는 차의 하트를 눌러 담아두면, 매일 시그널을 알려드려요."}
+            </p>
+            <Link
+              to="/explore"
+              className="flex items-center justify-between rounded-xl bg-[color:var(--color-brand-blue)]/8 border border-[color:var(--color-brand-blue)]/20 px-3.5 py-2.5"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Search className="h-4 w-4 text-[color:var(--color-brand-blue)] shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)]">전체 카탈로그에서 찾기</div>
+                  <div className="text-[10.5px] text-slate-500 truncate">브랜드·바디·연료로 필터해 하트로 담기</div>
+                </div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-[color:var(--color-brand-blue)] shrink-0" />
+            </Link>
+          </div>
         )}
 
         {recommend.map((c) => {

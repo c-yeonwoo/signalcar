@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, Minus, ArrowUpRight } from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { PageHeader, SectionTitle, TabPills } from "@/components/ui-kit";
+import { CatalogGrid } from "@/components/catalog-grid";
 
 export const Route = createFileRoute("/explore")({
   component: ExplorePage,
@@ -11,9 +12,9 @@ export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
       { title: "차 둘러보기 · 시그널카" },
-      { name: "description", content: "판매 순위·세그먼트·브랜드로 관심 있는 신차 후보를 찾아보세요." },
+      { name: "description", content: "전체 차종을 검색·필터로 둘러보고 관심에 담으세요. 판매 순위·세그먼트·브랜드까지 한번에." },
       { property: "og:title", content: "차 둘러보기 · 시그널카" },
-      { property: "og:description", content: "판매 순위·세그먼트·브랜드로 관심 있는 신차 후보를 찾아보세요." },
+      { property: "og:description", content: "전체 차종 카탈로그·판매 순위·세그먼트·브랜드." },
     ],
   }),
 });
@@ -142,27 +143,30 @@ function RankDelta({ rank, prev }: { rank: number; prev: number }) {
   return <span className="text-[10px] font-semibold text-rose-500">−{Math.abs(diff)}</span>;
 }
 
-type Tab = "map" | "rank" | "brand";
+type Tab = "catalog" | "rank" | "brand" | "map";
 const TABS: { id: Tab; label: string }[] = [
+  { id: "catalog", label: "카탈로그" },
   { id: "rank", label: "판매 순위" },
   { id: "brand", label: "브랜드" },
   { id: "map", label: "세그먼트" },
 ];
 
 function ExplorePage() {
-  const [tab, setTab] = useState<Tab>("rank");
+  const [tab, setTab] = useState<Tab>("catalog");
 
   return (
     <ConsumerShell>
       <PageHeader
         eyebrow="탐색"
         title="차 둘러보기"
-        subtitle="판매 순위·브랜드·세그먼트로 후보를 좁혀 보세요."
+        subtitle="전체 차종을 검색·필터로 훑고 마음에 드는 차는 하트로 관심에 담아보세요."
       />
 
       <div className="px-5">
         <TabPills value={tab} onChange={setTab} tabs={TABS} />
       </div>
+
+      {tab === "catalog" && <CatalogGrid />}
 
       {tab === "map" && (
         <>
