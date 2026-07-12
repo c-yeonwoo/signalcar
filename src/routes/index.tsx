@@ -132,10 +132,10 @@ function HomePage() {
       <PageHeader
         eyebrow="오늘의 시그널"
         title={<>어떤 차,<br />보고 계세요?</>}
-        subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
+        subtitle="관심 차량의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
 
-      {/* 가격 상승 경보 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
+      {/* 가격 상승 알림 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
       {riseTriggers.length > 0 && (
         <section className="px-5 mt-4">
           <div className="rounded-2xl border border-[color:var(--color-signal-wait)]/40 bg-[color:var(--color-signal-wait-soft)] p-4">
@@ -143,16 +143,16 @@ function HomePage() {
               <div className="flex items-center gap-1.5 min-w-0">
                 <AlertTriangle className="h-3.5 w-3.5 text-[color:var(--color-signal-wait)] shrink-0" />
                 <span className="text-[11px] font-bold text-[color:var(--color-signal-wait)] tracking-wide">
-                  가격 상승 경보
+                  가격 상승 알림
                 </span>
                 <span className="text-[10.5px] text-slate-500 truncate">
-                  · 임계값 {riseState.defaultPct}%
+                  · 기준 {riseState.defaultPct}%
                 </span>
               </div>
               <button
                 onClick={() => setShowThresholdSheet(true)}
                 className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[10.5px] font-semibold text-slate-600 border border-slate-200"
-                aria-label="임계값 조정"
+                aria-label="알림 기준 조정"
               >
                 <Settings2 className="h-3 w-3" />
                 조정
@@ -186,7 +186,7 @@ function HomePage() {
                       <button
                         onClick={() => {
                           ackRise(t.carId, t.currentPrice);
-                          toast.success("경보를 확인 처리했어요");
+                          toast.success("알림을 확인 처리했어요");
                         }}
                         aria-label="확인"
                         className="rounded-full p-1 text-slate-400 hover:text-slate-600"
@@ -205,7 +205,7 @@ function HomePage() {
         </section>
       )}
 
-      {/* 임계값 조정 시트 */}
+      {/* 알림 기준 조정 시트 */}
       {showThresholdSheet && (
         <div
           className="fixed inset-0 z-50 bg-black/40 grid place-items-end"
@@ -216,9 +216,9 @@ function HomePage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-200" />
-            <h3 className="text-[15px] font-bold text-[color:var(--color-brand-navy)]">가격 상승 임계값</h3>
+            <h3 className="text-[15px] font-bold text-[color:var(--color-brand-navy)]">가격 상승 알림 기준</h3>
             <p className="mt-1 text-[12px] text-slate-500 leading-snug">
-              담은 시점 대비 몇 % 이상 오르면 경보를 띄울지 정해요.
+              담은 시점 대비 몇 % 이상 오르면 알림을 띄울지 정해요.
             </p>
             <div className="mt-4 grid grid-cols-4 gap-2">
               {[1, 2, 3, 5].map((p) => (
@@ -226,7 +226,7 @@ function HomePage() {
                   key={p}
                   onClick={() => {
                     setDefaultPct(p);
-                    toast.success(`임계값 ${p}%로 저장했어요`);
+                    toast.success(`알림 기준 ${p}%로 저장했어요`);
                   }}
                   className={`rounded-xl border py-2.5 text-[13px] font-bold tabular-nums transition ${
                     riseState.defaultPct === p
@@ -340,7 +340,7 @@ function HomePage() {
               취향 기반 추천
             </span>
           ) : (
-            <>관심 차종 {recommend.length}</>
+            <>관심 차량 {recommend.length}</>
           )}
         </SectionTitle>
 

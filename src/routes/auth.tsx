@@ -71,7 +71,7 @@ function AuthPage() {
         backLabel="나중에"
         eyebrow="Welcome"
         title={<>시그널카에<br />로그인</>}
-        subtitle="관심 차종 저장, 내 계약 공유, 협상 브리핑 요청은 로그인이 필요해요."
+        subtitle="관심 차량 저장, 내 계약 공유, 협상 브리핑 요청은 로그인이 필요해요."
       />
 
       <section className="px-5 mt-4">
