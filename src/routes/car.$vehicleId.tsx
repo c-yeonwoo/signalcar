@@ -86,7 +86,7 @@ function CarDetailPage() {
 
   const handleWatch = () => {
     const { added } = toggleWatch(car.id, { price: car.medianContract });
-    toast.success(added ? "관심 차종에 담았어요" : "관심에서 뺐어요");
+    toast.success(added ? "관심 차량에 담았어요" : "관심에서 뺐어요");
   };
 
   const alertHit = alertPrice ? alertStatus(car.medianContract, alertPrice) : null;
@@ -115,7 +115,7 @@ function CarDetailPage() {
           </button>
           <button
             onClick={handleWatch}
-            aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
+            aria-label={watched ? "관심 차량에서 빼기" : "관심 차량에 담기"}
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
               watched
                 ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"

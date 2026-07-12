@@ -68,7 +68,7 @@ export function SnapshotBadge({
       <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
         <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
           <Bookmark className="h-3 w-3 text-slate-400" />
-          내 스냅샷 · {relativeAgo(snap.at)}
+          담은 시점 가격 · {relativeAgo(snap.at)}
         </div>
         <div className="mt-1.5 flex items-end justify-between gap-2">
           <div className="text-[15px] font-bold text-[color:var(--color-brand-navy)] tabular-nums">
@@ -81,7 +81,7 @@ export function SnapshotBadge({
         </div>
         {breached && (
           <p className="mt-1.5 text-[10.5px] font-semibold text-[color:var(--color-signal-wait)]">
-            임계값 {threshold}% 초과 · 가격 상승 경보
+            알림 기준 {threshold}% 초과 · 가격 상승 알림
           </p>
         )}
       </div>
