@@ -18,7 +18,10 @@ import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CoachIndexRouteImport } from './routes/coach.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as CoachOptionsRouteImport } from './routes/coach.options'
+import { Route as CoachMatchRouteImport } from './routes/coach.match'
 import { Route as CarVehicleIdRouteImport } from './routes/car.$vehicleId'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
@@ -71,10 +74,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoachIndexRoute = CoachIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CoachRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const CoachOptionsRoute = CoachOptionsRouteImport.update({
+  id: '/options',
+  path: '/options',
+  getParentRoute: () => CoachRoute,
+} as any)
+const CoachMatchRoute = CoachMatchRouteImport.update({
+  id: '/match',
+  path: '/match',
+  getParentRoute: () => CoachRoute,
 } as any)
 const CarVehicleIdRoute = CarVehicleIdRouteImport.update({
   id: '/car/$vehicleId',
@@ -111,7 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/coach': typeof CoachRoute
+  '/coach': typeof CoachRouteWithChildren
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
@@ -122,13 +140,15 @@ export interface FileRoutesByFullPath {
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/coach/match': typeof CoachMatchRoute
+  '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
+  '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/coach': typeof CoachRoute
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
@@ -139,7 +159,10 @@ export interface FileRoutesByTo {
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/coach/match': typeof CoachMatchRoute
+  '/coach/options': typeof CoachOptionsRoute
   '/admin': typeof AdminIndexRoute
+  '/coach': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRoutesById {
@@ -147,7 +170,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/coach': typeof CoachRoute
+  '/coach': typeof CoachRouteWithChildren
   '/compare': typeof CompareRoute
   '/diagnose': typeof DiagnoseRoute
   '/explore': typeof ExploreRoute
@@ -158,7 +181,10 @@ export interface FileRoutesById {
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRoute
+  '/coach/match': typeof CoachMatchRoute
+  '/coach/options': typeof CoachOptionsRoute
   '/admin/': typeof AdminIndexRoute
+  '/coach/': typeof CoachIndexRoute
   '/admin/vehicles/$vehicleId': typeof AdminVehiclesVehicleIdRoute
 }
 export interface FileRouteTypes {
@@ -178,13 +204,15 @@ export interface FileRouteTypes {
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
+    | '/coach/match'
+    | '/coach/options'
     | '/admin/'
+    | '/coach/'
     | '/admin/vehicles/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/coach'
     | '/compare'
     | '/diagnose'
     | '/explore'
@@ -195,7 +223,10 @@ export interface FileRouteTypes {
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
+    | '/coach/match'
+    | '/coach/options'
     | '/admin'
+    | '/coach'
     | '/admin/vehicles/$vehicleId'
   id:
     | '__root__'
@@ -213,7 +244,10 @@ export interface FileRouteTypes {
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
+    | '/coach/match'
+    | '/coach/options'
     | '/admin/'
+    | '/coach/'
     | '/admin/vehicles/$vehicleId'
   fileRoutesById: FileRoutesById
 }
@@ -221,7 +255,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
-  CoachRoute: typeof CoachRoute
+  CoachRoute: typeof CoachRouteWithChildren
   CompareRoute: typeof CompareRoute
   DiagnoseRoute: typeof DiagnoseRoute
   ExploreRoute: typeof ExploreRoute
@@ -295,12 +329,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/coach/': {
+      id: '/coach/'
+      path: '/'
+      fullPath: '/coach/'
+      preLoaderRoute: typeof CoachIndexRouteImport
+      parentRoute: typeof CoachRoute
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/coach/options': {
+      id: '/coach/options'
+      path: '/options'
+      fullPath: '/coach/options'
+      preLoaderRoute: typeof CoachOptionsRouteImport
+      parentRoute: typeof CoachRoute
+    }
+    '/coach/match': {
+      id: '/coach/match'
+      path: '/match'
+      fullPath: '/coach/match'
+      preLoaderRoute: typeof CoachMatchRouteImport
+      parentRoute: typeof CoachRoute
     }
     '/car/$vehicleId': {
       id: '/car/$vehicleId'
@@ -377,11 +432,25 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface CoachRouteChildren {
+  CoachMatchRoute: typeof CoachMatchRoute
+  CoachOptionsRoute: typeof CoachOptionsRoute
+  CoachIndexRoute: typeof CoachIndexRoute
+}
+
+const CoachRouteChildren: CoachRouteChildren = {
+  CoachMatchRoute: CoachMatchRoute,
+  CoachOptionsRoute: CoachOptionsRoute,
+  CoachIndexRoute: CoachIndexRoute,
+}
+
+const CoachRouteWithChildren = CoachRoute._addFileChildren(CoachRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
-  CoachRoute: CoachRoute,
+  CoachRoute: CoachRouteWithChildren,
   CompareRoute: CompareRoute,
   DiagnoseRoute: DiagnoseRoute,
   ExploreRoute: ExploreRoute,
