@@ -34,14 +34,19 @@ export function DiscoveryCarousel() {
 
   return (
     <section className="mt-6">
-      <div className="px-5 flex items-baseline justify-between">
-        <div className="inline-flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-brand-blue)]" />
-          <span className="text-[13px] font-bold text-[color:var(--color-brand-navy)]">{headline}</span>
-        </div>
-        <span className="text-[11px] text-slate-400">가로 스크롤</span>
+      <div className="px-5 flex items-center justify-between gap-2">
+        <h3 className="text-[13px] font-bold text-[color:var(--color-brand-navy)]">
+          {headline}
+        </h3>
+        <span className="inline-flex items-center gap-1 text-[11px] text-[color:var(--color-brand-blue)]">
+          <Sparkles className="h-3 w-3" />
+          발견
+        </span>
       </div>
-      <div className="mt-3 pl-5 flex gap-3 overflow-x-auto pb-2 no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
+      <div
+        className="mt-3 flex gap-3 overflow-x-auto pb-2 px-5 no-scrollbar"
+        style={{ scrollSnapType: "x mandatory", scrollPaddingLeft: "20px" }}
+      >
         {items.map(({ car, reason }) => {
           const watched = watchIds.includes(car.id);
           return (
@@ -79,7 +84,6 @@ export function DiscoveryCarousel() {
             </Link>
           );
         })}
-        <div className="shrink-0 w-2" />
       </div>
     </section>
   );
