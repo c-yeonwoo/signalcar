@@ -108,18 +108,34 @@ function CarDetailPage() {
         <Link to="/" className={`inline-flex items-center gap-1 text-[12px] ${MUTED}`}>
           <ArrowLeft className="h-3.5 w-3.5" /> 홈
         </Link>
-        <button
-          onClick={handleWatch}
-          aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
-            watched
-              ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
-              : "bg-slate-100 text-slate-500"
-          }`}
-        >
-          <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
-          {watched ? "관심 담김" : "관심 담기"}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setAlertOpen(true)}
+            aria-label="목표가 알림 설정"
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+              alertHit?.hit
+                ? "bg-[color:var(--color-signal-buy)] text-white"
+                : alertPrice
+                  ? "bg-[color:var(--color-brand-blue)]/12 text-[color:var(--color-brand-blue)]"
+                  : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            {alertHit?.hit ? <Target className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
+            {alertHit?.hit ? "목표가 도달" : alertPrice ? "알림 켜짐" : "목표가 알림"}
+          </button>
+          <button
+            onClick={handleWatch}
+            aria-label={watched ? "관심 차종에서 빼기" : "관심 차종에 담기"}
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+              watched
+                ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
+            {watched ? "관심 담김" : "관심 담기"}
+          </button>
+        </div>
       </div>
 
       {/* SECTION 01 · Model header */}
