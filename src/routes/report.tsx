@@ -8,6 +8,8 @@ import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 import { addMyReview } from "@/lib/onboarding-store";
+import { earnCredit, getCreditBalance } from "@/lib/report-credits";
+import { Ticket, BadgeCheck, Users } from "lucide-react";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
@@ -69,8 +71,9 @@ function ReportPage() {
         // 파일 경로는 별도로 관리하거나 워커가 storage 이벤트로 알림. 여기선 클라 참조만.
       });
       if (error) throw error;
+      earnCredit(1);
       setStep("done");
-      toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요" : "고마워요! 리포트가 열렸어요");
+      toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요 · 열람권 +1장" : "고마워요! 열람권 +1장이 지급됐어요");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "공유 실패");
     } finally {
@@ -107,6 +110,34 @@ function ReportPage() {
           />
 
           <section className="px-5 space-y-3">
+            {/* 명확한 보상 3종 */}
+            <div className="rounded-2xl border border-[color:var(--color-brand-mist)] overflow-hidden">
+              <div className="bg-[color:var(--color-brand-navy)] text-white px-4 py-3">
+                <div className="text-[10.5px] font-semibold text-white/60 uppercase tracking-wider">
+                  공유 1건 완료 시 즉시 지급
+                </div>
+                <div className="text-[15px] font-bold mt-0.5">받게 될 보상 3가지</div>
+              </div>
+              <div className="divide-y divide-slate-100 bg-white">
+                <RewardRow
+                  icon={<Ticket className="h-4 w-4" />}
+                  title="협상 리포트 열람권 +1장"
+                  desc="어느 차종에나 사용 가능 · 한 번 열면 계속 열람"
+                  highlight
+                />
+                <RewardRow
+                  icon={<BadgeCheck className="h-4 w-4" />}
+                  title="실제 구매자 배지"
+                  desc="내 리뷰에 인증 배지가 붙어 노출 우선순위 상승"
+                />
+                <RewardRow
+                  icon={<Users className="h-4 w-4" />}
+                  title="다음 구매자에게 실시세 기여"
+                  desc={`현재 보유 열람권 ${getCreditBalance()}장`}
+                />
+              </div>
+            </div>
+
             <div className="sc-card p-5 flex gap-3">
               <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-blue)]/10 grid place-items-center flex-shrink-0">
                 <ShieldCheck className="h-5 w-5 text-[color:var(--color-brand-blue)]" />
@@ -191,6 +222,38 @@ function ReportPage() {
   );
 }
 
+function RewardRow({
+  icon,
+  title,
+  desc,
+  highlight,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="px-4 py-3 flex items-start gap-3">
+      <div
+        className={`w-8 h-8 rounded-lg grid place-items-center flex-shrink-0 ${
+          highlight
+            ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+            : "bg-slate-100 text-slate-500"
+        }`}
+      >
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className={`text-[13px] font-semibold text-[color:var(--color-brand-navy)] ${highlight ? "" : ""}`}>
+          {title}
+        </div>
+        <div className="text-[11.5px] text-slate-500 mt-0.5 leading-relaxed">{desc}</div>
+      </div>
+    </div>
+  );
+}
+
 /* ============ 제보 완료 → 리뷰 남기기 트리거 ============ */
 
 function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
@@ -222,6 +285,19 @@ function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
       <p className="text-center text-[13px] text-slate-500 mt-1.5 leading-relaxed">
         계약 공유 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
       </p>
+
+      <div className="mt-4 mx-auto w-fit inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] px-3 py-1.5 text-[12.5px] font-bold">
+        <Ticket className="h-3.5 w-3.5" /> 협상 리포트 열람권 +1장 지급
+      </div>
+      {car && (
+        <Link
+          to="/car/$vehicleId"
+          params={{ vehicleId: car.id }}
+          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 text-[13.5px] font-semibold active:opacity-90"
+        >
+          지금 {car.model} 리포트 열러 가기
+        </Link>
+      )}
 
       {!saved ? (
         <section className="mt-7 sc-card p-5">

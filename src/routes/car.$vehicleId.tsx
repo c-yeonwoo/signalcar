@@ -13,6 +13,7 @@ import { alertStatus, getAlert } from "@/lib/alerts-store";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
+import { ReportCreditCard } from "@/components/report-credit-card";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -251,6 +252,9 @@ function CarDetailPage() {
 
       {/* SECTION 05 · Benefits */}
       <BenefitsSection benefits={car.benefits} accentHex={accent.hex} />
+
+      {/* SECTION 05.2 · Give-to-get gated report */}
+      <ReportCreditCard carId={car.id} brand={car.brand} model={car.model} />
 
       {/* SECTION 05.5 · Depreciation & used market band */}
       <DepreciationSection
