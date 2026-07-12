@@ -130,9 +130,6 @@ function HomePage() {
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
         <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
       </div>
-      {/* 관심차 없는 초기 유저에게만 상단에 신차 소식 배너 노출 */}
-      {personalized && <NewsHero />}
-
       {/* 가격 상승 알림 — 재방문자에게, 스냅샷 대비 임계값 이상 오른 관심차가 있을 때만 */}
       {revisit && riseTriggers.length > 0 && (
         <section className="px-5 mt-4">
