@@ -15,7 +15,7 @@ export const Route = createFileRoute("/compare")({
 function ComparePage() {
   const [selected, setSelected] = useState<string[]>([]);
 
-  // 초기 하이드레이션: 비교함(로컬스토리지) → 없으면 관심 차종 2대 기본
+  // 초기 하이드레이션: 비교함(로컬스토리지) → 없으면 관심 차량 2대 기본
   useEffect(() => {
     const stored = getCompareList();
     if (stored.length >= 1) setSelected(stored);
@@ -51,7 +51,7 @@ function ComparePage() {
         backTo="/"
         backLabel="홈"
         eyebrow="Compare"
-        title="관심 차종 비교"
+        title="관심 차량 비교"
         subtitle="최대 3대까지 나란히 보고, 항목별로 어떤 차가 유리한지 확인해요."
       />
 

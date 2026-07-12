@@ -132,7 +132,7 @@ function HomePage() {
       <PageHeader
         eyebrow="오늘의 시그널"
         title={<>어떤 차,<br />보고 계세요?</>}
-        subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
+        subtitle="관심 차량의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
 
       {/* 가격 상승 경보 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
@@ -340,7 +340,7 @@ function HomePage() {
               취향 기반 추천
             </span>
           ) : (
-            <>관심 차종 {recommend.length}</>
+            <>관심 차량 {recommend.length}</>
           )}
         </SectionTitle>
 
