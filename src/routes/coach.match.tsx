@@ -252,7 +252,7 @@ function MatchCoach() {
   return (
     <ConsumerShell>
       <PageHeader
-        eyebrow="차종 추천 코치"
+        eyebrow="차종 추천 상담"
         title={
           done ? (
             <>답변을 종합해봤어요.<br />이 3대가 잘 맞아요</>
@@ -581,7 +581,7 @@ function HeroCard({ rec, pop }: { rec: Rec; pop: boolean }) {
           {car.fuels.map((f) => FUEL_LABEL[f]).join(" · ")}
         </div>
         <div className="inline-flex items-center gap-1 text-white/95 font-semibold">
-          {hasDetail ? "상세·시그널 보기" : "카탈로그 열기"}
+          {hasDetail ? "상세·시그널 보기" : "전체 차량 열기"}
           <ArrowRight className="h-3.5 w-3.5" />
         </div>
       </div>

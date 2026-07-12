@@ -13,7 +13,7 @@ import {
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 
 /**
- * 전체 차량 카탈로그 그리드.
+ * 전체 차량 전체 차량 그리드.
  * - 검색 · 바디타입 · 가격 · 연료 필터
  * - 각 카드 하트 = 관심 담기 (상세 유무와 무관하게 저장 가능)
  * - 상세가 있는 차만 카드 전체가 링크. 없으면 "곧 오픈" 표시.

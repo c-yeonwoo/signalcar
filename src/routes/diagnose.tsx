@@ -131,7 +131,7 @@ function DiagnosePage() {
           <div className="sc-card p-6 text-center">
             <Loader2 className="h-6 w-6 mx-auto animate-spin text-[color:var(--color-brand-blue)]" />
             <div className="mt-3 text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
-              코치가 분석 중이에요…
+              상담이 분석 중이에요…
             </div>
             <p className="text-[12.5px] text-slate-500 mt-1">
               실거래 분포와 비교해서 상/중/하 판정을 준비하고 있어요. 보통 1~2분이면 끝나요.

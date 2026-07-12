@@ -19,7 +19,7 @@ const items = [
   { title: "브랜드", url: "/admin/brands", icon: Building2 },
   { title: "차종·트림", url: "/admin/vehicles", icon: Car },
   { title: "공식 프로모션", url: "/admin/promotions", icon: Tag },
-  { title: "실계약가 제보", url: "/admin/deal-reports", icon: FileText },
+  { title: "내 계약 공유", url: "/admin/deal-reports", icon: FileText },
 ];
 
 export function AppSidebar() {
@@ -39,7 +39,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>카탈로그</SidebarGroupLabel>
+          <SidebarGroupLabel>전체 차량</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

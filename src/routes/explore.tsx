@@ -14,7 +14,7 @@ export const Route = createFileRoute("/explore")({
       { title: "차 둘러보기 · 시그널카" },
       { name: "description", content: "전체 차종을 검색·필터로 둘러보고 관심에 담으세요. 판매 순위·세그먼트·브랜드까지 한번에." },
       { property: "og:title", content: "차 둘러보기 · 시그널카" },
-      { property: "og:description", content: "전체 차종 카탈로그·판매 순위·세그먼트·브랜드." },
+      { property: "og:description", content: "전체 차종 전체 차량·판매 순위·세그먼트·브랜드." },
     ],
   }),
 });
@@ -145,7 +145,7 @@ function RankDelta({ rank, prev }: { rank: number; prev: number }) {
 
 type Tab = "catalog" | "rank" | "brand" | "map";
 const TABS: { id: Tab; label: string }[] = [
-  { id: "catalog", label: "카탈로그" },
+  { id: "catalog", label: "전체 차량" },
   { id: "rank", label: "판매 순위" },
   { id: "brand", label: "브랜드" },
   { id: "map", label: "세그먼트" },

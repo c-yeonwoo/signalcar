@@ -358,7 +358,7 @@ function HomePage() {
               <div className="flex items-center gap-2 min-w-0">
                 <Search className="h-4 w-4 text-[color:var(--color-brand-blue)] shrink-0" />
                 <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)]">전체 카탈로그에서 찾기</div>
+                  <div className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)]">전체 전체 차량에서 찾기</div>
                   <div className="text-[10.5px] text-slate-500 truncate">브랜드·바디·연료로 필터해 하트로 담기</div>
                 </div>
               </div>
@@ -510,7 +510,7 @@ function HomePage() {
 
         <div className="pt-2 pb-4 text-center">
           <Link to="/coach/options" className="text-[13px] text-[color:var(--color-brand-blue)] font-medium">
-            AI 코치와 견적 뽑아보기 →
+            AI 상담와 견적 뽑아보기 →
           </Link>
         </div>
       </section>
@@ -543,8 +543,8 @@ function HomePage() {
       <section className="px-5 mt-5 grid grid-cols-2 gap-2.5">
         <Link to="/report" className="sc-card p-3.5 active:scale-[0.99] transition">
           <Camera className="h-4 w-4 text-[color:var(--color-brand-blue)]" />
-          <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">계약서 제보</div>
-          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">1건 제보 → 리포트 열람권</div>
+          <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">계약서 공유</div>
+          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">1건 공유 → 리포트 열람권</div>
         </Link>
         <Link to="/diagnose" className="sc-card p-3.5 active:scale-[0.99] transition">
           <ScanLine className="h-4 w-4 text-[color:var(--color-brand-blue)]" />

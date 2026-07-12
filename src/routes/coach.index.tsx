@@ -39,8 +39,8 @@ function CoachHub() {
             <Sparkles className="h-4 w-4" />
           </div>
           <p className="text-[12px] text-slate-500 leading-relaxed">
-            질문 결이 달라서 두 코치를 분리했어요. <b>추천 코치</b>는 "어떤 차?"에,{" "}
-            <b>옵션 코치</b>는 "이 차, 어떻게 뽑을까?"에 집중합니다.
+            질문 결이 달라서 두 상담을 분리했어요. <b>추천 상담</b>는 "어떤 차?"에,{" "}
+            <b>옵션 상담</b>는 "이 차, 어떻게 뽑을까?"에 집중합니다.
           </p>
         </div>
       </section>
