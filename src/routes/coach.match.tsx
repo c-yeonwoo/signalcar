@@ -4,7 +4,7 @@ import { ChevronLeft, RotateCcw, Sparkles, Heart, ArrowRight } from "lucide-reac
 import { ConsumerShell } from "@/components/consumer-shell";
 import { PageHeader } from "@/components/ui-kit";
 import { CATALOG, catalogHasDetail, FUEL_LABEL, type CatalogEntry, type Fuel } from "@/lib/mock-cars";
-import { toggleWatchlist, isWatched } from "@/lib/watchlist-store";
+import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/coach/match")({
@@ -285,14 +285,14 @@ function QuestionCard({
 
 function RecCard({ rank, car, score, reason }: { rank: number; car: CatalogEntry; score: number; reason: string }) {
   const hasDetail = catalogHasDetail(car.id);
-  const [watched, setWatched] = useState(() => isWatched(car.id));
+  const [watched, setWatched] = useState(() => getWatchlist().includes(car.id));
 
   const onHeart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const now = toggleWatchlist(car.id);
-    setWatched(now);
-    toast.success(now ? "관심 차량에 담았어요" : "관심에서 뺐어요");
+    const { added } = toggleWatch(car.id);
+    setWatched(added);
+    toast.success(added ? "관심 차량에 담았어요" : "관심에서 뺐어요");
   };
 
   const inner = (
