@@ -1,6 +1,7 @@
 import { Bookmark, Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { useHydrated } from "@tanstack/react-router";
 import { formatKRW } from "@/lib/mock-cars";
-import { getSnapshot, relativeAgo } from "@/lib/watch-snapshot";
+import { getSnapshot, relativeAgo, type WatchSnapshot } from "@/lib/watch-snapshot";
 import { getThresholdPct } from "@/lib/rise-alerts";
 import { useEffect, useState } from "react";
 
@@ -15,28 +16,32 @@ export function SnapshotBadge({
   currentPrice: number;
   variant?: Variant;
 }) {
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const bump = () => setTick((n) => n + 1);
-    window.addEventListener("sc:watch-snapshot-change", bump);
-    window.addEventListener("sc:watchlist-change", bump);
-    window.addEventListener("sc:rise-alerts-change", bump);
-    return () => {
-      window.removeEventListener("sc:watch-snapshot-change", bump);
-      window.removeEventListener("sc:watchlist-change", bump);
-      window.removeEventListener("sc:rise-alerts-change", bump);
-    };
-  }, []);
-  void tick;
+  const hydrated = useHydrated();
+  const [snap, setSnap] = useState<WatchSnapshot | null>(null);
+  const [threshold, setThreshold] = useState<number>(0);
 
-  const snap = getSnapshot(carId);
-  if (!snap) return null;
+  useEffect(() => {
+    const sync = () => {
+      setSnap(getSnapshot(carId));
+      setThreshold(getThresholdPct(carId));
+    };
+    sync();
+    window.addEventListener("sc:watch-snapshot-change", sync);
+    window.addEventListener("sc:watchlist-change", sync);
+    window.addEventListener("sc:rise-alerts-change", sync);
+    return () => {
+      window.removeEventListener("sc:watch-snapshot-change", sync);
+      window.removeEventListener("sc:watchlist-change", sync);
+      window.removeEventListener("sc:rise-alerts-change", sync);
+    };
+  }, [carId]);
+
+  if (!hydrated || !snap) return null;
 
   const diff = currentPrice - snap.price;
   const pct = snap.price > 0 ? (diff / snap.price) * 100 : 0;
   const same = Math.abs(diff) < 50_000;
   const dir: "down" | "up" | "flat" = same ? "flat" : diff < 0 ? "down" : "up";
-  const threshold = getThresholdPct(carId);
   const breached = dir === "up" && pct >= threshold;
 
   const tone =
