@@ -130,9 +130,6 @@ function HomePage() {
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
         <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
       </div>
-      {/* 관심차 없는 초기 유저에게만 상단에 신차 소식 배너 노출 */}
-      {personalized && <NewsHero />}
-
       {/* 가격 상승 알림 — 재방문자에게, 스냅샷 대비 임계값 이상 오른 관심차가 있을 때만 */}
       {revisit && riseTriggers.length > 0 && (
         <section className="px-5 mt-4">
@@ -492,8 +489,23 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 관심차 있는 유저: 신차 소식 배너를 관심차 아래에 노출 */}
-      {!personalized && <NewsHero />}
+      {/* 신규 유저(관심차 없음): 하단 웰컴 카드로 신차 소식 큐레이션 노출 */}
+      {personalized && (
+        <section className="px-5 mt-6">
+          <div className="sc-card p-4 bg-[color:var(--color-brand-blue)]/5 border-[color:var(--color-brand-blue)]/15">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-brand-blue)]" />
+              <span className="text-[11.5px] font-semibold text-[color:var(--color-brand-blue)] tracking-wide">
+                시그널카에 오신 걸 환영해요
+              </span>
+            </div>
+            <p className="text-[12.5px] text-slate-600 leading-snug mb-3">
+              요즘 뜨는 신차 소식부터 훑어보세요. 마음에 드는 차는 하트로 담아두면 매일 시그널을 알려드려요.
+            </p>
+            <NewsHero />
+          </div>
+        </section>
+      )}
 
       {/* 발견 — 구경하다 담기 */}
       <DiscoveryCarousel />
