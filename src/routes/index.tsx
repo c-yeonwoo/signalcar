@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target, Bookmark } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target, Bookmark, AlertTriangle, X, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -16,6 +16,7 @@ import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
 import { getAllSnapshots, relativeAgo, type WatchSnapshot } from "@/lib/watch-snapshot";
+import { computeTriggers, ackRise, getRiseState, setDefaultPct, setCarPct, type RiseTrigger } from "@/lib/rise-alerts";
 import type { MockCar } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/")({
@@ -31,6 +32,8 @@ function HomePage() {
   const [alertCar, setAlertCar] = useState<MockCar | null>(null);
   const [lastVisit, setLastVisit] = useState<number | null>(null);
   const [snaps, setSnaps] = useState<Record<string, WatchSnapshot>>({});
+  const [riseTick, setRiseTick] = useState(0);
+  const [showThresholdSheet, setShowThresholdSheet] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -47,6 +50,8 @@ function HomePage() {
     window.addEventListener("sc:prefs-change", sync);
     window.addEventListener("sc:alerts-change", sync);
     window.addEventListener("sc:watch-snapshot-change", sync);
+    const bump = () => setRiseTick((n) => n + 1);
+    window.addEventListener("sc:rise-alerts-change", bump);
     // "지난 방문 이후" 계산은 방문 스탬프를 갱신하기 전 값이어야 함
     setLastVisit(getLastVisit());
     stampLastVisit();
@@ -56,6 +61,7 @@ function HomePage() {
       window.removeEventListener("sc:prefs-change", sync);
       window.removeEventListener("sc:alerts-change", sync);
       window.removeEventListener("sc:watch-snapshot-change", sync);
+      window.removeEventListener("sc:rise-alerts-change", bump);
     };
   }, []);
 
@@ -106,6 +112,15 @@ function HomePage() {
 
   const revisit = daysSince(lastVisit) >= 1 && lastVisit !== null;
 
+  // 스냅샷 대비 임계값 이상 오른 관심차 계산 (인앱 배너)
+  const riseTriggers: RiseTrigger[] = (() => {
+    void riseTick;
+    return computeTriggers(
+      watched.map((c) => ({ id: c.id, price: c.medianContract, snapshot: snaps[c.id] ?? null })),
+    );
+  })();
+  const riseState = (() => { void riseTick; return getRiseState(); })();
+
   return (
     <ConsumerShell>
       <OnboardingModal />
@@ -119,6 +134,151 @@ function HomePage() {
         title={<>어떤 차,<br />보고 계세요?</>}
         subtitle="관심 차종의 실거래·프로모션·타이밍을 매일 갱신해드려요."
       />
+
+      {/* 가격 상승 경보 — 스냅샷 대비 임계값(기본 2%) 이상 오른 관심차 */}
+      {riseTriggers.length > 0 && (
+        <section className="px-5 mt-4">
+          <div className="rounded-2xl border border-[color:var(--color-signal-wait)]/40 bg-[color:var(--color-signal-wait-soft)] p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <AlertTriangle className="h-3.5 w-3.5 text-[color:var(--color-signal-wait)] shrink-0" />
+                <span className="text-[11px] font-bold text-[color:var(--color-signal-wait)] tracking-wide">
+                  가격 상승 경보
+                </span>
+                <span className="text-[10.5px] text-slate-500 truncate">
+                  · 임계값 {riseState.defaultPct}%
+                </span>
+              </div>
+              <button
+                onClick={() => setShowThresholdSheet(true)}
+                className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[10.5px] font-semibold text-slate-600 border border-slate-200"
+                aria-label="임계값 조정"
+              >
+                <Settings2 className="h-3 w-3" />
+                조정
+              </button>
+            </div>
+            <p className="mt-1.5 text-[12.5px] text-slate-700 leading-snug">
+              담은 이후 {riseTriggers.length}대의 가격이 기준치 이상 올랐어요.
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {riseTriggers.map((t) => {
+                const car = watched.find((c) => c.id === t.carId);
+                if (!car) return null;
+                return (
+                  <li
+                    key={t.carId}
+                    className="flex items-center justify-between gap-2 rounded-xl bg-white px-3 py-2 border border-[color:var(--color-signal-wait)]/25"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[12.5px] font-bold text-[color:var(--color-brand-navy)] truncate">
+                        {car.model}
+                      </div>
+                      <div className="text-[10.5px] text-slate-500 tabular-nums">
+                        {formatKRW(t.snapshotPrice)} → {formatKRW(t.currentPrice)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-signal-wait)] px-2 py-0.5 text-[10.5px] font-bold text-white tabular-nums">
+                        <TrendingUp className="h-3 w-3" />
+                        +{t.pct.toFixed(1)}%
+                      </span>
+                      <button
+                        onClick={() => {
+                          ackRise(t.carId, t.currentPrice);
+                          toast.success("경보를 확인 처리했어요");
+                        }}
+                        aria-label="확인"
+                        className="rounded-full p-1 text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-2 text-[10.5px] text-slate-500">
+              푸시·이메일 알림은 곧 지원돼요. 지금은 방문 시 배너로 알려드려요.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* 임계값 조정 시트 */}
+      {showThresholdSheet && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 grid place-items-end"
+          onClick={() => setShowThresholdSheet(false)}
+        >
+          <div
+            className="w-full max-w-[480px] mx-auto bg-white rounded-t-3xl p-5 pb-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-200" />
+            <h3 className="text-[15px] font-bold text-[color:var(--color-brand-navy)]">가격 상승 임계값</h3>
+            <p className="mt-1 text-[12px] text-slate-500 leading-snug">
+              담은 시점 대비 몇 % 이상 오르면 경보를 띄울지 정해요.
+            </p>
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              {[1, 2, 3, 5].map((p) => (
+                <button
+                  key={p}
+                  onClick={() => {
+                    setDefaultPct(p);
+                    toast.success(`임계값 ${p}%로 저장했어요`);
+                  }}
+                  className={`rounded-xl border py-2.5 text-[13px] font-bold tabular-nums transition ${
+                    riseState.defaultPct === p
+                      ? "border-[color:var(--color-brand-blue)] bg-[color:var(--color-brand-blue)]/10 text-[color:var(--color-brand-blue)]"
+                      : "border-slate-200 text-slate-600"
+                  }`}
+                >
+                  {p}%
+                </button>
+              ))}
+            </div>
+            {watched.length > 0 && (
+              <div className="mt-5">
+                <div className="text-[11px] font-semibold text-slate-500 mb-2">차량별 개별 설정</div>
+                <ul className="space-y-1.5 max-h-[240px] overflow-y-auto">
+                  {watched.map((c) => {
+                    const pct = riseState.perCar[c.id] ?? riseState.defaultPct;
+                    return (
+                      <li key={c.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-100 px-3 py-2">
+                        <span className="text-[12.5px] font-semibold text-[color:var(--color-brand-navy)] truncate">
+                          {c.model}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 5].map((p) => (
+                            <button
+                              key={p}
+                              onClick={() => setCarPct(c.id, p)}
+                              className={`rounded-md px-2 py-0.5 text-[11px] font-bold tabular-nums ${
+                                pct === p
+                                  ? "bg-[color:var(--color-brand-navy)] text-white"
+                                  : "bg-slate-100 text-slate-500"
+                              }`}
+                            >
+                              {p}%
+                            </button>
+                          ))}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+            <button
+              onClick={() => setShowThresholdSheet(false)}
+              className="mt-5 w-full rounded-xl bg-[color:var(--color-brand-navy)] py-3 text-[13.5px] font-bold text-white"
+            >
+              완료
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 주간 시그널 다이제스트 배너 (관심차 있을 때만) */}
       {digest && (
