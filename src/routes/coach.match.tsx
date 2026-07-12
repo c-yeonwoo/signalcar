@@ -27,6 +27,7 @@ import {
   type Fuel,
 } from "@/lib/mock-cars";
 import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
+import { SnapshotBadge } from "@/components/snapshot-badge";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/coach/match")({
@@ -552,6 +553,9 @@ function HeroCard({ rec, pop }: { rec: Rec; pop: boolean }) {
           <div className="text-[12px] opacity-80 mt-1.5 tabular-nums">
             {car.priceFrom.toLocaleString()} ~ {car.priceTo.toLocaleString()}만원
           </div>
+          <div className="mt-2">
+            <SnapshotBadge carId={car.id} currentPrice={car.priceFrom * 10000} variant="inline" />
+          </div>
         </div>
         <MatchRing value={match} pop={pop} />
       </div>
@@ -647,6 +651,10 @@ function RunnerUp({ rec, rank, pop }: { rec: Rec; rank: number; pop: boolean }) 
             <div className="text-[10.5px] tabular-nums text-slate-500 font-medium">
               {car.priceFrom.toLocaleString()}~{car.priceTo.toLocaleString()}만
             </div>
+          </div>
+
+          <div className="mt-2">
+            <SnapshotBadge carId={car.id} currentPrice={car.priceFrom * 10000} variant="inline" />
           </div>
 
           {reasons.length > 0 && (
