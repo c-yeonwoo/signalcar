@@ -289,6 +289,38 @@ function HomePage() {
                 <Sparkline values={c.history} color={sparkColor} width={110} height={44} />
               </div>
 
+              {isWatched && snaps[c.id] && (() => {
+                const snap = snaps[c.id];
+                const diff = c.medianContract - snap.price;
+                const pct = snap.price > 0 ? (diff / snap.price) * 100 : 0;
+                const same = Math.abs(diff) < 50_000; // 5만원 미만은 무의미
+                const dir: "down" | "up" | "flat" = same ? "flat" : diff < 0 ? "down" : "up";
+                const tone =
+                  dir === "down"
+                    ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
+                    : dir === "up"
+                      ? "bg-[color:var(--color-signal-wait-soft)] text-[color:var(--color-signal-wait)]"
+                      : "bg-slate-100 text-slate-500";
+                const DirIcon = dir === "down" ? TrendingDown : dir === "up" ? TrendingUp : Minus;
+                const abs = formatKRW(Math.abs(diff));
+                const label =
+                  dir === "flat"
+                    ? "담은 시점과 동일"
+                    : `담은 이후 ${abs} ${dir === "down" ? "↓" : "↑"} (${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%)`;
+                return (
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Bookmark className="h-3 w-3 text-slate-400 shrink-0" />
+                      <span className="text-[10.5px] text-slate-500 shrink-0">{relativeAgo(snap.at)} · {formatKRW(snap.price)}</span>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${tone}`}>
+                      <DirIcon className="h-3 w-3" />
+                      {label.replace(/담은 이후 /, "")}
+                    </span>
+                  </div>
+                );
+              })()}
+
               <div
                 className="mt-4 rounded-xl bg-slate-50 pl-3 pr-3 py-2.5 text-[12.5px] leading-snug text-slate-700 border-l-2"
                 style={{ borderColor: sparkColor }}
