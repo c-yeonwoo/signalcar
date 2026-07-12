@@ -478,3 +478,75 @@ export function weeklyChangeFor(car: MockCar): WeeklyChange {
   }
   return { priceDelta: delta, priceDeltaPct: pct, direction: dir, promoRefreshed, headline };
 }
+
+/* ============ 전체 차량 카탈로그 (탐색 · 관심 담기 소스) ============
+ * MOCK_CARS는 상세페이지가 있는 차만. CATALOG는 앱이 인지하는 전 차종.
+ * id가 MOCK_CARS.id와 일치하면 상세 가능, 아니면 "곧 오픈" 표시.
+ * 관심(watchlist) 담기는 id만 있으면 되므로 상세 유무와 무관하게 동작.
+ */
+export type Fuel = MockCar["fuelType"];
+export type CatalogTag = "hot" | "new" | "facelift" | "discount";
+
+export type CatalogEntry = {
+  id: string;
+  brand: string;
+  model: string;
+  bodyType: string;
+  priceFrom: number; // 만원
+  priceTo: number;   // 만원
+  fuels: Fuel[];
+  tag?: CatalogTag;
+};
+
+export const CATALOG: CatalogEntry[] = [
+  // 상세 있는 3대
+  { id: "grand-koleos-inspire", brand: "르노코리아", model: "그랑콜레오스", bodyType: "중형 SUV", priceFrom: 3540, priceTo: 3990, fuels: ["hybrid"], tag: "discount" },
+  { id: "santafe-calligraphy",  brand: "현대",       model: "싼타페",      bodyType: "중형 SUV", priceFrom: 3540, priceTo: 4980, fuels: ["gasoline","hybrid"], tag: "hot" },
+  { id: "sorento-noblesse",     brand: "기아",       model: "쏘렌토",      bodyType: "중형 SUV", priceFrom: 3320, priceTo: 4760, fuels: ["gasoline","hybrid","diesel"], tag: "hot" },
+
+  // 세단
+  { id: "hyundai-avante",   brand: "현대", model: "아반떼",   bodyType: "준중형 세단", priceFrom: 1990, priceTo: 3050, fuels: ["gasoline","hybrid"] },
+  { id: "hyundai-sonata",   brand: "현대", model: "쏘나타",   bodyType: "중형 세단",   priceFrom: 2830, priceTo: 3990, fuels: ["gasoline","hybrid"] },
+  { id: "kia-k5",           brand: "기아", model: "K5",       bodyType: "중형 세단",   priceFrom: 2790, priceTo: 3910, fuels: ["gasoline","hybrid"], tag: "discount" },
+  { id: "hyundai-grandeur", brand: "현대", model: "그랜저",   bodyType: "준대형 세단", priceFrom: 3800, priceTo: 5720, fuels: ["gasoline","hybrid"] },
+  { id: "kia-k8",           brand: "기아", model: "K8",       bodyType: "준대형 세단", priceFrom: 3720, priceTo: 5480, fuels: ["gasoline","hybrid"] },
+  { id: "genesis-g80",      brand: "제네시스", model: "G80",  bodyType: "프리미엄 세단", priceFrom: 6300, priceTo: 8600, fuels: ["gasoline","diesel"] },
+
+  // SUV
+  { id: "hyundai-kona",     brand: "현대", model: "코나",     bodyType: "소형 SUV", priceFrom: 2400, priceTo: 3400, fuels: ["gasoline","hybrid"] },
+  { id: "kia-seltos",       brand: "기아", model: "셀토스",   bodyType: "소형 SUV", priceFrom: 2200, priceTo: 3100, fuels: ["gasoline"] },
+  { id: "hyundai-palisade", brand: "현대", model: "팰리세이드", bodyType: "대형 SUV", priceFrom: 4500, priceTo: 7200, fuels: ["gasoline","hybrid","diesel"], tag: "facelift" },
+  { id: "genesis-gv70",     brand: "제네시스", model: "GV70", bodyType: "프리미엄 SUV", priceFrom: 5600, priceTo: 8100, fuels: ["gasoline","diesel"] },
+  { id: "genesis-gv80",     brand: "제네시스", model: "GV80", bodyType: "프리미엄 SUV", priceFrom: 7100, priceTo: 10500, fuels: ["gasoline","diesel"] },
+  { id: "kgm-torres",       brand: "KG모빌리티", model: "토레스", bodyType: "중형 SUV", priceFrom: 2900, priceTo: 3700, fuels: ["gasoline"] },
+
+  // 미니밴
+  { id: "kia-carnival",     brand: "기아", model: "카니발",   bodyType: "미니밴", priceFrom: 3600, priceTo: 5400, fuels: ["gasoline","diesel","hybrid"], tag: "hot" },
+  { id: "hyundai-staria",   brand: "현대", model: "스타리아", bodyType: "미니밴", priceFrom: 2900, priceTo: 4600, fuels: ["gasoline","diesel"] },
+
+  // 전기
+  { id: "kia-ev3",          brand: "기아", model: "EV3",      bodyType: "소형 전기 SUV", priceFrom: 3550, priceTo: 4400, fuels: ["ev"], tag: "new" },
+  { id: "hyundai-ioniq5",   brand: "현대", model: "아이오닉5", bodyType: "전기 SUV",     priceFrom: 4695, priceTo: 5700, fuels: ["ev"] },
+  { id: "kia-ev6",          brand: "기아", model: "EV6",      bodyType: "전기 SUV",     priceFrom: 4870, priceTo: 5900, fuels: ["ev"] },
+  { id: "kia-ev9",          brand: "기아", model: "EV9",      bodyType: "대형 전기 SUV", priceFrom: 7500, priceTo: 8900, fuels: ["ev"] },
+  { id: "hyundai-casper-ev", brand: "현대", model: "캐스퍼 EV", bodyType: "경형 전기", priceFrom: 2740, priceTo: 3300, fuels: ["ev"], tag: "new" },
+];
+
+export function catalogHasDetail(id: string): boolean {
+  return MOCK_CARS.some((c) => c.id === id);
+}
+
+export const FUEL_LABEL: Record<Fuel, string> = {
+  gasoline: "가솔린",
+  diesel: "디젤",
+  hybrid: "하이브리드",
+  ev: "전기",
+};
+
+export const BODY_GROUPS: { id: string; label: string; match: (b: string) => boolean }[] = [
+  { id: "all",   label: "전체",   match: () => true },
+  { id: "sedan", label: "세단",   match: (b) => b.includes("세단") },
+  { id: "suv",   label: "SUV",    match: (b) => b.includes("SUV") },
+  { id: "van",   label: "미니밴", match: (b) => b.includes("미니밴") },
+  { id: "ev",    label: "전기",   match: (b) => b.includes("전기") },
+];
