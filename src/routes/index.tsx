@@ -489,8 +489,23 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 관심차 있는 유저: 신차 소식 배너를 관심차 아래에 노출 */}
-      {!personalized && <NewsHero />}
+      {/* 신규 유저(관심차 없음): 하단 웰컴 카드로 신차 소식 큐레이션 노출 */}
+      {personalized && (
+        <section className="px-5 mt-6">
+          <div className="sc-card p-4 bg-[color:var(--color-brand-blue)]/5 border-[color:var(--color-brand-blue)]/15">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-brand-blue)]" />
+              <span className="text-[11.5px] font-semibold text-[color:var(--color-brand-blue)] tracking-wide">
+                시그널카에 오신 걸 환영해요
+              </span>
+            </div>
+            <p className="text-[12.5px] text-slate-600 leading-snug mb-3">
+              요즘 뜨는 신차 소식부터 훑어보세요. 마음에 드는 차는 하트로 담아두면 매일 시그널을 알려드려요.
+            </p>
+            <NewsHero />
+          </div>
+        </section>
+      )}
 
       {/* 발견 — 구경하다 담기 */}
       <DiscoveryCarousel />
