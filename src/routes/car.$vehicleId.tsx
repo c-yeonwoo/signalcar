@@ -342,6 +342,7 @@ function CarDetailPage() {
           </Link>
         </div>
       </StickyCTA>
+      <PriceAlertSheet car={car} open={alertOpen} onOpenChange={setAlertOpen} />
     </ConsumerShell>
   );
 }
