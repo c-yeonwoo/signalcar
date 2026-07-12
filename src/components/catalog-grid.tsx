@@ -132,16 +132,20 @@ export function CatalogGrid() {
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={(e) => onHeart(e, c)}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
                     aria-pressed={isWatched}
                     aria-label={isWatched ? "관심 해제" : "관심 담기"}
-                    className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center transition ${
+                    data-testid={`watch-toggle-${c.id}`}
+                    className={`shrink-0 -m-1 h-10 w-10 rounded-full flex items-center justify-center transition touch-manipulation ${
                       isWatched
                         ? "bg-[color:var(--color-signal-buy)]/10 text-[color:var(--color-signal-buy)]"
                         : "bg-slate-100 text-slate-400"
                     }`}
                   >
-                    <Heart className="h-4 w-4" fill={isWatched ? "currentColor" : "none"} />
+                    <Heart className="h-[18px] w-[18px]" fill={isWatched ? "currentColor" : "none"} />
                   </button>
                 </div>
 
