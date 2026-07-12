@@ -26,7 +26,7 @@ export function DiscoveryCarousel() {
   const handleWatch = (car: MockCar, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const { added } = toggleWatch(car.id);
+    const { added } = toggleWatch(car.id, { price: car.medianContract });
     toast.success(added ? `${car.model} 관심에 담았어요` : "관심에서 뺐어요");
   };
 
