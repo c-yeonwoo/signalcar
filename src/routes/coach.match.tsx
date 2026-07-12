@@ -47,6 +47,7 @@ import {
 } from "@/lib/mock-cars";
 import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
+import { NewVsUsedBadge } from "@/components/new-vs-used-badge";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/coach/match")({
