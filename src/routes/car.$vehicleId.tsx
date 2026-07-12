@@ -336,19 +336,6 @@ function Metric({ label, value, sub }: { label: string; value: string; sub?: str
 
 /* ---------- Depreciation & used market band ---------- */
 
-// Rough 3-year retention rates by body type (Korean market estimates).
-// Source: 엔카/KB차차차 공개 시세 밴드 기반 추정. 실제 매물 편차는 큼.
-function retentionFor(bodyType: string): number {
-  const t = bodyType.toLowerCase();
-  if (t.includes("suv")) return 0.68;
-  if (t.includes("트럭") || t.includes("픽업")) return 0.72;
-  if (t.includes("경") || t.includes("소형")) return 0.6;
-  if (t.includes("전기") || t.includes("ev")) return 0.55;
-  if (t.includes("세단")) return 0.62;
-  if (t.includes("해치") || t.includes("왜건")) return 0.58;
-  return 0.62;
-}
-
 function DepreciationSection({
   listPrice,
   medianContract,
