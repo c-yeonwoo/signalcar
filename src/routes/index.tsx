@@ -12,6 +12,7 @@ import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
 import { DiscoveryCarousel } from "@/components/discovery-carousel";
+import { NewsHero } from "@/components/news-hero";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
@@ -129,6 +130,7 @@ function HomePage() {
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
         <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
       </div>
+      <NewsHero />
       <PageHeader
         eyebrow="오늘의 시그널"
         title={<>어떤 차,<br />보고 계세요?</>}
