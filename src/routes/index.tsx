@@ -568,6 +568,7 @@ function HomePage() {
           onOpenChange={(v) => { if (!v) setAlertCar(null); }}
         />
       )}
+      <WatchlistAddSheet open={showAddSheet} onOpenChange={setShowAddSheet} />
     </ConsumerShell>
   );
 }
