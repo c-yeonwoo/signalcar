@@ -152,8 +152,15 @@ function CarDetailPage() {
             </p>
           </div>
         </div>
-        <div className="mt-2">
+        <div className="mt-2 space-y-1.5">
           <SnapshotBadge carId={car.id} currentPrice={car.medianContract} variant="hero" />
+          <Link
+            to="/car/$vehicleId/history"
+            params={{ vehicleId: car.id }}
+            className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[color:var(--color-brand-blue)]"
+          >
+            프로모션·가격 히스토리 보기 →
+          </Link>
         </div>
       </section>
 
