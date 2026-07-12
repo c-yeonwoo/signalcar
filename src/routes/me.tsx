@@ -12,6 +12,7 @@ import { getMyReviews } from "@/lib/onboarding-store";
 import { hasSignedUpForPro } from "@/components/pro-signup-card";
 import { getAllSnapshots } from "@/lib/watch-snapshot";
 import { getRiseState } from "@/lib/rise-alerts";
+import { getCreditBalance, getUnlockedIds } from "@/lib/report-credits";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -26,6 +27,8 @@ function MePage() {
   const [proSignedUp, setProSignedUp] = useState(false);
   const [snapCount, setSnapCount] = useState(0);
   const [thresholdPct, setThresholdPct] = useState(2);
+  const [creditBalance, setCreditBalance] = useState(0);
+  const [unlockedCount, setUnlockedCount] = useState(0);
   useEffect(() => {
     const sync = () =>
       setCounts((c) => ({
@@ -48,6 +51,12 @@ function MePage() {
     window.addEventListener("sc:pro-signup-change", syncPro);
     window.addEventListener("sc:watch-snapshot-change", syncAlerts);
     window.addEventListener("sc:rise-alerts-change", syncAlerts);
+    const syncCredits = () => {
+      setCreditBalance(getCreditBalance());
+      setUnlockedCount(getUnlockedIds().length);
+    };
+    syncCredits();
+    window.addEventListener("sc:report-credits-change", syncCredits);
     return () => {
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:compare-change", sync);
@@ -55,6 +64,7 @@ function MePage() {
       window.removeEventListener("sc:pro-signup-change", syncPro);
       window.removeEventListener("sc:watch-snapshot-change", syncAlerts);
       window.removeEventListener("sc:rise-alerts-change", syncAlerts);
+      window.removeEventListener("sc:report-credits-change", syncCredits);
     };
   }, []);
 
@@ -113,7 +123,13 @@ function MePage() {
       <section className="px-5 mb-5 grid grid-cols-2 gap-2.5">
         <HubCard to="/" icon={Heart} title="관심 차량" count={counts.watch} desc="홈에서 시그널 추적 중" />
         <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
-        <HubCard to="/report" icon={FileText} title="내가 공유한 계약" count={counts.reports} desc="계약서로 리포트 언락" />
+        <HubCard
+          to="/report"
+          icon={FileText}
+          title="내가 공유한 계약"
+          count={counts.reports}
+          desc={`열람권 ${creditBalance}장 · 언락 ${unlockedCount}대`}
+        />
         <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실제 구매자 배지" />
       </section>
 
