@@ -14,6 +14,7 @@ import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
 import { ReportCreditCard } from "@/components/report-credit-card";
+import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
