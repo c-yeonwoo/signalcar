@@ -376,10 +376,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                 <span className={`text-[10.5px] ${MUTED} tabular-nums`}>{items.length}개</span>
               </div>
               {catTotal > 0 && (
-                <p
-                  className="text-[15px] font-bold tabular-nums mt-1"
-                  style={{ color: accentHex }}
-                >
+                <p className={`${NAVY} text-[15px] font-bold tabular-nums mt-1`}>
                   −{formatKRW(catTotal)}
                 </p>
               )}
@@ -429,7 +426,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
                 </div>
                 <div className="whitespace-nowrap pt-0.5">
                   {b.amount > 0 ? (
-                    <span className="text-[13px] font-bold tabular-nums" style={{ color: accentHex }}>
+                    <span className={`${NAVY} text-[13px] font-bold tabular-nums`}>
                       −{formatKRW(b.amount)}
                     </span>
                   ) : (
@@ -540,7 +537,7 @@ function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: strin
               <span className={`text-[12px] ${INK} w-16 shrink-0`}>{a.label}</span>
               <div className="flex-1 h-1.5 rounded-full bg-[color:var(--color-brand-mist)] overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[color:var(--color-brand-blue)]"
+                  className="h-full rounded-full bg-[color:var(--color-brand-navy)]/85"
                   style={{ width: `${(a.score / 5) * 100}%` }}
                 />
               </div>
