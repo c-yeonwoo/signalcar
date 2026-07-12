@@ -157,55 +157,19 @@ function CarDetailPage() {
         </div>
       </section>
 
-      {/* SECTION 02 · Gallery */}
-      <section className="bg-[color:var(--color-brand-mist)] py-1">
-        <div className="grid grid-cols-4 grid-rows-2 gap-px [grid-auto-rows:1fr]">
-          {gallery.slice(0, 5).map((g, i) => {
-            const big = i === 0;
-            const isPlusTile = i === 4; // last visible tile becomes the "+more" affordance
-            const isActive = i === activeShot;
-            return (
-              <button
-                key={g.label}
-                onClick={() => setActiveShot(i)}
-                className={`${big ? "col-span-2 row-span-2" : "aspect-square"} bg-white relative group`}
-              >
-                {g.src ? (
-                  <img
-                    src={g.src}
-                    alt={`${car.model} ${g.label}`}
-                    className="absolute inset-0 h-full w-full object-contain p-3 scale-105"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-slate-300">
-                    <ImageOff className="h-5 w-5" strokeWidth={1.4} />
-                    <span className="text-[9.5px] tracking-wider uppercase">{g.label}</span>
-                  </div>
-                )}
-                {big && (
-                  <span className={`absolute left-3 bottom-2 text-[9.5px] font-bold tracking-[0.15em] uppercase ${INK}`}>
-                    {g.label}
-                  </span>
-                )}
-                {isActive && (
-                  <span className="absolute inset-0 ring-2 ring-inset ring-[color:var(--color-brand-navy)]" />
-                )}
-                {isPlusTile && (
-                  <span className="absolute inset-0 bg-[color:var(--color-brand-navy)]/85 flex flex-col items-center justify-center text-white">
-                    <span className={`${DISPLAY} text-lg font-bold`}>+{gallery.length - 4}</span>
-                    <span className="text-[9px] tracking-[0.2em] uppercase mt-0.5">More</span>
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-        <div className="px-5 py-2 flex items-center justify-between">
-          <span className={`text-[10px] tracking-[0.15em] uppercase font-semibold ${MUTED}`}>
-            {shot.label}
+      {/* SECTION 02 · Hero image */}
+      <section className="bg-[color:var(--color-brand-mist)]/50 border-y border-[color:var(--color-brand-mist)]">
+        <div className="relative aspect-[16/10] w-full flex items-center justify-center overflow-hidden">
+          <img
+            src={car.image}
+            alt={`${car.brand} ${car.model}`}
+            className="max-h-full max-w-full object-contain px-6"
+          />
+          <span className={`absolute left-4 top-3 text-[9.5px] font-semibold tracking-[0.18em] uppercase ${MUTED}`}>
+            {car.brand}
           </span>
-          <span className={`text-[10px] tabular-nums ${MUTED}`}>
-            {String(activeShot + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}
+          <span className={`absolute right-4 bottom-3 inline-flex items-center gap-1 text-[10px] ${MUTED}`}>
+            <Camera className="h-3 w-3" strokeWidth={1.6} /> 공식 이미지
           </span>
         </div>
       </section>
