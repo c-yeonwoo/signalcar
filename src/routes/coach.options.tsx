@@ -244,6 +244,9 @@ function Interview() {
                   {c.model}
                 </div>
                 <div className="text-[11px] text-slate-500 truncate">{c.trim}</div>
+                <div className="mt-1.5">
+                  <SnapshotBadge carId={c.id} currentPrice={c.medianContract} variant="inline" />
+                </div>
               </div>
             </button>
           ))}
@@ -270,6 +273,9 @@ function Interview() {
             </div>
             <div className="mt-1 text-[16px] font-bold text-[color:var(--color-brand-navy)]">
               {car.model} · {car.trim}
+            </div>
+            <div className="mt-2">
+              <SnapshotBadge carId={car.id} currentPrice={car.medianContract} variant="hero" />
             </div>
           </div>
 
