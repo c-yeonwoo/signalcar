@@ -17,6 +17,25 @@ import {
   Sparkles,
   Check,
 } from "lucide-react";
+import {
+  Coins,
+  Banknote,
+  CreditCard,
+  Truck,
+  Bus,
+  Shuffle,
+  User as UserIcon,
+  UsersRound,
+  Building2,
+  Baby,
+  Route as RouteIcon,
+  Tent,
+  BatteryCharging,
+  Zap,
+  Flame,
+  CalendarDays,
+  BookOpen,
+} from "lucide-react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { PageHeader } from "@/components/ui-kit";
 import {
@@ -53,7 +72,7 @@ type Q = {
   coach: string;
   helper?: string;
   layout: "list" | "grid";
-  options: { label: string; sub?: string; value: string; emoji?: string }[];
+  options: { label: string; sub?: string; value: string; icon?: React.ReactNode }[];
 };
 
 const QUESTIONS: Q[] = [
@@ -65,10 +84,10 @@ const QUESTIONS: Q[] = [
     helper: "차값 + 옵션 + 탁송비 다 포함한 실계약가 기준으로요.",
     layout: "list",
     options: [
-      { label: "2,500만원 이하", sub: "경형·소형 중심", value: "under2500", emoji: "🪙" },
-      { label: "2,500 ~ 4,000만원", sub: "준중형·중형 주력대", value: "2500-4000", emoji: "💵" },
-      { label: "4,000 ~ 6,000만원", sub: "중대형·프리미엄 진입", value: "4000-6000", emoji: "💳" },
-      { label: "6,000만원 이상", sub: "프리미엄·플래그십", value: "over6000", emoji: "👑" },
+      { label: "2,500만원 이하", sub: "경형·소형 중심", value: "under2500", icon: <Coins className="h-6 w-6" /> },
+      { label: "2,500 ~ 4,000만원", sub: "준중형·중형 주력대", value: "2500-4000", icon: <Banknote className="h-6 w-6" /> },
+      { label: "4,000 ~ 6,000만원", sub: "중대형·프리미엄 진입", value: "4000-6000", icon: <CreditCard className="h-6 w-6" /> },
+      { label: "6,000만원 이상", sub: "프리미엄·플래그십", value: "over6000", icon: <Crown className="h-6 w-6" /> },
     ],
   },
   {
@@ -78,10 +97,10 @@ const QUESTIONS: Q[] = [
     coach: "선호하는 차체 스타일이 있으세요?",
     layout: "grid",
     options: [
-      { label: "세단", value: "sedan", emoji: "🚗" },
-      { label: "SUV", value: "suv", emoji: "🚙" },
-      { label: "미니밴", sub: "7~9인", value: "van", emoji: "🚐" },
-      { label: "상관없음", value: "any", emoji: "🤷" },
+      { label: "세단", value: "sedan", icon: <Car className="h-7 w-7" /> },
+      { label: "SUV", value: "suv", icon: <Truck className="h-7 w-7" /> },
+      { label: "미니밴", sub: "7~9인", value: "van", icon: <Bus className="h-7 w-7" /> },
+      { label: "상관없음", value: "any", icon: <Shuffle className="h-7 w-7" /> },
     ],
   },
   {
@@ -91,9 +110,9 @@ const QUESTIONS: Q[] = [
     coach: "평소 몇 명이서 자주 타세요?",
     layout: "grid",
     options: [
-      { label: "1~2명", value: "1-2", emoji: "👤" },
-      { label: "3~4명", value: "3-4", emoji: "👥" },
-      { label: "5명 이상", value: "5+", emoji: "👨‍👩‍👧‍👦" },
+      { label: "1~2명", value: "1-2", icon: <UserIcon className="h-7 w-7" /> },
+      { label: "3~4명", value: "3-4", icon: <Users className="h-7 w-7" /> },
+      { label: "5명 이상", value: "5+", icon: <UsersRound className="h-7 w-7" /> },
     ],
   },
   {
@@ -103,10 +122,10 @@ const QUESTIONS: Q[] = [
     coach: "주로 어디에 쓰실 예정이세요?",
     layout: "list",
     options: [
-      { label: "출퇴근 위주", sub: "매일 시내 · 주차 편의 중요", value: "commute", emoji: "🏙️" },
-      { label: "가족용 (아이 있음)", sub: "안전·공간 우선", value: "family", emoji: "👨‍👩‍👧" },
-      { label: "장거리·출장 잦음", sub: "고속 주행 · 승차감", value: "longhaul", emoji: "🛣️" },
-      { label: "레저·캠핑", sub: "짐 많이 · 험로 여유", value: "leisure", emoji: "⛺" },
+      { label: "출퇴근 위주", sub: "매일 시내 · 주차 편의 중요", value: "commute", icon: <Building2 className="h-6 w-6" /> },
+      { label: "가족용 (아이 있음)", sub: "안전·공간 우선", value: "family", icon: <Baby className="h-6 w-6" /> },
+      { label: "장거리·출장 잦음", sub: "고속 주행 · 승차감", value: "longhaul", icon: <RouteIcon className="h-6 w-6" /> },
+      { label: "레저·캠핑", sub: "짐 많이 · 험로 여유", value: "leisure", icon: <Tent className="h-6 w-6" /> },
     ],
   },
   {
@@ -117,10 +136,10 @@ const QUESTIONS: Q[] = [
     helper: "잘 모르시겠으면 '상관없음'을 골라주세요.",
     layout: "grid",
     options: [
-      { label: "가솔린", value: "gasoline", emoji: "⛽" },
-      { label: "하이브리드", value: "hybrid", emoji: "🔋" },
-      { label: "전기", value: "ev", emoji: "⚡" },
-      { label: "상관없음", value: "any", emoji: "🤷" },
+      { label: "가솔린", value: "gasoline", icon: <FuelIcon className="h-7 w-7" /> },
+      { label: "하이브리드", value: "hybrid", icon: <BatteryCharging className="h-7 w-7" /> },
+      { label: "전기", value: "ev", icon: <Zap className="h-7 w-7" /> },
+      { label: "상관없음", value: "any", icon: <Shuffle className="h-7 w-7" /> },
     ],
   },
   {
@@ -130,9 +149,9 @@ const QUESTIONS: Q[] = [
     coach: "구매는 언제쯤 예정이세요?",
     layout: "list",
     options: [
-      { label: "지금 당장", sub: "1개월 내 계약", value: "now", emoji: "🔥" },
-      { label: "2~3개월 뒤", sub: "천천히 알아보는 중", value: "3m", emoji: "🗓️" },
-      { label: "6개월 이상 여유", sub: "정보 수집 단계", value: "6m+", emoji: "📚" },
+      { label: "지금 당장", sub: "1개월 내 계약", value: "now", icon: <Flame className="h-6 w-6" /> },
+      { label: "2~3개월 뒤", sub: "천천히 알아보는 중", value: "3m", icon: <CalendarDays className="h-6 w-6" /> },
+      { label: "6개월 이상 여유", sub: "정보 수집 단계", value: "6m+", icon: <BookOpen className="h-6 w-6" /> },
     ],
   },
 ];
@@ -378,7 +397,7 @@ function InterviewStep({
                       : "border-slate-200 bg-white"
                   }`}
                 >
-                  <div className="text-[26px] leading-none">{o.emoji}</div>
+                  <div className={`leading-none ${active ? "text-[color:var(--color-brand-blue)]" : "text-[color:var(--color-brand-navy)]"}`}>{o.icon}</div>
                   <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)]">{o.label}</div>
                   {o.sub && <div className="text-[10.5px] text-slate-500">{o.sub}</div>}
                 </button>
@@ -399,10 +418,10 @@ function InterviewStep({
                       : "border-slate-200 bg-white"
                   }`}
                 >
-                  <div className={`h-11 w-11 rounded-xl flex items-center justify-center text-[22px] shrink-0 ${
-                    active ? "bg-white" : "bg-slate-50"
+                  <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    active ? "bg-white text-[color:var(--color-brand-blue)]" : "bg-slate-50 text-[color:var(--color-brand-navy)]"
                   }`}>
-                    {o.emoji}
+                    {o.icon}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">{o.label}</div>
