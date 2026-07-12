@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, ImageOff, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -57,17 +57,6 @@ function CarDetailPage() {
   const accent = signalAccent(car.signal);
   const savings = car.listPrice - car.medianContract;
   const discountPct = Math.round((savings / car.listPrice) * 100);
-
-  const gallery: { label: string; src?: string }[] = [
-    { label: "정면", src: car.image },
-    { label: "측면" },
-    { label: "후면" },
-    { label: "실내" },
-    { label: "대시보드" },
-    { label: "트렁크" },
-  ];
-  const [activeShot, setActiveShot] = useState(0);
-  const shot = gallery[activeShot];
 
   const [inCompare, setInCompare] = useState(false);
   const [watched, setWatched] = useState(false);
