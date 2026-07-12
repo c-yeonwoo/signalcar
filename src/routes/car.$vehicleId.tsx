@@ -95,7 +95,7 @@ function CarDetailPage() {
   };
 
   const handleWatch = () => {
-    const { added } = toggleWatch(car.id);
+    const { added } = toggleWatch(car.id, { price: car.medianContract });
     toast.success(added ? "관심 차종에 담았어요" : "관심에서 뺐어요");
   };
 

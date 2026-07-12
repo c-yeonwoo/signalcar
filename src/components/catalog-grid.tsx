@@ -68,7 +68,7 @@ export function CatalogGrid() {
   const onHeart = (e: React.MouseEvent, c: CatalogEntry) => {
     e.preventDefault();
     e.stopPropagation();
-    const { added } = toggleWatch(c.id);
+    const { added } = toggleWatch(c.id, { price: c.priceFrom });
     setWatched(getWatchlist());
     toast.success(added ? `${c.model} 관심 담음` : `${c.model} 관심 해제`);
   };
