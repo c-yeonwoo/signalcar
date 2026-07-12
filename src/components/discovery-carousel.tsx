@@ -60,13 +60,18 @@ export function DiscoveryCarousel() {
               <div className="relative aspect-[4/3] rounded-xl bg-slate-50 overflow-hidden flex items-center justify-center">
                 <img src={car.image} alt={car.model} className="w-full h-full object-contain" />
                 <button
+                  type="button"
                   onClick={(e) => handleWatch(car, e)}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                   aria-label={watched ? "관심 해제" : "관심 담기"}
-                  className={`absolute top-1.5 right-1.5 h-7 w-7 rounded-full grid place-items-center backdrop-blur bg-white/80 shadow-sm ${
+                  aria-pressed={watched}
+                  data-testid={`watch-toggle-${car.id}`}
+                  className={`absolute top-0.5 right-0.5 h-10 w-10 rounded-full grid place-items-center backdrop-blur bg-white/80 shadow-sm z-10 touch-manipulation ${
                     watched ? "text-[color:var(--color-signal-buy)]" : "text-slate-400"
                   }`}
                 >
-                  <Heart className={`h-3.5 w-3.5 ${watched ? "fill-current" : ""}`} />
+                  <Heart className={`h-4 w-4 ${watched ? "fill-current" : ""}`} />
                 </button>
               </div>
               <div className="mt-2">
