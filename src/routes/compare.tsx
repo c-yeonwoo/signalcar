@@ -179,7 +179,7 @@ function ComparePage() {
               ))}
             </CompareRow>
 
-            <CompareRow label="제보 표본" hint="많을수록 신뢰도↑">
+            <CompareRow label="공유된 계약 수" hint="많을수록 신뢰도↑">
               {cars.map((c) => (
                 <Cell
                   key={c.id}
@@ -222,7 +222,7 @@ function ComparePage() {
               to="/coach/options"
               className="block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90 transition"
             >
-              AI 코치와 최종 결정하기 →
+              AI 상담와 최종 결정하기 →
             </Link>
           </StickyCTA>
         </>

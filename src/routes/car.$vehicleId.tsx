@@ -450,7 +450,7 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
 }
 
 function reviewSourceLabel(src: ReviewItem["source"]) {
-  return src === "owner" ? "실오너" : src === "video" ? "영상" : "미디어";
+  return src === "owner" ? "실제 구매자" : src === "video" ? "영상" : "미디어";
 }
 
 function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: string }) {
@@ -485,7 +485,7 @@ function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: strin
       <section className="bg-[color:var(--color-brand-mist)]/50 px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className={SECTION_TITLE}>실오너 리뷰 요약</h3>
+            <h3 className={SECTION_TITLE}>실제 구매자 리뷰 요약</h3>
             <p className={`text-[11.5px] ${MUTED} mt-0.5`}>AI가 정리한 한 줄</p>
           </div>
           <div className="text-right shrink-0 ml-3">
@@ -620,7 +620,7 @@ function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: strin
         </ul>
         <div className={`px-5 py-3 text-[11.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
           <Info className="h-3 w-3 mt-0.5 shrink-0" />
-          <span>실오너 리뷰는 시그널카 견적서·계약 제보와 연결된 사용자만 작성 가능합니다.</span>
+          <span>실제 구매자 리뷰는 시그널카 견적서·계약 공유와 연결된 사용자만 작성 가능합니다.</span>
         </div>
       </section>
     </>

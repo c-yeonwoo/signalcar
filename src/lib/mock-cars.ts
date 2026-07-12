@@ -71,7 +71,7 @@ export type ReviewItem = {
   date: string; // YYYY-MM
   quote: string;
   ownershipMonths?: number;
-  verified?: boolean; // 시그널카 실계약 제보와 매칭됨
+  verified?: boolean; // 시그널카 실계약 공유와 매칭됨
   url?: string; // 외부 링크 (미디어/영상)
   channel?: string;
 };
@@ -479,7 +479,7 @@ export function weeklyChangeFor(car: MockCar): WeeklyChange {
   return { priceDelta: delta, priceDeltaPct: pct, direction: dir, promoRefreshed, headline };
 }
 
-/* ============ 전체 차량 카탈로그 (탐색 · 관심 담기 소스) ============
+/* ============ 전체 차량 전체 차량 (탐색 · 관심 담기 소스) ============
  * MOCK_CARS는 상세페이지가 있는 차만. CATALOG는 앱이 인지하는 전 차종.
  * id가 MOCK_CARS.id와 일치하면 상세 가능, 아니면 "곧 오픈" 표시.
  * 관심(watchlist) 담기는 id만 있으면 되므로 상세 유무와 무관하게 동작.

@@ -72,7 +72,7 @@ function ReportPage() {
       setStep("done");
       toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요" : "고마워요! 리포트가 열렸어요");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "제보 실패");
+      toast.error(err instanceof Error ? err.message : "공유 실패");
     } finally {
       setSubmitting(false);
     }
@@ -84,12 +84,12 @@ function ReportPage() {
       <ConsumerShell>
         <PageHeader
           eyebrow="Report"
-          title={<>제보하려면<br />로그인이 필요해요</>}
+          title={<>계약을 공유하려면<br />로그인이 필요해요</>}
           subtitle="익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요."
         />
         <section className="px-5">
           <Link to="/auth" className="sc-btn-primary">
-            <LogIn className="h-4 w-4" /> 로그인하고 제보하기
+            <LogIn className="h-4 w-4" /> 로그인하고 공유하기
           </Link>
         </section>
       </ConsumerShell>
@@ -178,7 +178,7 @@ function ReportPage() {
             </FormRow>
 
             <PrimaryButton onClick={submit} disabled={submitting} className="mt-3 disabled:opacity-60">
-              {submitting ? "제보 중…" : "제보하고 리포트 열기"}
+              {submitting ? "공유 중…" : "공유하고 리포트 열기"}
             </PrimaryButton>
           </section>
         </>
@@ -208,7 +208,7 @@ function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
     }
     addMyReview({ carId: car.id, rating, pros: pros.trim(), cons: cons.trim() });
     setSaved(true);
-    toast.success("리뷰가 저장됐어요 · 실오너 배지가 붙어요");
+    toast.success("리뷰가 저장됐어요 · 실제 구매자 배지가 붙어요");
   };
 
   return (
@@ -220,13 +220,13 @@ function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
         고마워요!
       </h1>
       <p className="text-center text-[13px] text-slate-500 mt-1.5 leading-relaxed">
-        제보 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
+        계약 공유 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
       </p>
 
       {!saved ? (
         <section className="mt-7 sc-card p-5">
           <div className="text-[11px] font-semibold text-[color:var(--color-brand-blue)]">
-            실오너 리뷰
+            실제 구매자 리뷰
           </div>
           <h2 className="text-[16px] font-bold text-[color:var(--color-brand-navy)] mt-1 leading-snug">
             {car ? `${car.model} 실사용, ` : ""}한 줄만 남겨주실래요?

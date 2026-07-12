@@ -74,7 +74,7 @@ export function ProSignupCard({
     return (
       <div className={`rounded-2xl ${variant === "full" ? "bg-[color:var(--color-brand-navy)] text-white p-5" : "bg-slate-50 border border-slate-100 p-4"}`}>
         <div className={`flex items-center gap-1.5 text-[11.5px] ${variant === "full" ? "opacity-80" : "text-slate-500"}`}>
-          <Crown className="h-3.5 w-3.5" /> 코치 PRO 얼리버드
+          <Crown className="h-3.5 w-3.5" /> 상담 PRO 얼리버드
         </div>
         <div className={`mt-1.5 text-[14px] font-semibold ${variant === "full" ? "" : "text-[color:var(--color-brand-navy)]"} flex items-center gap-1.5`}>
           <Check className="h-4 w-4 text-[color:var(--color-signal-buy)]" />
@@ -91,7 +91,7 @@ export function ProSignupCard({
     return (
       <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
         <div className="flex items-center gap-1.5 text-[11.5px] text-slate-500">
-          <Crown className="h-3.5 w-3.5" /> 코치 PRO 얼리버드
+          <Crown className="h-3.5 w-3.5" /> 상담 PRO 얼리버드
         </div>
         <div className="text-[13.5px] font-semibold text-[color:var(--color-brand-navy)] mt-1">
           런칭 알림 · 최대 50% 얼리버드가
@@ -126,7 +126,7 @@ export function ProSignupCard({
   return (
     <div className="rounded-2xl bg-gradient-to-br from-[color:var(--color-brand-navy)] to-slate-800 text-white p-5">
       <div className="flex items-center gap-1.5 text-[11.5px] opacity-80">
-        <Crown className="h-3.5 w-3.5" /> 코치 PRO · 얼리버드 모집 중
+        <Crown className="h-3.5 w-3.5" /> 상담 PRO · 얼리버드 모집 중
       </div>
       <div className="text-[16px] font-bold mt-1.5 leading-snug">
         런칭 알림 받고 얼리버드가로 열어보세요

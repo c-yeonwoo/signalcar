@@ -487,7 +487,7 @@ function BriefingLocked() {
     <section className="px-5 mt-5 space-y-4">
       <div className="rounded-2xl bg-gradient-to-br from-[color:var(--color-brand-navy)] to-slate-800 text-white p-5">
         <div className="flex items-center gap-1.5 text-[11.5px] opacity-80">
-          <Crown className="h-3.5 w-3.5" /> 코치 PRO · 월 9,900원
+          <Crown className="h-3.5 w-3.5" /> 상담 PRO · 월 9,900원
         </div>
         <div className="text-[18px] font-bold mt-1.5 leading-snug">
           매장 앞에서 떨지 마세요.<br />브리핑 한 장으로 무장하세요

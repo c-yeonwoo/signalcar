@@ -100,8 +100,8 @@ function MePage() {
       <section className="px-5 mb-5 grid grid-cols-2 gap-2.5">
         <HubCard to="/" icon={Heart} title="관심 차종" count={counts.watch} desc="홈에서 시그널 추적 중" />
         <HubCard to="/compare" icon={GitCompare} title="비교함" count={counts.compare} desc="최대 3대 나란히" />
-        <HubCard to="/report" icon={FileText} title="내 제보" count={counts.reports} desc="계약서로 리포트 언락" />
-        <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실오너 배지" />
+        <HubCard to="/report" icon={FileText} title="내가 공유한 계약" count={counts.reports} desc="계약서로 리포트 언락" />
+        <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실제 구매자 배지" />
       </section>
 
       {/* PRO 얼리버드 상태 */}
@@ -115,7 +115,7 @@ function MePage() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
-              코치 PRO 얼리버드
+              상담 PRO 얼리버드
             </div>
             <div className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">
               {proSignedUp
@@ -134,7 +134,7 @@ function MePage() {
       </section>
 
       <section className="px-5 space-y-3">
-        <ActionLink to="/report" icon={Camera} title="계약서 제보" desc="1건 제보하면 리포트 열람권을 드려요." />
+        <ActionLink to="/report" icon={Camera} title="계약서 공유" desc="1건 공유하면 리포트 열람권을 드려요." />
         <ActionLink to="/diagnose" icon={ScanLine} title="견적서 진단" desc="딜러 견적서 함정 여부를 사진으로 체크." />
         <Placeholder icon={Clock} title="출고 트래킹" desc="계약 후 생산·배송·출고를 한눈에 볼 수 있어요." />
         <Placeholder icon={Wrench} title="차생활 관리" desc="첫 점검·소모품 교체 시점을 알려드려요." />
