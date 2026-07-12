@@ -8,6 +8,7 @@ import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
+import { SnapshotBadge } from "@/components/snapshot-badge";
 import { alertStatus, getAlert } from "@/lib/alerts-store";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
