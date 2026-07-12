@@ -219,7 +219,7 @@ function ComparePage() {
 
           <StickyCTA>
             <Link
-              to="/coach"
+              to="/coach/options"
               className="block w-full text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90 transition"
             >
               AI 코치와 최종 결정하기 →

@@ -294,12 +294,12 @@ function ExplorePage() {
       {/* Coach CTA */}
       <section className="px-5 mt-6 mb-4">
         <Link
-          to="/coach"
+          to="/coach/match"
           className="flex items-center justify-between rounded-2xl bg-[color:var(--color-brand-navy)] text-white px-5 py-4 active:scale-[0.99] transition"
         >
           <div>
-            <div className="text-[13px] font-semibold">헷갈리면 AI 코치</div>
-            <div className="text-[11px] opacity-70 mt-0.5">7문항으로 후보 3대까지</div>
+            <div className="text-[13px] font-semibold">내게 맞는 차 찾기</div>
+            <div className="text-[11px] opacity-70 mt-0.5">6문항으로 후보 3대 추천</div>
           </div>
           <ArrowUpRight className="h-4 w-4 opacity-80" />
         </Link>
