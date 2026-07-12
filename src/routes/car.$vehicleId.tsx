@@ -245,6 +245,14 @@ function CarDetailPage() {
       {/* SECTION 05 · Benefits */}
       <BenefitsSection benefits={car.benefits} accentHex={accent.hex} />
 
+      {/* SECTION 05.5 · Depreciation & used market band */}
+      <DepreciationSection
+        listPrice={car.listPrice}
+        medianContract={car.medianContract}
+        bodyType={car.bodyType}
+        accentHex={accent.hex}
+      />
+
       {/* SECTION 06 · Reviews */}
       <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} carId={car.id} />
 
