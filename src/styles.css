@@ -36,6 +36,13 @@
   border-radius: 1rem; /* rounded-2xl */
   box-shadow: var(--shadow-card);
 }
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+@utility no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 @utility sc-eyebrow {
   font-size: 11px;
   font-weight: 600;
