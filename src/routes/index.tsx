@@ -13,6 +13,7 @@ import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
 import { DiscoveryCarousel } from "@/components/discovery-carousel";
 import { NewsHero } from "@/components/news-hero";
+import { WatchlistAddSheet } from "@/components/watchlist-add-sheet";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
@@ -35,6 +36,7 @@ function HomePage() {
   const [snaps, setSnaps] = useState<Record<string, WatchSnapshot>>({});
   const [riseTick, setRiseTick] = useState(0);
   const [showThresholdSheet, setShowThresholdSheet] = useState(false);
+  const [showAddSheet, setShowAddSheet] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -502,6 +504,13 @@ function HomePage() {
             <p className="text-[12.5px] text-slate-600 leading-snug mb-3">
               요즘 뜨는 신차 소식부터 훑어보세요. 마음에 드는 차는 하트로 담아두면 매일 시그널을 알려드려요.
             </p>
+            <button
+              onClick={() => setShowAddSheet(true)}
+              className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-blue)] text-white py-2.5 text-[12.5px] font-bold active:scale-[0.99] transition mb-3"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              내 관심 차 추가
+            </button>
             <NewsHero />
           </div>
         </section>
@@ -559,6 +568,7 @@ function HomePage() {
           onOpenChange={(v) => { if (!v) setAlertCar(null); }}
         />
       )}
+      <WatchlistAddSheet open={showAddSheet} onOpenChange={setShowAddSheet} />
     </ConsumerShell>
   );
 }
