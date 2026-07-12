@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target, Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
@@ -15,6 +15,7 @@ import { DiscoveryCarousel } from "@/components/discovery-carousel";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
+import { getAllSnapshots, relativeAgo, type WatchSnapshot } from "@/lib/watch-snapshot";
 import type { MockCar } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +30,7 @@ function HomePage() {
   const [alerts, setAlerts] = useState<Record<string, PriceAlert>>({});
   const [alertCar, setAlertCar] = useState<MockCar | null>(null);
   const [lastVisit, setLastVisit] = useState<number | null>(null);
+  const [snaps, setSnaps] = useState<Record<string, WatchSnapshot>>({});
 
   useEffect(() => {
     const sync = () => {
@@ -37,12 +39,14 @@ function HomePage() {
       setCompareIds(getCompareList());
       setPersonalized(w.length === 0);
       setAlerts(getAlerts());
+      setSnaps(getAllSnapshots());
     };
     sync();
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:prefs-change", sync);
     window.addEventListener("sc:alerts-change", sync);
+    window.addEventListener("sc:watch-snapshot-change", sync);
     // "지난 방문 이후" 계산은 방문 스탬프를 갱신하기 전 값이어야 함
     setLastVisit(getLastVisit());
     stampLastVisit();
@@ -51,6 +55,7 @@ function HomePage() {
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:prefs-change", sync);
       window.removeEventListener("sc:alerts-change", sync);
+      window.removeEventListener("sc:watch-snapshot-change", sync);
     };
   }, []);
 
