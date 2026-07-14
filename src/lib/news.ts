@@ -40,7 +40,7 @@ function carIdFromUrl(url: string | null): string | undefined {
 }
 
 export async function fetchNewsItems(): Promise<NewsItem[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("news_items")
     .select("id, kind, tag, title, subtitle, url, published_at")
     .order("published_at", { ascending: false })
@@ -48,7 +48,7 @@ export async function fetchNewsItems(): Promise<NewsItem[]> {
 
   if (error || !data?.length) return getNewsItemsSync();
 
-  return data.map((n) => {
+  return data.map((n: any) => {
     const kind = (n.kind as NewsKind) || "launch";
     const carId = carIdFromUrl(n.url);
     const car = carId ? findCar(carId) ?? MOCK_CARS.find((c) => c.id === carId) : undefined;
