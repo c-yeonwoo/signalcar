@@ -12,6 +12,7 @@ import {
   Ban,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { useSession } from "@/hooks/use-session";
 import {
   LOOP_JOBS,
@@ -38,23 +39,9 @@ export const Route = createFileRoute("/admin/ingest")({
   ssr: false,
 });
 
-type ConfigRow = { job_id: string; enabled: boolean; updated_at: string };
-type RunRow = {
-  id: string;
-  pipeline: string;
-  status: string;
-  started_at: string;
-  finished_at: string | null;
-  stats: Record<string, unknown>;
-  error: string | null;
-};
-type RequestRow = {
-  id: string;
-  job_id: string;
-  status: string;
-  requested_at: string;
-  requested_by: string | null;
-};
+type ConfigRow = Tables<"ingest_loop_config">;
+type RunRow = Tables<"ingest_runs">;
+type RequestRow = Tables<"ingest_run_requests">;
 
 function statusMeta(s: LoopJobStatus | string) {
   switch (s) {
@@ -83,9 +70,9 @@ function IngestLoopPage() {
   const configQ = useQuery({
     queryKey: ["ingest-loop-config"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("ingest_loop_config" as "brands").select("*");
+      const { data, error } = await supabase.from("ingest_loop_config").select("*");
       if (error) throw error;
-      return (data ?? []) as unknown as ConfigRow[];
+      return (data ?? []) as ConfigRow[];
     },
     retry: false,
   });
@@ -94,12 +81,12 @@ function IngestLoopPage() {
     queryKey: ["ingest-runs"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("ingest_runs" as "brands")
+        .from("ingest_runs")
         .select("*")
         .order("started_at", { ascending: false })
         .limit(30);
       if (error) throw error;
-      return (data ?? []) as unknown as RunRow[];
+      return (data ?? []) as RunRow[];
     },
     retry: false,
   });
@@ -108,24 +95,24 @@ function IngestLoopPage() {
     queryKey: ["ingest-run-requests"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("ingest_run_requests" as "brands")
+        .from("ingest_run_requests")
         .select("*")
         .order("requested_at", { ascending: false })
         .limit(15);
       if (error) throw error;
-      return (data ?? []) as unknown as RequestRow[];
+      return (data ?? []) as RequestRow[];
     },
     retry: false,
   });
 
   const toggleMut = useMutation({
     mutationFn: async ({ jobId, enabled }: { jobId: string; enabled: boolean }) => {
-      const { error } = await supabase.from("ingest_loop_config" as "brands").upsert({
+      const { error } = await supabase.from("ingest_loop_config").upsert({
         job_id: jobId,
         enabled,
         updated_at: new Date().toISOString(),
         updated_by: user?.email ?? null,
-      } as never);
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -137,11 +124,11 @@ function IngestLoopPage() {
 
   const requestMut = useMutation({
     mutationFn: async (jobId: string) => {
-      const { error } = await supabase.from("ingest_run_requests" as "brands").insert({
+      const { error } = await supabase.from("ingest_run_requests").insert({
         job_id: jobId,
         status: "pending",
         requested_by: user?.email ?? null,
-      } as never);
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -160,8 +147,7 @@ function IngestLoopPage() {
 
   const runtimeOf = (jobId: string) => seed.jobs.find((j) => j.jobId === jobId);
 
-  const dbUnavailable =
-    configQ.isError || runsQ.isError || reqsQ.isError;
+  const dbUnavailable = configQ.isError || runsQ.isError || reqsQ.isError;
 
   return (
     <div className="space-y-6 max-w-5xl">
