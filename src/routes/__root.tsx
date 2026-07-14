@@ -16,6 +16,7 @@ import { SplashScreen } from "@/components/splash-screen";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateWatchlistFromServer } from "@/lib/watchlist-store";
 import { hydrateAlertsFromServer } from "@/lib/alerts-store";
+import { hydrateUnlocksFromServer } from "@/lib/report-credits";
 
 function NotFoundComponent() {
   return (
@@ -141,11 +142,13 @@ function RootComponent() {
       if (event === "SIGNED_IN") {
         void hydrateWatchlistFromServer();
         void hydrateAlertsFromServer();
+        void hydrateUnlocksFromServer();
       }
     });
     // 새로고침으로 이미 세션이 있는 경우
     void hydrateWatchlistFromServer();
     void hydrateAlertsFromServer();
+    void hydrateUnlocksFromServer();
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
 

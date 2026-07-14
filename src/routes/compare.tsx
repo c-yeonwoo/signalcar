@@ -111,14 +111,16 @@ function ComparePage() {
                     params={{ vehicleId: c.id }}
                     className="sc-card p-3 active:scale-[0.99] transition"
                   >
-                    <div
-                      className="h-20 rounded-xl bg-white border border-slate-100 relative overflow-hidden"
-                    >
-                      <img
-                        src={c.image}
-                        alt={c.model}
-                        className="absolute inset-0 h-full w-full object-contain scale-110 drop-shadow-[0_6px_10px_rgba(0,0,0,0.25)]"
-                      />
+                    <div className="h-20 rounded-xl bg-white border border-slate-100 relative overflow-hidden">
+                      {c.image ? (
+                        <img
+                          src={c.image}
+                          alt={c.model}
+                          className="absolute inset-0 h-full w-full object-contain scale-110 drop-shadow-[0_6px_10px_rgba(0,0,0,0.25)]"
+                        />
+                      ) : (
+                        <div className={`absolute inset-0 bg-gradient-to-br ${c.imageColor} opacity-40`} />
+                      )}
                     </div>
                     <div className="mt-2 text-[10px] text-slate-500 truncate">{c.brand}</div>
                     <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] truncate leading-tight">

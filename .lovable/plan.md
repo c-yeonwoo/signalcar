@@ -1,67 +1,16 @@
-# Sprint J — 리텐션 엔진 우선
+# Sprint J' — Retention (post Gate 0)
 
-방향: **관심 차 시그널로 다시 오게 만든다 + 구경하다 새 차를 담게 만든다.** 협상 브리핑 유료화(Sprint K)는 뒤로 미룬다.
+Gate 0 Trust Threshold 이후. 수익화(Sprint L)는 보류.
 
----
+## Done in app
+- Explore: BUY TOP5 strip + BUY 필터 + 세그먼트 BUY only
+- Detail: similarTo 「함께 본 차」
+- Digest email waitlist (`digest_signups`) — 발송 워커는 Sprint K
 
-## 1. 관심 차 시그널 강화 (재방문 이유)
+## Next — Sprint K
+- 주간 이메일 다이제스트 실제 발송 (pg_cron / Resend 등)
+- 목표가 도달 이메일
 
-### 1.1 목표가 알림 (Price Alert)
-관심 차 카드마다 "이 가격 되면 알려줘" 설정.
-- 관심 카드 우상단 종 아이콘 → 바텀시트로 목표가 입력(중앙값 기준 프리셋: -3%, -5%, -8%, 직접 입력).
-- 저장소: `sc.alerts.v1` (로컬) + 로그인 시 `price_alerts` 테이블 미러링.
-- 카드 상단 배지: "목표가 ₩X,XXX 설정됨 · 현재 대비 -3%".
-- 시그널이 목표가 도달/근접(±1%) 시 카드 배지가 "🎯 목표가 도달" 로 승격.
-
-### 1.2 홈 "이번주 시그널 다이제스트" 상단 배너
-관심 차 전체를 한 줄로 요약:
-- "관심 3대 중 2대에 이번주 변화 · 그랜드콜레오스 -50만 ↓, 산타페 프로모션 갱신".
-- 없으면 "이번주 시그널 변화 없음 · 조용해요" (허니스티).
-- 마지막 방문 대비 델타를 보여줌 → `sc.last-visit.v1` 저장.
-
-### 1.3 "지난 방문 이후" 뱃지
-관심 차 카드에 마지막 방문 이후 변한 필드만 하이라이트 (가격/프로모션/시그널).
-
-### 1.4 (백엔드 준비만) `price_alerts` 테이블 + 트리거 스켈레톤
-알림 발송은 이번 스프린트 밖. 스키마·RLS만 우선 붙여 두고, 알림 채널(이메일/푸시)은 후속.
-
----
-
-## 2. 발견(Discovery) — 구경하다 담게 만든다
-
-### 2.1 홈 하단 "이런 차는 어때요?" 큐레이션 캐러셀
-관심 차와 세그먼트/가격대가 겹치는 후보 3~5대 가로 스와이프. 각 카드에 즉시 하트(관심 담기).
-- 관심 없음: 온보딩 취향 기반.
-- 관심 있음: 워치 목록의 세그먼트/바디타입 유사도 기반.
-- "왜 추천했는지" 한 줄 라벨: "산타페와 같은 가격대 · SUV".
-
-### 2.2 탐색 페이지 리셋 — "구경하다 담기"에 최적화
-현재 탐색은 판매순위/세그먼트/브랜드 3탭. 유지하되:
-- 각 리스트 아이템에 홈과 동일한 **하트/비교 즉시 담기 버튼**.
-- 상단에 "이번주 시그널 좋은 차 TOP 5" 셀렉션 신설(buy 시그널 + 표본 큰 것).
-- 세그먼트 탭에 "지금 buy 시그널만 보기" 토글.
-
-### 2.3 상세 페이지 하단 "이 차를 본 사람들이 함께 본 차"
-같은 세그먼트/가격대 ±10% 3대. 하트로 담기.
-
----
-
-## 3. 백로그 재정렬
-
-`.lovable/plan.md` 갱신:
-- **Sprint J (이번)**: 위 1.1~2.3.
-- **Sprint K (다음)**: 알림 발송 채널(이메일 다이제스트 주1회) — J의 파이프라인 위에서.
-- **Sprint L**: 협상 브리핑 실 데이터화 + PRO 단권 결제(₩29,000).
-- 티어 2 실 데이터 파이프라인은 K와 병렬 가능.
-
----
-
-## 기술 메모 (개발자용)
-
-- 새 파일: `src/lib/alerts-store.ts`, `src/components/price-alert-sheet.tsx`, `src/components/discovery-carousel.tsx`, `src/lib/last-visit.ts`, `src/lib/recommend.ts` (유사도).
-- 수정: `src/routes/index.tsx` (다이제스트 배너·캐러셀·목표가 배지), `src/routes/car.$vehicleId.tsx` (관련 차 섹션·종 아이콘), `src/routes/explore.tsx` (즉시 담기·시그널 필터·주간 셀렉션), `src/routes/__root.tsx` (last-visit 스탬프, alerts 하이드레이션).
-- 마이그레이션: `price_alerts (id, user_id, trim_id, target_price, created_at, unique(user_id,trim_id))` + RLS(본인만) + GRANT.
-- MOCK: `mock-cars.ts`에 `similarTo(carId)` 헬퍼 추가.
-- 알림 발송 로직·pg_cron·이메일은 Sprint K로 명시적으로 미룸.
-
-승인해주시면 바로 착수합니다.
+## Later — Sprint L
+- 협상 브리핑 단권 결제 ₩29,000
+- PRO 구독 재정의
