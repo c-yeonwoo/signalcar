@@ -1,0 +1,56 @@
+{
+  "vehicleId": "hyundai-grandeur",
+  "danawaModelId": "4802",
+  "brandId": "303",
+  "modelName": "더 뉴 그랜저",
+  "period": "2026-07",
+  "fetchedAt": "2026-07-14T14:32:52.183Z",
+  "sourceUrl": "https://mauto.danawa.com/newcar/?Work=sales&Brand=303&Screen=terms4802",
+  "benefits": [
+    {
+      "id": "dnw-4802-fin-0",
+      "category": "finance",
+      "title": "기본조건 4.9% (36개월)",
+      "amount": 0,
+      "note": "4.9%(36개월) / 5.0%(48개월) / 5.1%(60개월) · 2026-07 기준 · 기본 할인조건 택1",
+      "stackable": false,
+      "source": "official"
+    },
+    {
+      "id": "dnw-4802-트레이드-인-특별조건-1",
+      "category": "tradein",
+      "title": "트레이드-인 특별조건",
+      "amount": 500000,
+      "note": "50만 (현대/제네시스 매각 시) / 30만 (타 브랜드 매각 시) · 2026-07 기준 · 조건 충족 시",
+      "stackable": true,
+      "source": "official"
+    },
+    {
+      "id": "dnw-4802-노후차-트레이드-인-2",
+      "category": "tradein",
+      "title": "노후차 트레이드-인",
+      "amount": 200000,
+      "note": "20만 (현대/제네시스 노후차 보유차량 매각) / 20만 (타 브랜드 매각 시) · 2026-07 기준 · 조건 충족 시",
+      "stackable": true,
+      "source": "official"
+    },
+    {
+      "id": "dnw-4802-현장-렌트사-우대타겟-3",
+      "category": "group",
+      "title": "현장 렌트사 우대타겟",
+      "amount": 500000,
+      "note": "10만 (1대) / 30만 (2~3대) / 40만 (4~5대) / 50만 (6대 이상) · 2026-07 기준 · 조건 충족 시",
+      "stackable": true,
+      "source": "official"
+    },
+    {
+      "id": "dnw-4802-현장관리법인-4",
+      "category": "group",
+      "title": "현장관리법인",
+      "amount": 300000,
+      "note": "20만 (법인 업무용/대표자/키맨) / 30만 (법인 업무용/대표자/키맨) · 2026-07 기준 · 조건 충족 시",
+      "stackable": true,
+      "source": "official"
+    }
+  ]
+}

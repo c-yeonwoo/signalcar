@@ -1,0 +1,51 @@
+name: Ingest Loop (daily)
+
+on:
+  schedule:
+    # 06:00 KST = 21:00 UTC previous day
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Optional single job id (catalog-index, news-index, …)"
+        required: false
+        default: ""
+      force:
+        description: "Force run even if disabled"
+        required: false
+        default: "false"
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Run ingest loop
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+        run: |
+          ARGS=(loop)
+          if [ -n "${{ inputs.job }}" ]; then
+            ARGS+=(--job "${{ inputs.job }}")
+          fi
+          if [ "${{ inputs.force }}" = "true" ]; then
+            ARGS+=(--force)
+          fi
+          bun workers/ingest/run.ts "${ARGS[@]}"
+      - name: Upload loop artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingest-loop-out
+          path: |
+            workers/ingest/out/loop-state.json
+            workers/ingest/out/catalog-index-*.json
+            workers/ingest/out/news-index-*.json
+            src/data/ingest-loop-status.json
+          if-no-files-found: ignore

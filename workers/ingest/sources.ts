@@ -38,11 +38,15 @@ export type IngestSource = {
   targetTables: string[];
 };
 
-/** 금지 소스 — 구현/호출 금지 */
+/** 제품 공개 적재 금지 — 개인 로컬 조사용 CLI(`danawa-private`)는 별도 */
 export const FORBIDDEN_SOURCES = [
-  { id: "getcha", name: "겟차", reason: "경쟁사 ToS · 제품 정책" },
-  { id: "danawa-auto", name: "다나와 자동차", reason: "경쟁사 ToS · 제품 정책" },
-  { id: "encar", name: "엔카", reason: "경쟁사 ToS · 제품 정책" },
+  { id: "getcha", name: "겟차", reason: "경쟁사 ToS · 제품 공개 적재 금지" },
+  {
+    id: "danawa-auto",
+    name: "다나와 자동차",
+    reason: "제품 DB/UI 적재 금지 (개인 로컬: run.ts danawa-private)",
+  },
+  { id: "encar", name: "엔카", reason: "경쟁사 ToS · 제품 공개 적재 금지" },
   { id: "kbchachacha", name: "KB차차차", reason: "경쟁사 ToS" },
 ] as const;
 

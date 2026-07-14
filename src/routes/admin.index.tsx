@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Car, Tag, FileText, Layers } from "lucide-react";
+import { Building2, Car, Tag, FileText, Layers, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: Index,
@@ -31,11 +31,11 @@ function Index() {
   const { data, isLoading } = useQuery({ queryKey: ["counts"], queryFn: fetchCounts });
 
   const cards = [
-    { title: "브랜드", value: data?.brands, icon: Building2, to: "/brands" as const },
-    { title: "차종", value: data?.vehicles, icon: Car, to: "/vehicles" as const },
-    { title: "트림", value: data?.trims, icon: Layers, to: "/vehicles" as const },
-    { title: "공식 프로모션", value: data?.promotions, icon: Tag, to: "/promotions" as const },
-    { title: "공유된 실계약가", value: data?.deals, icon: FileText, to: "/deal-reports" as const },
+    { title: "브랜드", value: data?.brands, icon: Building2, to: "/admin/brands" as const },
+    { title: "차종", value: data?.vehicles, icon: Car, to: "/admin/vehicles" as const },
+    { title: "트림", value: data?.trims, icon: Layers, to: "/admin/vehicles" as const },
+    { title: "공식 프로모션", value: data?.promotions, icon: Tag, to: "/admin/promotions" as const },
+    { title: "공유된 실계약가", value: data?.deals, icon: FileText, to: "/admin/deal-reports" as const },
   ];
 
   return (
@@ -65,6 +65,22 @@ function Index() {
           </Link>
         ))}
       </div>
+
+      <Link to="/admin/ingest">
+        <Card className="hover:border-primary transition-colors cursor-pointer">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <RefreshCw className="h-4 w-4" />
+              데이터 갱신 루프
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">
+              하루 1회 크롤링 · 변경분만 반영. 스케줄·작업 on/off·수동 실행 요청.
+            </p>
+          </CardContent>
+        </Card>
+      </Link>
     </div>
   );
 }

@@ -282,7 +282,11 @@ function CarDetailPage() {
       </section>
 
       {/* SECTION 05 · Benefits */}
-      <BenefitsSection benefits={car.benefits} accentHex={accent.hex} />
+      <BenefitsSection
+        benefits={car.benefits}
+        accentHex={accent.hex}
+        period={car.benefitsPeriod}
+      />
 
       {/* SECTION 05.2 · Give-to-get gated report */}
       <ReportCreditCard carId={car.id} brand={car.brand} model={car.model} />
@@ -545,7 +549,15 @@ function PriceAnchor({
   );
 }
 
-function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentHex: string }) {
+function BenefitsSection({
+  benefits,
+  accentHex,
+  period,
+}: {
+  benefits: Benefit[];
+  accentHex: string;
+  period?: string;
+}) {
   // stackable + 금전 혜택 합산 (중복 가능한 것만)
   const stackTotal = benefits
     .filter((b) => b.stackable && b.amount > 0)
@@ -563,10 +575,19 @@ function BenefitsSection({ benefits, accentHex }: { benefits: Benefit[]; accentH
   const sourceLabel = (s: Benefit["source"]) =>
     s === "official" ? "공식" : s === "dealer" ? "딜러재량" : "제휴";
 
+  const periodLabel = period
+    ? `${period.slice(0, 4)}년 ${Number(period.slice(5))}월 판매조건`
+    : null;
+
   return (
     <section className="bg-white border-t border-[color:var(--color-brand-mist)]">
       <div className="px-5 pt-5 pb-2">
         <h3 className={SECTION_TITLE}>받을 수 있는 혜택</h3>
+        {periodLabel && (
+          <p className={`mt-1 text-[12px] ${MUTED}`}>
+            {periodLabel} · 기본 할인조건은 택1
+          </p>
+        )}
       </div>
 
       {/* Hero: Max savings — editorial mist card with signal accent bar */}

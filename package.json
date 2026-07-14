@@ -13,7 +13,8 @@
     "ingest:sources": "bun workers/ingest/run.ts sources",
     "ingest:catalog": "bun workers/ingest/run.ts catalog-index",
     "ingest:signals": "bun workers/ingest/run.ts aggregate-signals",
-    "ingest:sales": "bun workers/ingest/run.ts sales-kot"
+    "ingest:sales": "bun workers/ingest/run.ts sales-kot",
+    "ingest:loop": "bun workers/ingest/run.ts loop"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
