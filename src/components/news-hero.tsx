@@ -1,14 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Megaphone, ChevronRight } from "lucide-react";
-import { getNewsItems, type NewsItem } from "@/lib/news";
+import { fetchNewsItems, type NewsItem } from "@/lib/news";
 
 /**
  * 홈 상단 신차 소식 히어로 배너.
- * - 최신 소식 1건을 큰 카드로, 나머지는 아래 도트 인디케이터로 자동 순환.
  */
 export function NewsHero() {
-  const items = getNewsItems();
+  const { data: items = [] } = useQuery({
+    queryKey: ["news-items"],
+    queryFn: fetchNewsItems,
+  });
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
@@ -18,7 +21,8 @@ export function NewsHero() {
   }, [items.length]);
 
   if (items.length === 0) return null;
-  const item = items[idx];
+  const item = items[idx % items.length];
+  if (!item) return null;
 
   return (
     <section className="px-5 mt-3">
@@ -46,7 +50,6 @@ function NewsCard({ item }: { item: NewsItem }) {
     <div
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${item.accent} text-white shadow-sm`}
     >
-      {/* 이미지 워터마크 */}
       {item.image && (
         <img
           src={item.image}

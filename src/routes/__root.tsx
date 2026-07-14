@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { hydrateWatchlistFromServer } from "@/lib/watchlist-store";
 import { hydrateAlertsFromServer } from "@/lib/alerts-store";
 import { hydrateUnlocksFromServer } from "@/lib/report-credits";
+import { hydrateCars } from "@/lib/cars";
 
 function NotFoundComponent() {
   return (
@@ -135,6 +136,7 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    void hydrateCars();
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();

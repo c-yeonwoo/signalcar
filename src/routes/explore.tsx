@@ -6,7 +6,8 @@ import { Sparkline } from "@/components/sparkline";
 import { PageHeader, SectionTitle, TabPills } from "@/components/ui-kit";
 import { CatalogGrid } from "@/components/catalog-grid";
 import { SignalTopStrip } from "@/components/signal-top-strip";
-import { MOCK_CARS } from "@/lib/mock-cars";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCarsFromDb } from "@/lib/cars";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
@@ -158,6 +159,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 function ExplorePage() {
+  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
   const [tab, setTab] = useState<Tab>("catalog");
   const [buyOnly, setBuyOnly] = useState(false);
   const [watched, setWatched] = useState<string[]>([]);
@@ -170,8 +172,8 @@ function ExplorePage() {
   }, []);
 
   const segmentCars = buyOnly
-    ? MOCK_CARS.filter((c) => c.signal === "buy")
-    : MOCK_CARS;
+    ? cars.filter((c) => c.signal === "buy")
+    : cars;
 
   return (
     <ConsumerShell>

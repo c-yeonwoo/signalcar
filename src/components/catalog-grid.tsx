@@ -4,10 +4,10 @@ import { Heart, Search, X, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   CATALOG,
+  MOCK_CARS,
   BODY_GROUPS,
   FUEL_LABEL,
   catalogHasDetail,
-  MOCK_CARS,
   type CatalogEntry,
   type Fuel,
 } from "@/lib/mock-cars";

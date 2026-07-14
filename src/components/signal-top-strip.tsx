@@ -1,14 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
-import { MOCK_CARS, formatKRW, type MockCar } from "@/lib/mock-cars";
+import { useQuery } from "@tanstack/react-query";
+import { formatKRW, type MockCar } from "@/lib/mock-cars";
+import { fetchCarsFromDb } from "@/lib/cars";
 import { SignalPill } from "@/components/ui-kit";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /** BUY 시그널 + 표본 많은 순 TOP N */
-export function buySignalTop(limit = 5): MockCar[] {
-  return [...MOCK_CARS]
+export function buySignalTop(cars: MockCar[], limit = 5): MockCar[] {
+  return [...cars]
     .filter((c) => c.signal === "buy")
     .sort((a, b) => b.reports - a.reports || b.promoPercentile - a.promoPercentile)
     .slice(0, limit);
@@ -18,8 +20,12 @@ export function buySignalTop(limit = 5): MockCar[] {
  * 탐색 상단: 이번주 시그널 좋은 차 TOP 5
  */
 export function SignalTopStrip({ limit = 5 }: { limit?: number }) {
+  const { data: allCars = [] } = useQuery({
+    queryKey: ["cars"],
+    queryFn: () => fetchCarsFromDb(),
+  });
   const [watched, setWatched] = useState<string[]>([]);
-  const items = buySignalTop(limit);
+  const items = useMemo(() => buySignalTop(allCars, limit), [allCars, limit]);
 
   useEffect(() => {
     const sync = () => setWatched(getWatchlist());
@@ -45,7 +51,7 @@ export function SignalTopStrip({ limit = 5 }: { limit?: number }) {
           <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)]">
             이번주 시그널 좋은 차 TOP {items.length}
           </div>
-          <div className="text-[11px] text-slate-500 mt-0.5">BUY 시그널 · 표본 많은 순</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">BUY 시그널 · 표본 많은 순</div>
         </div>
       </div>
       <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1" style={{ scrollSnapType: "x mandatory" }}>
