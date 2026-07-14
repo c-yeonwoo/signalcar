@@ -22,9 +22,10 @@ bun workers/ingest/run.ts news-index
 SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
   bun workers/ingest/run.ts aggregate-signals [--dry]
 
-# 교통안전공단 신규등록 (키 필요)
-DATA_GO_KR_API_KEY=... DATA_GO_KR_SERVICE_URL=... \
-  bun workers/ingest/run.ts sales-kot --year 2026 --month 06
+# 교통안전공단 신규등록 (키는 .env.local 권장)
+# DATA_GO_KR_API_KEY=...
+# DATA_GO_KR_SERVICE_URL 생략 시 기본 엔드포인트 사용
+bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 ```
 
 ## Catalog sources (키 없음)
@@ -60,8 +61,8 @@ DATA_GO_KR_API_KEY=... DATA_GO_KR_SERVICE_URL=... \
 |-----|-------|---------|
 | `SUPABASE_URL` | DB 쓰기 시 | project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | DB 쓰기 시 | master 테이블 write |
-| `DATA_GO_KR_API_KEY` | 판매통계 시 | 공공데이터포털 |
-| `DATA_GO_KR_SERVICE_URL` | 판매통계 시 | KOTSA 신규등록 서비스 URL |
+| `DATA_GO_KR_API_KEY` | 판매통계 시 | 공공데이터포털 (`.env.local`) |
+| `DATA_GO_KR_SERVICE_URL` | 선택 | 기본: `.../newRegistlnfoService_02/getnewRegistlnfoService02` |
 | `VITE_ADMIN_EMAILS` | 선택 | 관리자 allowlist |
 
 **불필요:** 현대/기아/제네시스 공식 카탈로그·뉴스 인덱싱.

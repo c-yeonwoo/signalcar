@@ -9,7 +9,7 @@
  *   bun workers/ingest/run.ts sales-kot --year 2026 --month 06
  *   bun workers/ingest/run.ts keys
  */
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   FORBIDDEN_SOURCES,
@@ -18,6 +18,32 @@ import {
   sourcesByDomain,
   type DataDomain,
 } from "./sources";
+
+/** Load .env then .env.local into process.env (local secrets wins). */
+function loadEnvFiles() {
+  for (const name of [".env", ".env.local"]) {
+    const path = join(process.cwd(), name);
+    if (!existsSync(path)) continue;
+    for (const line of readFileSync(path, "utf8").split("\n")) {
+      const t = line.trim();
+      if (!t || t.startsWith("#")) continue;
+      const i = t.indexOf("=");
+      if (i < 0) continue;
+      const k = t.slice(0, i).trim();
+      let v = t.slice(i + 1).trim();
+      if (
+        (v.startsWith('"') && v.endsWith('"')) ||
+        (v.startsWith("'") && v.endsWith("'"))
+      ) {
+        v = v.slice(1, -1);
+      }
+      if (name === ".env.local" || process.env[k] === undefined) {
+        process.env[k] = v;
+      }
+    }
+  }
+}
+loadEnvFiles();
 
 const args = process.argv.slice(2);
 const cmd = args[0] ?? "help";
@@ -38,8 +64,9 @@ async function main() {
     → aggregate-signals, source_documents upsert, trims 적재
 
 [필수 — 공공 판매통계]
-  DATA_GO_KR_API_KEY          공공데이터포털 일반인증키
-  DATA_GO_KR_SERVICE_URL      교통안전공단 신규등록 서비스 URL
+  DATA_GO_KR_API_KEY          공공데이터포털 일반인증키 (.env.local)
+  DATA_GO_KR_SERVICE_URL      선택. 미설정 시 기본:
+    https://apis.data.go.kr/B553881/newRegistlnfoService_02/getnewRegistlnfoService02
     → https://www.data.go.kr/data/15059401/openapi.do 신청
 
 [선택 — 앱/어드민]
