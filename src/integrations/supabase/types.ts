@@ -44,68 +44,6 @@ export type Database = {
         }
         Relationships: []
       }
-      car_profiles: {
-        Row: {
-          benefits: Json
-          body_type_label: string | null
-          coach: string | null
-          facelift: Json | null
-          fuel_efficiency: number | null
-          headline: string | null
-          image_color: string | null
-          insurance_annual: number | null
-          promo_amount: number | null
-          promo_label: string | null
-          promo_note: string | null
-          published: boolean
-          slug: string
-          trim_id: string
-          updated_at: string
-        }
-        Insert: {
-          benefits?: Json
-          body_type_label?: string | null
-          coach?: string | null
-          facelift?: Json | null
-          fuel_efficiency?: number | null
-          headline?: string | null
-          image_color?: string | null
-          insurance_annual?: number | null
-          promo_amount?: number | null
-          promo_label?: string | null
-          promo_note?: string | null
-          published?: boolean
-          slug: string
-          trim_id: string
-          updated_at?: string
-        }
-        Update: {
-          benefits?: Json
-          body_type_label?: string | null
-          coach?: string | null
-          facelift?: Json | null
-          fuel_efficiency?: number | null
-          headline?: string | null
-          image_color?: string | null
-          insurance_annual?: number | null
-          promo_amount?: number | null
-          promo_label?: string | null
-          promo_note?: string | null
-          published?: boolean
-          slug?: string
-          trim_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "car_profiles_trim_id_fkey"
-            columns: ["trim_id"]
-            isOneToOne: true
-            referencedRelation: "trims"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       deal_reports: {
         Row: {
           contract_month: string | null
@@ -167,176 +105,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      ingest_loop_config: {
-        Row: {
-          enabled: boolean
-          job_id: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          enabled?: boolean
-          job_id: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          enabled?: boolean
-          job_id?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: []
-      }
-      ingest_run_requests: {
-        Row: {
-          claimed_at: string | null
-          finished_at: string | null
-          id: string
-          job_id: string
-          requested_at: string
-          requested_by: string | null
-          result: Json
-          status: string
-        }
-        Insert: {
-          claimed_at?: string | null
-          finished_at?: string | null
-          id?: string
-          job_id: string
-          requested_at?: string
-          requested_by?: string | null
-          result?: Json
-          status?: string
-        }
-        Update: {
-          claimed_at?: string | null
-          finished_at?: string | null
-          id?: string
-          job_id?: string
-          requested_at?: string
-          requested_by?: string | null
-          result?: Json
-          status?: string
-        }
-        Relationships: []
-      }
-      ingest_runs: {
-        Row: {
-          error: string | null
-          finished_at: string | null
-          id: string
-          pipeline: string
-          started_at: string
-          stats: Json
-          status: string
-        }
-        Insert: {
-          error?: string | null
-          finished_at?: string | null
-          id?: string
-          pipeline: string
-          started_at?: string
-          stats?: Json
-          status?: string
-        }
-        Update: {
-          error?: string | null
-          finished_at?: string | null
-          id?: string
-          pipeline?: string
-          started_at?: string
-          stats?: Json
-          status?: string
-        }
-        Relationships: []
-      }
-      news_items: {
-        Row: {
-          created_at: string
-          id: string
-          kind: string
-          published_at: string | null
-          source_id: string | null
-          subtitle: string | null
-          tag: string | null
-          title: string
-          url: string | null
-          vehicle_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          kind?: string
-          published_at?: string | null
-          source_id?: string | null
-          subtitle?: string | null
-          tag?: string | null
-          title: string
-          url?: string | null
-          vehicle_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          kind?: string
-          published_at?: string | null
-          source_id?: string | null
-          subtitle?: string | null
-          tag?: string | null
-          title?: string
-          url?: string | null
-          vehicle_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "news_items_vehicle_id_fkey"
-            columns: ["vehicle_id"]
-            isOneToOne: false
-            referencedRelation: "vehicles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      source_documents: {
-        Row: {
-          brand_hint: string | null
-          content_type: string | null
-          created_at: string
-          fetched_at: string
-          file_name: string | null
-          id: string
-          meta: Json
-          parsed_at: string | null
-          source_id: string
-          url: string
-        }
-        Insert: {
-          brand_hint?: string | null
-          content_type?: string | null
-          created_at?: string
-          fetched_at?: string
-          file_name?: string | null
-          id?: string
-          meta?: Json
-          parsed_at?: string | null
-          source_id: string
-          url: string
-        }
-        Update: {
-          brand_hint?: string | null
-          content_type?: string | null
-          created_at?: string
-          fetched_at?: string
-          file_name?: string | null
-          id?: string
-          meta?: Json
-          parsed_at?: string | null
-          source_id?: string
-          url?: string
-        }
-        Relationships: []
       }
       negotiation_briefs: {
         Row: {
@@ -533,46 +301,22 @@ export type Database = {
         }
         Relationships: []
       }
-      digest_signups: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
           id: string
-          is_admin: boolean
           nickname: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           id: string
-          is_admin?: boolean
           nickname?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          is_admin?: boolean
           nickname?: string | null
           updated_at?: string
         }
@@ -858,10 +602,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      unlock_briefing_with_credit: {
-        Args: { p_trim_id: string }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       body_type:
