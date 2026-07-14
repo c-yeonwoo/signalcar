@@ -12,6 +12,7 @@ import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
 import { DiscoveryCarousel } from "@/components/discovery-carousel";
+import { DigestSignupCard } from "@/components/digest-signup-card";
 import { NewsHero } from "@/components/news-hero";
 import { WatchlistAddSheet } from "@/components/watchlist-add-sheet";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
@@ -522,6 +523,13 @@ function HomePage() {
 
       {/* 발견 — 구경하다 담기 */}
       <DiscoveryCarousel />
+
+      {/* 주간 메일 다이제스트 (발송은 Sprint K) */}
+      {!personalized && (
+        <section className="px-5 mt-5">
+          <DigestSignupCard />
+        </section>
+      )}
 
       {/* 폴백/디스커버리 — 관심 차 외에도 다른 차들을 훑을 수 있게 */}
       <section className="px-5 mt-6">

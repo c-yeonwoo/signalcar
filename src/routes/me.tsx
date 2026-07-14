@@ -13,6 +13,7 @@ import { hasSignedUpForPro } from "@/components/pro-signup-card";
 import { getAllSnapshots } from "@/lib/watch-snapshot";
 import { getRiseState } from "@/lib/rise-alerts";
 import { getCreditBalance, getUnlockedIds } from "@/lib/report-credits";
+import { DigestSignupCard } from "@/components/digest-signup-card";
 
 export const Route = createFileRoute("/me")({
   component: MePage,
@@ -166,7 +167,8 @@ function MePage() {
       </section>
 
       {/* PRO 얼리버드 상태 */}
-      <section className="px-5 mb-5">
+      <section className="px-5 mb-5 space-y-2.5">
+        <DigestSignupCard compact />
         <Link
           to="/coach"
           className="sc-card p-4 flex items-center gap-3 active:scale-[0.99] transition"

@@ -15,6 +15,7 @@ import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
 import { ReportCreditCard } from "@/components/report-credit-card";
+import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
 
 /* ============================================================
@@ -313,6 +314,8 @@ function CarDetailPage() {
           <p className={`${MUTED} text-[13px]`}>가까운 시기 변경 계획 없음</p>
         )}
       </section>
+
+      <SimilarCarsSection car={car} />
 
       <div className="h-4" />
 

@@ -7,6 +7,7 @@ import {
   BODY_GROUPS,
   FUEL_LABEL,
   catalogHasDetail,
+  MOCK_CARS,
   type CatalogEntry,
   type Fuel,
 } from "@/lib/mock-cars";
@@ -44,7 +45,7 @@ export function CatalogGrid() {
   const [band, setBand] = useState<string>("all");
   const [fuel, setFuel] = useState<Fuel | "all">("all");
   const [watched, setWatched] = useState<string[]>([]);
-  const [scope, setScope] = useState<"all" | "ready" | "soon">("all");
+  const [scope, setScope] = useState<"all" | "ready" | "soon" | "buy">("all");
 
   useEffect(() => {
     const sync = () => setWatched(getWatchlist());
@@ -66,6 +67,10 @@ export function CatalogGrid() {
       const ready = catalogHasDetail(c.id);
       if (scope === "ready" && !ready) return false;
       if (scope === "soon" && ready) return false;
+      if (scope === "buy") {
+        const car = MOCK_CARS.find((m) => m.id === c.id);
+        if (!car || car.signal !== "buy") return false;
+      }
       return true;
     });
   }, [q, bodyGroup, bandRange, fuel, scope]);
@@ -104,9 +109,10 @@ export function CatalogGrid() {
 
       <FilterRow
         value={scope}
-        onChange={(v) => setScope(v as "all" | "ready" | "soon")}
+        onChange={(v) => setScope(v as "all" | "ready" | "soon" | "buy")}
         items={[
           { id: "all", label: "전체" },
+          { id: "buy", label: "BUY 시그널" },
           { id: "ready", label: "시그널 오픈" },
           { id: "soon", label: "곧 오픈" },
         ]}

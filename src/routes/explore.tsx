@@ -5,6 +5,12 @@ import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { PageHeader, SectionTitle, TabPills } from "@/components/ui-kit";
 import { CatalogGrid } from "@/components/catalog-grid";
+import { SignalTopStrip } from "@/components/signal-top-strip";
+import { MOCK_CARS } from "@/lib/mock-cars";
+import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
+import { Heart } from "lucide-react";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/explore")({
   component: ExplorePage,
@@ -153,6 +159,19 @@ const TABS: { id: Tab; label: string }[] = [
 
 function ExplorePage() {
   const [tab, setTab] = useState<Tab>("catalog");
+  const [buyOnly, setBuyOnly] = useState(false);
+  const [watched, setWatched] = useState<string[]>([]);
+
+  useEffect(() => {
+    const sync = () => setWatched(getWatchlist());
+    sync();
+    window.addEventListener("sc:watchlist-change", sync);
+    return () => window.removeEventListener("sc:watchlist-change", sync);
+  }, []);
+
+  const segmentCars = buyOnly
+    ? MOCK_CARS.filter((c) => c.signal === "buy")
+    : MOCK_CARS;
 
   return (
     <ConsumerShell>
@@ -162,7 +181,9 @@ function ExplorePage() {
         subtitle="전체 차종을 검색·필터로 훑고 마음에 드는 차는 하트로 관심에 담아보세요."
       />
 
-      <div className="px-5">
+      <SignalTopStrip />
+
+      <div className="px-5 mt-4">
         <TabPills value={tab} onChange={setTab} tabs={TABS} />
       </div>
 
@@ -170,6 +191,68 @@ function ExplorePage() {
 
       {tab === "map" && (
         <>
+          <div className="px-5 mt-3 flex items-center justify-between">
+            <span className="text-[12px] text-slate-500">세그먼트 시그널</span>
+            <button
+              type="button"
+              onClick={() => setBuyOnly((v) => !v)}
+              className={`rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition ${
+                buyOnly
+                  ? "bg-[color:var(--color-signal-buy)] text-white"
+                  : "bg-white border border-slate-200 text-slate-600"
+              }`}
+            >
+              지금 BUY만 보기
+            </button>
+          </div>
+
+          {buyOnly && (
+            <section className="px-5 mt-3">
+              <div className="sc-card divide-y divide-slate-100 overflow-hidden">
+                {segmentCars.length === 0 ? (
+                  <div className="px-4 py-6 text-center text-[12.5px] text-slate-500">
+                    BUY 시그널 차가 없어요.
+                  </div>
+                ) : (
+                  segmentCars.map((c) => {
+                    const isWatched = watched.includes(c.id);
+                    return (
+                      <div key={c.id} className="px-4 py-3 flex items-center gap-3">
+                        <Link
+                          to="/car/$vehicleId"
+                          params={{ vehicleId: c.id }}
+                          className="flex-1 min-w-0"
+                        >
+                          <div className="text-[12.5px] font-semibold text-slate-800">
+                            {c.brand} {c.model}
+                          </div>
+                          <div className="text-[10.5px] text-slate-400 mt-0.5">
+                            {c.bodyType} · 표본 {c.reports}
+                          </div>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const { added } = toggleWatch(c.id, { price: c.medianContract });
+                            setWatched(getWatchlist());
+                            toast.success(added ? `${c.model} 관심 담음` : `${c.model} 관심 해제`);
+                          }}
+                          className={`h-9 w-9 rounded-full grid place-items-center ${
+                            isWatched
+                              ? "text-[color:var(--color-signal-buy)] bg-[color:var(--color-signal-buy)]/10"
+                              : "text-slate-400 bg-slate-50"
+                          }`}
+                        >
+                          <Heart className="h-4 w-4" fill={isWatched ? "currentColor" : "none"} />
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Matrix */}
           <section className="px-5 mt-4">
             <SectionTitle right="색상 = 인기">차종 × 가격대</SectionTitle>
