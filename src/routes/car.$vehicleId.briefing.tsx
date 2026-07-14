@@ -112,7 +112,7 @@ function BriefingPage() {
       <section className="px-5 pb-5">
         <h2 className="text-[15px] font-bold text-[color:var(--color-brand-navy)]">핵심 포인트</h2>
         <ul className="mt-3 space-y-2">
-          {brief.talkTracks.map((t) => (
+          {brief.talkTracks.map((t: string) => (
             <li
               key={t}
               className="rounded-xl bg-[color:var(--color-brand-mist)]/50 px-3.5 py-3 text-[13px] text-slate-700 leading-relaxed"
@@ -129,7 +129,7 @@ function BriefingPage() {
           지역별 편차 (참고)
         </h2>
         <div className="mt-3 rounded-2xl border border-[color:var(--color-brand-mist)] overflow-hidden">
-          {brief.regionalSpread.map((r) => (
+          {brief.regionalSpread.map((r: any) => (
             <div
               key={r.region}
               className="flex items-start justify-between gap-3 px-3.5 py-3 border-b border-slate-100 last:border-0"
@@ -166,8 +166,8 @@ function BriefingPage() {
           협상 스크립트 3종
         </h2>
         <div className="mt-3 space-y-3">
-          {brief.scripts.map((s) => {
-            const Icon = CHANNEL_ICON[s.channel];
+          {brief.scripts.map((s: any) => {
+            const Icon = CHANNEL_ICON[s.channel as keyof typeof CHANNEL_ICON];
             return (
               <div
                 key={s.channel}
@@ -179,7 +179,7 @@ function BriefingPage() {
                   </div>
                   <div>
                     <div className="text-[10.5px] font-semibold text-slate-400 uppercase">
-                      {CHANNEL_LABEL[s.channel]}
+                      {CHANNEL_LABEL[s.channel as keyof typeof CHANNEL_LABEL]}
                     </div>
                     <div className="text-[13.5px] font-semibold text-[color:var(--color-brand-navy)]">
                       {s.title}
@@ -202,7 +202,7 @@ function BriefingPage() {
           견적 함정 체크
         </h2>
         <ul className="mt-3 space-y-2">
-          {brief.traps.map((t) => (
+          {brief.traps.map((t: string) => (
             <li key={t} className="flex gap-2 text-[12.5px] text-slate-700 leading-relaxed">
               <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[color:var(--color-signal-wait)] shrink-0" />
               {t}
