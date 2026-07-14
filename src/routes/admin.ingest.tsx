@@ -11,8 +11,8 @@ import {
   MinusCircle,
   Ban,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
+import { supabase as supabaseTyped } from "@/integrations/supabase/client";
+const supabase = supabaseTyped as any;
 import { useSession } from "@/hooks/use-session";
 import {
   LOOP_JOBS,
@@ -39,9 +39,9 @@ export const Route = createFileRoute("/admin/ingest")({
   ssr: false,
 });
 
-type ConfigRow = Tables<"ingest_loop_config">;
-type RunRow = Tables<"ingest_runs">;
-type RequestRow = Tables<"ingest_run_requests">;
+type ConfigRow = { job_id: string; enabled: boolean; updated_at?: string; updated_by?: string | null };
+type RunRow = { id: string; pipeline: string; status: string; started_at: string };
+type RequestRow = { id: string; job_id: string; status: string; requested_at: string; requested_by?: string | null };
 
 function statusMeta(s: LoopJobStatus | string) {
   switch (s) {

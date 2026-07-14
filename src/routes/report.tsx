@@ -274,6 +274,7 @@ function RewardRow({
 /* ============ 제보 완료 → 리뷰 남기기 트리거 ============ */
 
 function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
+  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
   const car = cars.find((c) => c.id === carId);
   const [rating, setRating] = useState(0);
   const [pros, setPros] = useState("");

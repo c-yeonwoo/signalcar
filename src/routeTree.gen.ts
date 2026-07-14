@@ -454,18 +454,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPromotionsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/deal-reports': {
-      id: '/admin/deal-reports'
-      path: '/deal-reports'
-      fullPath: '/admin/deal-reports'
-      preLoaderRoute: typeof AdminDealReportsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/ingest': {
       id: '/admin/ingest'
       path: '/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/deal-reports': {
+      id: '/admin/deal-reports'
+      path: '/deal-reports'
+      fullPath: '/admin/deal-reports'
+      preLoaderRoute: typeof AdminDealReportsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/brands': {
