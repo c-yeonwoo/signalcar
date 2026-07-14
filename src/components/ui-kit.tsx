@@ -199,20 +199,32 @@ export function CarThumb({
   src,
   alt,
   size = "md",
+  fallbackClassName,
 }: {
-  src: string;
+  src?: string;
   alt: string;
   size?: "sm" | "md" | "lg";
+  fallbackClassName?: string;
 }) {
   const h = size === "sm" ? "h-20" : size === "lg" ? "h-40" : "h-36";
   return (
     <div className={cn("w-full rounded-xl bg-white border border-slate-100 relative overflow-hidden", h)}>
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-contain object-center scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.22)]"
-      />
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-contain object-center scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.22)]"
+        />
+      ) : (
+        <div
+          className={cn(
+            "absolute inset-0 bg-gradient-to-br opacity-40",
+            fallbackClassName ?? "from-slate-300 to-slate-500",
+          )}
+          aria-hidden
+        />
+      )}
     </div>
   );
 }

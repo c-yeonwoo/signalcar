@@ -401,7 +401,11 @@ function HomePage() {
                 </div>
               )}
               <div className="mb-4">
-                <CarThumb src={c.image} alt={`${c.model} ${c.trim}`} />
+                <CarThumb
+                  src={c.image}
+                  alt={`${c.model} ${c.trim}`}
+                  fallbackClassName={c.imageColor}
+                />
               </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">

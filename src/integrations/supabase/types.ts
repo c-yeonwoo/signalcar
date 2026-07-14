@@ -602,7 +602,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      unlock_briefing_with_credit: {
+        Args: { p_trim_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       body_type:

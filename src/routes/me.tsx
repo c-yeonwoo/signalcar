@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Clock, Wrench, HeartHandshake, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight, Heart, GitCompare, MessageSquareQuote, FileText, Crown, Bell, Bookmark } from "lucide-react";
+import { Heart, GitCompare, MessageSquareQuote, FileText, Crown, Bell, Bookmark, LogIn, LogOut, User as UserIcon, Camera, ScanLine, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { useSession } from "@/hooks/use-session";
@@ -197,9 +197,6 @@ function MePage() {
       <section className="px-5 space-y-3">
         <ActionLink to="/report" icon={Camera} title="계약서 공유" desc="1건 공유하면 리포트 열람권을 드려요." />
         <ActionLink to="/diagnose" icon={ScanLine} title="견적서 진단" desc="딜러 견적서 함정 여부를 사진으로 체크." />
-        <Placeholder icon={Clock} title="출고 트래킹" desc="계약 후 생산·배송·출고를 한눈에 볼 수 있어요." />
-        <Placeholder icon={Wrench} title="차생활 관리" desc="첫 점검·소모품 교체 시점을 알려드려요." />
-        <Placeholder icon={HeartHandshake} title="구매 히스토리" desc="내가 받은 브리핑과 진단 기록을 보관해요." />
       </section>
 
       {user && (
@@ -223,7 +220,7 @@ function HubCard({
   desc,
 }: {
   to: string;
-  icon: typeof Clock;
+  icon: typeof Heart;
   title: string;
   count: number;
   desc: string;
@@ -244,23 +241,6 @@ function HubCard({
   );
 }
 
-function Placeholder({ icon: Icon, title, desc }: { icon: typeof Clock; title: string; desc: string }) {
-  return (
-    <div className="sc-card p-5 flex gap-3 items-start opacity-90">
-      <div className="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center flex-shrink-0">
-        <Icon className="h-5 w-5 text-slate-500" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">{title}</div>
-          <span className="text-[10px] bg-slate-100 text-slate-500 rounded-full px-1.5 py-0.5">준비 중</span>
-        </div>
-        <div className="text-[12.5px] text-slate-500 mt-1 leading-relaxed">{desc}</div>
-      </div>
-    </div>
-  );
-}
-
 function ActionLink({
   to,
   icon: Icon,
@@ -268,7 +248,7 @@ function ActionLink({
   desc,
 }: {
   to: string;
-  icon: typeof Clock;
+  icon: typeof Heart;
   title: string;
   desc: string;
 }) {

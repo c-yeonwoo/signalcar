@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Lock, Unlock, Ticket, Camera, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHydrated } from "@tanstack/react-router";
@@ -25,6 +25,7 @@ export function ReportCreditCard({
   model: string;
 }) {
   const hydrated = useHydrated();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
 
@@ -47,6 +48,7 @@ export function ReportCreditCard({
       return;
     }
     toast.success(`협상 리포트가 열렸어요 · ${brand} ${model}`);
+    void navigate({ to: "/car/$vehicleId/briefing", params: { vehicleId: carId } });
   };
 
   return (
@@ -90,11 +92,12 @@ export function ReportCreditCard({
           {/* CTA */}
           {unlocked ? (
             <Link
-              to="/report"
+              to="/car/$vehicleId/briefing"
+              params={{ vehicleId: carId }}
               className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 text-[13.5px] font-semibold"
             >
               <Sparkles className="h-4 w-4" />
-              리포트 열기
+              협상 리포트 열기
             </Link>
           ) : balance > 0 ? (
             <div className="mt-4 space-y-2">

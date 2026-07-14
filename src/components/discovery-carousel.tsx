@@ -58,7 +58,11 @@ export function DiscoveryCarousel() {
               style={{ scrollSnapAlign: "start" }}
             >
               <div className="relative aspect-[4/3] rounded-xl bg-slate-50 overflow-hidden flex items-center justify-center">
-                <img src={car.image} alt={car.model} className="w-full h-full object-contain" />
+                {car.image ? (
+                  <img src={car.image} alt={car.model} className="w-full h-full object-contain" />
+                ) : (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${car.imageColor} opacity-40`} />
+                )}
                 <button
                   type="button"
                   onClick={(e) => handleWatch(car, e)}

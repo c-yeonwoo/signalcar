@@ -6,6 +6,7 @@ import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
+import { resolveCarWithSignal } from "@/lib/price-signals";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
@@ -42,8 +43,8 @@ function signalAccent(s: Signal) {
 export const Route = createFileRoute("/car/$vehicleId")({
   component: CarDetailPage,
   ssr: false,
-  loader: ({ params }) => {
-    const car = findCar(params.vehicleId);
+  loader: async ({ params }) => {
+    const car = (await resolveCarWithSignal(params.vehicleId)) ?? findCar(params.vehicleId);
     if (!car) throw notFound();
     return { car };
   },
@@ -187,16 +188,26 @@ function CarDetailPage() {
       {/* SECTION 02 · Hero image */}
       <section className="bg-[color:var(--color-brand-mist)]/50 border-y border-[color:var(--color-brand-mist)]">
         <div className="relative aspect-[16/10] w-full flex items-center justify-center overflow-hidden">
-          <img
-            src={car.image}
-            alt={`${car.brand} ${car.model}`}
-            className="max-h-full max-w-full object-contain px-6"
-          />
+          {car.image ? (
+            <img
+              src={car.image}
+              alt={`${car.brand} ${car.model}`}
+              className="max-h-full max-w-full object-contain px-6"
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${car.imageColor} opacity-35`} aria-hidden />
+          )}
           <span className={`absolute left-4 top-3 text-[9.5px] font-semibold tracking-[0.18em] uppercase ${MUTED}`}>
             {car.brand}
           </span>
           <span className={`absolute right-4 bottom-3 inline-flex items-center gap-1 text-[10px] ${MUTED}`}>
-            <Camera className="h-3 w-3" strokeWidth={1.6} /> 공식 이미지
+            {car.image ? (
+              <>
+                <Camera className="h-3 w-3" strokeWidth={1.6} /> 공식 이미지
+              </>
+            ) : (
+              "시그널 데이터 제공 중"
+            )}
           </span>
         </div>
       </section>
