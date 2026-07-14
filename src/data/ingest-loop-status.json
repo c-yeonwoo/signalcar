@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-14T14:40:31.789Z",
+  "schedule": {
+    "timezone": "Asia/Seoul",
+    "cron": "0 6 * * *",
+    "note": "매일 06:00 KST — GitHub Actions 또는 bun workers/ingest/run.ts loop --once"
+  },
+  "jobs": [
+    {
+      "jobId": "catalog-index",
+      "enabled": true,
+      "lastStatus": "never",
+      "lastRunAt": null,
+      "lastChangedAt": null,
+      "lastFingerprint": null,
+      "lastError": null,
+      "lastStats": {}
+    },
+    {
+      "jobId": "news-index",
+      "enabled": true,
+      "lastStatus": "never",
+      "lastRunAt": null,
+      "lastChangedAt": null,
+      "lastFingerprint": null,
+      "lastError": null,
+      "lastStats": {}
+    },
+    {
+      "jobId": "aggregate-signals",
+      "enabled": true,
+      "lastStatus": "error",
+      "lastRunAt": "2026-07-14T14:39:48.230Z",
+      "lastChangedAt": null,
+      "lastFingerprint": null,
+      "lastError": "missing env: SUPABASE_SERVICE_ROLE_KEY",
+      "lastStats": {}
+    },
+    {
+      "jobId": "sales-kot",
+      "enabled": true,
+      "lastStatus": "never",
+      "lastRunAt": null,
+      "lastChangedAt": null,
+      "lastFingerprint": null,
+      "lastError": null,
+      "lastStats": {}
+    },
+    {
+      "jobId": "danawa-sales-preview",
+      "enabled": true,
+      "lastStatus": "never",
+      "lastRunAt": null,
+      "lastChangedAt": null,
+      "lastFingerprint": null,
+      "lastError": null,
+      "lastStats": {}
+    }
+  ],
+  "recentRuns": []
+}

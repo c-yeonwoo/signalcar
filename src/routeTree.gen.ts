@@ -27,6 +27,7 @@ import { Route as CoachMatchRouteImport } from './routes/coach.match'
 import { Route as CarVehicleIdRouteImport } from './routes/car.$vehicleId'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
+import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-reports'
 import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as CarVehicleIdHistoryRouteImport } from './routes/car.$vehicleId.history'
@@ -123,6 +124,11 @@ const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
   path: '/promotions',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIngestRoute = AdminIngestRouteImport.update({
+  id: '/ingest',
+  path: '/ingest',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDealReportsRoute = AdminDealReportsRouteImport.update({
   id: '/deal-reports',
   path: '/deal-reports',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
+  '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
+    | '/admin/ingest'
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
@@ -262,6 +272,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
+    | '/admin/ingest'
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/brands'
     | '/admin/deal-reports'
+    | '/admin/ingest'
     | '/admin/promotions'
     | '/admin/vehicles'
     | '/car/$vehicleId'
@@ -449,6 +461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDealReportsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ingest': {
+      id: '/admin/ingest'
+      path: '/ingest'
+      fullPath: '/admin/ingest'
+      preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/brands': {
       id: '/admin/brands'
       path: '/brands'
@@ -495,6 +514,7 @@ const AdminVehiclesRouteWithChildren = AdminVehiclesRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminBrandsRoute: typeof AdminBrandsRoute
   AdminDealReportsRoute: typeof AdminDealReportsRoute
+  AdminIngestRoute: typeof AdminIngestRoute
   AdminPromotionsRoute: typeof AdminPromotionsRoute
   AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
@@ -503,6 +523,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminBrandsRoute: AdminBrandsRoute,
   AdminDealReportsRoute: AdminDealReportsRoute,
+  AdminIngestRoute: AdminIngestRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,
   AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,

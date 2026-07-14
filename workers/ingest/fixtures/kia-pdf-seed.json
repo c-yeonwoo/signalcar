@@ -1,0 +1,717 @@
+{
+  "fetchedAt": "2026-07-14T13:00:00Z",
+  "docs": [
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "bongo3-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_bongo3-ev.pdf",
+      "fileName": "catalog_bongo3-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "bongo3",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_bongo3.pdf",
+      "fileName": "catalog_bongo3.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "carnival-hi-limousine",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_carnival-hi-limousine.pdf",
+      "fileName": "catalog_carnival-hi-limousine.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "carnival",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_carnival.pdf",
+      "fileName": "catalog_carnival.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev3-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev3-gt.pdf",
+      "fileName": "catalog_ev3-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev3",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev3.pdf",
+      "fileName": "catalog_ev3.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev4-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev4-gt.pdf",
+      "fileName": "catalog_ev4-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev4",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev4.pdf",
+      "fileName": "catalog_ev4.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev5-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev5-gt.pdf",
+      "fileName": "catalog_ev5-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev5",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev5.pdf",
+      "fileName": "catalog_ev5.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev6-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev6-gt.pdf",
+      "fileName": "catalog_ev6-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev6",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev6.pdf",
+      "fileName": "catalog_ev6.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev9-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev9-gt.pdf",
+      "fileName": "catalog_ev9-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ev9",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ev9.pdf",
+      "fileName": "catalog_ev9.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "k5",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_k5.pdf",
+      "fileName": "catalog_k5.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "k8-taxi",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_k8-taxi.pdf",
+      "fileName": "catalog_k8-taxi.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "k8",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_k8.pdf",
+      "fileName": "catalog_k8.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "k9",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_k9.pdf",
+      "fileName": "catalog_k9.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "carnival",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_carnival.pdf",
+      "fileName": "catalog_mo_carnival.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev3-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev3-gt.pdf",
+      "fileName": "catalog_mo_ev3-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev4-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev4-gt.pdf",
+      "fileName": "catalog_mo_ev4-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev4",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev4.pdf",
+      "fileName": "catalog_mo_ev4.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev5-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev5-gt.pdf",
+      "fileName": "catalog_mo_ev5-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev5",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev5.pdf",
+      "fileName": "catalog_mo_ev5.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev6-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev6-gt.pdf",
+      "fileName": "catalog_mo_ev6-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev6",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev6.pdf",
+      "fileName": "catalog_mo_ev6.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "ev9-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_ev9-gt.pdf",
+      "fileName": "catalog_mo_ev9-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "k8",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_k8.pdf",
+      "fileName": "catalog_mo_k8.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "niro",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_niro.pdf",
+      "fileName": "catalog_mo_niro.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "pv5-cargo",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_pv5-cargo.pdf",
+      "fileName": "catalog_mo_pv5-cargo.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "pv5-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_pv5-openbed.pdf",
+      "fileName": "catalog_mo_pv5-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "pv5-passenger",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_pv5-passenger.pdf",
+      "fileName": "catalog_mo_pv5-passenger.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "pv5-wav",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_pv5-wav.pdf",
+      "fileName": "catalog_mo_pv5-wav.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "seltos",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_seltos.pdf",
+      "fileName": "catalog_mo_seltos.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "sportage",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_sportage.pdf",
+      "fileName": "catalog_mo_sportage.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "tasman-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_tasman-openbed.pdf",
+      "fileName": "catalog_mo_tasman-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog_mobile",
+      "slug": "tasman",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_mo_tasman.pdf",
+      "fileName": "catalog_mo_tasman.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "morning",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_morning.pdf",
+      "fileName": "catalog_morning.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "new-granbird",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_new-granbird.pdf",
+      "fileName": "catalog_new-granbird.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "niro",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_niro.pdf",
+      "fileName": "catalog_niro.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "pv5-cargo",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_pv5-cargo.pdf",
+      "fileName": "catalog_pv5-cargo.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "pv5-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_pv5-openbed.pdf",
+      "fileName": "catalog_pv5-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "pv5-passenger",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_pv5-passenger.pdf",
+      "fileName": "catalog_pv5-passenger.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "pv5-wav",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_pv5-wav.pdf",
+      "fileName": "catalog_pv5-wav.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ray-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ray-ev.pdf",
+      "fileName": "catalog_ray-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "ray",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_ray.pdf",
+      "fileName": "catalog_ray.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "seltos",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_seltos.pdf",
+      "fileName": "catalog_seltos.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "sorento",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_sorento.pdf",
+      "fileName": "catalog_sorento.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "sportage",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_sportage.pdf",
+      "fileName": "catalog_sportage.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "tasman-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_tasman-openbed.pdf",
+      "fileName": "catalog_tasman-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "tasman",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_tasman.pdf",
+      "fileName": "catalog_tasman.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "topcar-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_topcar-ev.pdf",
+      "fileName": "catalog_topcar-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "catalog",
+      "slug": "topcar",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/catalog/catalog_topcar.pdf",
+      "fileName": "catalog_topcar.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "bongo3-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_bongo3-ev.pdf",
+      "fileName": "price_bongo3-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "bongo3",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_bongo3.pdf",
+      "fileName": "price_bongo3.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "carnival-hi-limousine",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_carnival-hi-limousine.pdf",
+      "fileName": "price_carnival-hi-limousine.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "carnival",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_carnival.pdf",
+      "fileName": "price_carnival.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev3-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev3-gt.pdf",
+      "fileName": "price_ev3-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev3",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev3.pdf",
+      "fileName": "price_ev3.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev4-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev4-gt.pdf",
+      "fileName": "price_ev4-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev4",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev4.pdf",
+      "fileName": "price_ev4.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev5-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev5-gt.pdf",
+      "fileName": "price_ev5-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev5",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev5.pdf",
+      "fileName": "price_ev5.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev6-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev6-gt.pdf",
+      "fileName": "price_ev6-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev6",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev6.pdf",
+      "fileName": "price_ev6.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev9-gt",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev9-gt.pdf",
+      "fileName": "price_ev9-gt.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ev9",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ev9.pdf",
+      "fileName": "price_ev9.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "k5",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_k5.pdf",
+      "fileName": "price_k5.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "k8-taxi",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_k8-taxi.pdf",
+      "fileName": "price_k8-taxi.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "k8",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_k8.pdf",
+      "fileName": "price_k8.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "k9",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_k9.pdf",
+      "fileName": "price_k9.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "morning",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_morning.pdf",
+      "fileName": "price_morning.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "new-granbird",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_new-granbird.pdf",
+      "fileName": "price_new-granbird.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "niro",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_niro.pdf",
+      "fileName": "price_niro.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-cargo",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-cargo.pdf",
+      "fileName": "price_pv5-cargo.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-openbed.pdf",
+      "fileName": "price_pv5-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-passenger",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-passenger.pdf",
+      "fileName": "price_pv5-passenger.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-taxi",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-taxi.pdf",
+      "fileName": "price_pv5-taxi.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-wav-taxi",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-wav-taxi.pdf",
+      "fileName": "price_pv5-wav-taxi.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "pv5-wav",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_pv5-wav.pdf",
+      "fileName": "price_pv5-wav.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ray-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ray-ev.pdf",
+      "fileName": "price_ray-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "ray",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_ray.pdf",
+      "fileName": "price_ray.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "seltos",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_seltos.pdf",
+      "fileName": "price_seltos.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "sorento",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_sorento.pdf",
+      "fileName": "price_sorento.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "sportage",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_sportage.pdf",
+      "fileName": "price_sportage.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "tasman-openbed",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_tasman-openbed.pdf",
+      "fileName": "price_tasman-openbed.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "tasman",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_tasman.pdf",
+      "fileName": "price_tasman.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "topcar-ev",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_topcar-ev.pdf",
+      "fileName": "price_topcar-ev.pdf"
+    },
+    {
+      "sourceId": "kia-catalog",
+      "brandHint": "기아",
+      "kind": "price",
+      "slug": "topcar",
+      "url": "https://www.kia.com/content/dam/kwp/kr/ko/vehicles/pdf/price/price_topcar.pdf",
+      "fileName": "price_topcar.pdf"
+    }
+  ]
+}

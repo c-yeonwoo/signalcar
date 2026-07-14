@@ -1,6 +1,7 @@
 import carGrandKoleos from "@/assets/car-grand-koleos.png";
 import carSantafe from "@/assets/car-santafe.png";
 import carSorento from "@/assets/car-sorento.png";
+import danawaGrandeurBenefits from "@/data/danawa-benefits-grandeur.json";
 
 export type Signal = "buy" | "wait" | "neutral";
 
@@ -28,6 +29,8 @@ export type MockCar = {
   fuelEfficiency: number; // km/L (or km/kWh for EV)
   insuranceAnnual: number; // 30대 남성 기준 예시 (원/년)
   benefits: Benefit[];
+  /** 혜택 기준월 (예: 2026-07). 있으면 상세 UI에 표기 */
+  benefitsPeriod?: string;
 };
 
 export type BenefitCategory =
@@ -571,6 +574,47 @@ export const MOCK_CARS: MockCar[] = [
       { id: "gv-dealer", category: "cash", title: "딜러 재량 할인 (예상)", amount: 900000, note: "재고·전시차", stackable: true, source: "dealer" },
     ],
   },
+  {
+    id: "hyundai-grandeur",
+    brand: "현대",
+    model: "그랜저",
+    trim: "더 뉴 그랜저 캘리그래피",
+    bodyType: "준대형 세단",
+    listPrice: 50890000,
+    medianContract: 48900000,
+    minContract: 47200000,
+    maxContract: 50200000,
+    reports: 64,
+    signal: "neutral",
+    headline: "할부·트레이드인이 핵심이에요",
+    coach:
+      "공식 현금 할인보다 모빌리티 할부·트레이드인 조건이 눈에 띕니다. 기변 계획이 있으면 현대/제네시스 매각 시 트레이드인 50만을 먼저 챙기세요.",
+    promoPercentile: 58,
+    facelift: null,
+    history: [4980, 4950, 4930, 4910, 4900, 4890],
+    promoThisMonth: {
+      label: "모빌리티 할부 4.9%",
+      amount: 0,
+      note: "36개월 표준형 · 트레이드인 별도",
+    },
+    imageColor: "from-slate-400 to-slate-700",
+    fuelType: "hybrid",
+    fuelEfficiency: 16.2,
+    insuranceAnnual: 980000,
+    benefitsPeriod: danawaGrandeurBenefits.period,
+    benefits: [
+      ...(danawaGrandeurBenefits.benefits as Benefit[]),
+      {
+        id: "gr-eco",
+        category: "eco",
+        title: "친환경차 세제혜택",
+        amount: 1430000,
+        note: "개소세·취득세 감면 (하이브리드) · 공식 판매조건 외",
+        stackable: true,
+        source: "external",
+      },
+    ],
+  },
 ];
 
 export function findCar(id: string) {
@@ -611,6 +655,7 @@ export const TRIM_ID_MAP: Record<string, string> = {
   "kia-ev3": "22222222-2222-2222-2222-222222220008",
   "hyundai-avante": "22222222-2222-2222-2222-222222220009",
   "genesis-gv70": "22222222-2222-2222-2222-222222220010",
+  "hyundai-grandeur": "22222222-2222-2222-2222-222222220011",
 };
 
 /* ============ 유지비 추정 ============ */
@@ -684,7 +729,7 @@ export function weeklyChangeFor(car: MockCar): WeeklyChange {
 }
 
 /* ============ 전체 차량 카탈로그 (탐색 · 관심 담기 소스) ============
- * MOCK_CARS는 시그널 상세가 있는 차 (Gate 0: 10대).
+ * MOCK_CARS는 시그널 상세가 있는 차 (Gate 0 seed 10대 + 그랜저 혜택 프리뷰).
  * CATALOG는 앱이 인지하는 전 차종. catalogHasDetail이면 상세 링크.
  */
 export type Fuel = MockCar["fuelType"];
@@ -715,7 +760,7 @@ export const CATALOG: CatalogEntry[] = [
   { id: "genesis-gv70",     brand: "제네시스", model: "GV70", bodyType: "프리미엄 SUV", priceFrom: 5600, priceTo: 8100, fuels: ["gasoline","diesel"] },
 
   // 곧 오픈
-  { id: "hyundai-grandeur", brand: "현대", model: "그랜저",   bodyType: "준대형 세단", priceFrom: 3800, priceTo: 5720, fuels: ["gasoline","hybrid"] },
+  { id: "hyundai-grandeur", brand: "현대", model: "그랜저",   bodyType: "준대형 세단", priceFrom: 4185, priceTo: 6089, fuels: ["gasoline","hybrid"] },
   { id: "kia-k8",           brand: "기아", model: "K8",       bodyType: "준대형 세단", priceFrom: 3720, priceTo: 5480, fuels: ["gasoline","hybrid"] },
   { id: "genesis-g80",      brand: "제네시스", model: "G80",  bodyType: "프리미엄 세단", priceFrom: 6300, priceTo: 8600, fuels: ["gasoline","diesel"] },
 

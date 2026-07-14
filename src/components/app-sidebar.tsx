@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Building2, Car, Tag, FileText } from "lucide-react";
+import { LayoutDashboard, Building2, Car, Tag, FileText, RefreshCw } from "lucide-react";
 
 import {
   Sidebar,
@@ -20,6 +20,7 @@ const items = [
   { title: "차종·트림", url: "/admin/vehicles", icon: Car },
   { title: "공식 프로모션", url: "/admin/promotions", icon: Tag },
   { title: "내 계약 공유", url: "/admin/deal-reports", icon: FileText },
+  { title: "데이터 갱신 루프", url: "/admin/ingest", icon: RefreshCw },
 ];
 
 export function AppSidebar() {
@@ -27,8 +28,10 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const currentPath = useRouterState({ select: (r) => r.location.pathname });
 
-  const isActive = (path: string) =>
-    path === "/" ? currentPath === "/" : currentPath.startsWith(path);
+  const isActive = (path: string) => {
+    if (path === "/admin") return currentPath === "/admin" || currentPath === "/admin/";
+    return currentPath === path || currentPath.startsWith(path + "/");
+  };
 
   return (
     <Sidebar collapsible="icon">
