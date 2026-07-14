@@ -184,6 +184,7 @@ function CoachPage() {
 /* ============ Interview flow ============ */
 
 function Interview() {
+  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
   const { carId: seedCarId } = Route.useSearch();
   const [carId, setCarId] = useState<string | null>(seedCarId ?? null);
   const [step, setStep] = useState(seedCarId ? 1 : 0); // 상세에서 넘어오면 질문부터
