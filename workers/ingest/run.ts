@@ -4,8 +4,10 @@
  *
  *   bun workers/ingest/run.ts sources
  *   bun workers/ingest/run.ts catalog-index
+ *   bun workers/ingest/run.ts news-index
  *   bun workers/ingest/run.ts aggregate-signals [--dry]
  *   bun workers/ingest/run.ts sales-kot --year 2026 --month 06
+ *   bun workers/ingest/run.ts keys
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -27,6 +29,34 @@ const get = (f: string) => {
 
 async function main() {
   switch (cmd) {
+    case "keys": {
+      console.log(`=== API KEYS / SECRETS REQUIRED ===
+
+[필수 — DB 쓰기]
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+    → aggregate-signals, source_documents upsert, trims 적재
+
+[필수 — 공공 판매통계]
+  DATA_GO_KR_API_KEY          공공데이터포털 일반인증키
+  DATA_GO_KR_SERVICE_URL      교통안전공단 신규등록 서비스 URL
+    → https://www.data.go.kr/data/15059401/openapi.do 신청
+
+[선택 — 앱/어드민]
+  VITE_ADMIN_EMAILS           관리자 allowlist (콤마 구분)
+
+[유료·계약 — 키 아님]
+  KAIDA 등록 DB               계약/라이선스 후 ETL
+  Hyundai Developers          파트너 승인 (신차 시세 1순위 아님)
+
+=== 키 없이 동작 ===
+  catalog-index   현대 GW API · 기아 DAM PDF · 제네시스 HTML 인덱스
+  news-index      공식 뉴스룸 링크 인덱싱
+  sources         레지스트리 출력
+`);
+      break;
+    }
+
     case "sources": {
       console.log("=== ALLOWED ===");
       for (const s of allowedSources()) {
@@ -64,6 +94,21 @@ async function main() {
       mkdirSync(dir, { recursive: true });
       const path = join(dir, `catalog-index-${Date.now()}.json`);
       writeFileSync(path, JSON.stringify(docs, null, 2));
+      const by = Object.groupBy(docs, (d) => d.sourceId);
+      for (const [k, v] of Object.entries(by)) {
+        console.log(`  ${k}: ${v?.length ?? 0}`);
+      }
+      console.log(`wrote ${docs.length} docs → ${path}`);
+      break;
+    }
+
+    case "news-index": {
+      const { indexOfficialNews } = await import("./pipelines/news-index");
+      const docs = await indexOfficialNews();
+      const dir = join(process.cwd(), "workers/ingest/out");
+      mkdirSync(dir, { recursive: true });
+      const path = join(dir, `news-index-${Date.now()}.json`);
+      writeFileSync(path, JSON.stringify(docs, null, 2));
       console.log(`wrote ${docs.length} docs → ${path}`);
       break;
     }
@@ -96,8 +141,10 @@ async function main() {
 
     default:
       console.log(`Usage:
+  bun workers/ingest/run.ts keys
   bun workers/ingest/run.ts sources
   bun workers/ingest/run.ts catalog-index
+  bun workers/ingest/run.ts news-index
   bun workers/ingest/run.ts aggregate-signals [--dry]
   bun workers/ingest/run.ts sales-kot --year 2026 --month 06`);
   }

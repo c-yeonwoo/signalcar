@@ -57,7 +57,8 @@ export const INGEST_SOURCES: IngestSource[] = [
     method: "pdf_index",
     cadence: "monthly",
     legal: "allowed",
-    notes: "차량별 PDF 가격표·디지털 카탈로그. 트림/옵션/MSRP 1차 소스.",
+    notes:
+      "공개 GW API /kr/ko/gw/product/v1/product/car/catalog-price → contents/repn-car/catalog/*.pdf. API 키 불필요.",
     targetTables: ["brands", "vehicles", "trims", "trim_options"],
   },
   {
@@ -69,7 +70,8 @@ export const INGEST_SOURCES: IngestSource[] = [
     method: "pdf_index",
     cadence: "monthly",
     legal: "allowed",
-    notes: "공식 가격표 PDF. 선택옵션·트림 가격.",
+    notes:
+      "공개 DAM PDF (/content/dam/kwp/.../pdf/{catalog|price}/). kwpapi는 시스템 토큰 필요(미사용).",
     targetTables: ["brands", "vehicles", "trims", "trim_options"],
   },
   {
@@ -81,7 +83,8 @@ export const INGEST_SOURCES: IngestSource[] = [
     method: "pdf_index",
     cadence: "monthly",
     legal: "allowed",
-    notes: "모델별 가격표·카탈로그 PDF (data-download-info).",
+    notes:
+      "HTML viewPdf(fileKey) 인덱스. PDF는 POST /wsvc/kr/api/v2/downloadcenter/pdfdownload. API 키 불필요.",
     targetTables: ["brands", "vehicles", "trims", "trim_options"],
   },
   {
@@ -203,36 +206,36 @@ export const INGEST_SOURCES: IngestSource[] = [
     name: "현대 뉴스룸",
     kind: "official_news",
     domains: ["news"],
-    url: "https://www.hyundai.com/kr/ko/company-info/newsroom",
+    url: "https://www.hyundai.com/kr/ko/company/newsroom",
     method: "html",
     cadence: "daily",
     legal: "allowed",
     notes: "신차 출시·부분변경 보도자료.",
-    targetTables: ["/* news_items TBD */"],
+    targetTables: ["news_items"],
   },
   {
     id: "kia-news",
     name: "기아 뉴스",
     kind: "official_news",
     domains: ["news"],
-    url: "https://www.kia.com/kr/experience/news",
+    url: "https://www.kia.com/kr/discover-kia/news",
     method: "html",
     cadence: "daily",
     legal: "allowed",
     notes: "신차·프로모션 뉴스.",
-    targetTables: ["/* news_items TBD */"],
+    targetTables: ["news_items"],
   },
   {
     id: "genesis-news",
     name: "제네시스 뉴스룸",
     kind: "official_news",
     domains: ["news"],
-    url: "https://www.genesis.com/kr/ko/news",
+    url: "https://newsroom.genesis.com/ko-ko/",
     method: "html",
     cadence: "daily",
     legal: "allowed",
-    notes: "프리미엄 라인 출시·이벤트.",
-    targetTables: ["/* news_items TBD */"],
+    notes: "공식 뉴스룸(newsroom.genesis.com). 신차·보도자료.",
+    targetTables: ["news_items"],
   },
 
   // ─── 1st party / 내부 ───
