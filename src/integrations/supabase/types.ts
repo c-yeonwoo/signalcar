@@ -44,6 +44,68 @@ export type Database = {
         }
         Relationships: []
       }
+      car_profiles: {
+        Row: {
+          benefits: Json
+          body_type_label: string | null
+          coach: string | null
+          facelift: Json | null
+          fuel_efficiency: number | null
+          headline: string | null
+          image_color: string | null
+          insurance_annual: number | null
+          promo_amount: number | null
+          promo_label: string | null
+          promo_note: string | null
+          published: boolean
+          slug: string
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json
+          body_type_label?: string | null
+          coach?: string | null
+          facelift?: Json | null
+          fuel_efficiency?: number | null
+          headline?: string | null
+          image_color?: string | null
+          insurance_annual?: number | null
+          promo_amount?: number | null
+          promo_label?: string | null
+          promo_note?: string | null
+          published?: boolean
+          slug: string
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json
+          body_type_label?: string | null
+          coach?: string | null
+          facelift?: Json | null
+          fuel_efficiency?: number | null
+          headline?: string | null
+          image_color?: string | null
+          insurance_annual?: number | null
+          promo_amount?: number | null
+          promo_label?: string | null
+          promo_note?: string | null
+          published?: boolean
+          slug?: string
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_profiles_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: true
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_reports: {
         Row: {
           contract_month: string | null
@@ -496,18 +558,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_admin: boolean
           nickname: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           id: string
+          is_admin?: boolean
           nickname?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_admin?: boolean
           nickname?: string | null
           updated_at?: string
         }

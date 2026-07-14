@@ -3,7 +3,9 @@ import { Check, Minus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { MOCK_CARS, formatKRW, signalColor } from "@/lib/mock-cars";
+import { formatKRW, signalColor } from "@/lib/mock-cars";
+import { fetchCarsFromDb } from "@/lib/cars";
+import { useQuery } from "@tanstack/react-query";
 import { PageHeader, SignalPill, sampleConfidence, StickyCTA } from "@/components/ui-kit";
 import { getCompareList, setCompareList } from "@/lib/compare-store";
 
@@ -23,14 +25,18 @@ export const Route = createFileRoute("/compare")({
 });
 
 function ComparePage() {
+  const { data: allCars = [] } = useQuery({
+    queryKey: ["cars"],
+    queryFn: () => fetchCarsFromDb(),
+  });
   const [selected, setSelected] = useState<string[]>([]);
 
   // 초기 하이드레이션: 비교함(로컬스토리지) → 없으면 관심 차량 2대 기본
   useEffect(() => {
     const stored = getCompareList();
     if (stored.length >= 1) setSelected(stored);
-    else setSelected(MOCK_CARS.slice(0, 2).map((c) => c.id));
-  }, []);
+    else if (allCars.length) setSelected(allCars.slice(0, 2).map((c) => c.id));
+  }, [allCars]);
 
   // 선택 변경 → 비교함 동기화
   useEffect(() => {
@@ -38,8 +44,8 @@ function ComparePage() {
   }, [selected]);
 
   const cars = useMemo(
-    () => selected.map((id) => MOCK_CARS.find((c) => c.id === id)!).filter(Boolean),
-    [selected],
+    () => selected.map((id) => allCars.find((c) => c.id === id)!).filter(Boolean),
+    [selected, allCars],
   );
 
   function toggle(id: string) {
@@ -68,7 +74,7 @@ function ComparePage() {
       {/* Picker */}
       <section className="px-5 mt-3">
         <div className="flex flex-wrap gap-2">
-          {MOCK_CARS.map((c) => {
+          {allCars.map((c) => {
             const on = selected.includes(c.id);
             return (
               <button

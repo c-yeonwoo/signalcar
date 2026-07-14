@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { MOCK_CARS, formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
+import { formatKRW, estimateOwnership, MILEAGE_MAP, MOCK_CARS } from "@/lib/mock-cars";
+import { fetchCarsFromDb } from "@/lib/cars";
+import { useQuery } from "@tanstack/react-query";
 import { SnapshotBadge } from "@/components/snapshot-badge";
 import { PageHeader, TabPills, SampleSize } from "@/components/ui-kit";
 import { Share2, TrendingDown, Percent } from "lucide-react";
@@ -149,6 +151,10 @@ const OPTION_CATALOG: Record<OptionTag, { name: string; price: number; why: stri
 };
 
 function CoachPage() {
+  const { data: cars = [] } = useQuery({
+    queryKey: ["cars"],
+    queryFn: () => fetchCarsFromDb(),
+  });
   const [tab, setTab] = useState<"interview" | "briefing">("interview");
 
   return (
@@ -198,7 +204,7 @@ function Interview() {
     setPrefilled(true);
   }, [prefilled]);
 
-  const car = MOCK_CARS.find((c) => c.id === carId) ?? null;
+  const car = cars.find((c) => c.id === carId) ?? null;
   const totalSteps = QUESTIONS.length + 1; // +1 for 차 선택
   const showResult = car && step > QUESTIONS.length;
 
@@ -238,7 +244,7 @@ function Interview() {
         <ProgressBar current={0} total={totalSteps} />
         <ChatBubble>어떤 차 견적을 뽑아볼까요?</ChatBubble>
         <div className="space-y-2">
-          {MOCK_CARS.map((c) => (
+          {cars.map((c) => (
             <button
               key={c.id}
               onClick={() => {
@@ -486,6 +492,7 @@ function Interview() {
 
 function BriefingLocked() {
   const previewCar = MOCK_CARS[0];
+  if (!previewCar) return null;
   // 딜러 첫 제시가 예측: 정가 - (정가-중앙값)*0.35 러프 (실제는 서버 모델)
   const predictedFirstAsk = Math.round(
     (previewCar.listPrice - (previewCar.listPrice - previewCar.medianContract) * 0.35) / 10000,

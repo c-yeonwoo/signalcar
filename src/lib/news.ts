@@ -1,59 +1,79 @@
-import { MOCK_CARS } from "./mock-cars";
+import { supabase } from "@/integrations/supabase/client";
+import { findCar, MOCK_CARS } from "@/lib/mock-cars";
 
 export type NewsKind = "launch" | "facelift" | "promo" | "rumor";
 
 export type NewsItem = {
   id: string;
   kind: NewsKind;
-  tag: string; // 짧은 배지
-  title: string; // 한 줄 헤드라인
-  subtitle: string; // 보조 설명
-  dateLabel: string; // 예: "오늘", "7월 10일"
-  carId?: string; // 상세로 연결 가능한 경우
+  tag: string;
+  title: string;
+  subtitle: string;
+  dateLabel: string;
+  carId?: string;
   image?: string;
-  accent: string; // gradient (tailwind classes)
+  accent: string;
 };
 
-// 큐레이션된 신차 소식 (mock). 최신순.
-const RAW: NewsItem[] = [
-  {
-    id: "n-grand-koleos-promo",
-    kind: "promo",
-    tag: "NEW 프로모션",
-    title: "그랑콜레오스, 이번 달 220만원 현금할인",
-    subtitle: "밀어내기 시즌 · 최근 6개월 중 2번째로 좋은 조건",
-    dateLabel: "오늘",
-    carId: "grand-koleos-inspire",
-    accent: "from-emerald-500 to-teal-600",
-  },
-  {
-    id: "n-santafe-facelift",
-    kind: "rumor",
-    tag: "부분변경 루머",
-    title: "싼타페 F/L, 2026년 1월 공개 유력",
-    subtitle: "재고 할인 확대 가능성 · 지금 계약은 신중히",
-    dateLabel: "3일 전",
-    carId: "santafe-calligraphy",
-    accent: "from-amber-500 to-orange-600",
-  },
-  {
-    id: "n-grand-koleos-yc",
-    kind: "facelift",
-    tag: "연식변경 예정",
-    title: "그랑콜레오스 26년형, 2월 출시 예정",
-    subtitle: "현재 재고 소진 프로모션 진행 중",
-    dateLabel: "5일 전",
-    carId: "grand-koleos-inspire",
-    accent: "from-sky-500 to-indigo-600",
-  },
-];
+const ACCENT: Record<NewsKind, string> = {
+  launch: "from-sky-500 to-indigo-600",
+  facelift: "from-violet-500 to-purple-600",
+  promo: "from-emerald-500 to-teal-600",
+  rumor: "from-amber-500 to-orange-600",
+};
 
-export function getNewsItems(): NewsItem[] {
-  // carId가 있으면 실제 차량 이미지를 붙여준다
-  return RAW.map((n) => {
-    const car = n.carId ? MOCK_CARS.find((c) => c.id === n.carId) : undefined;
-    return { ...n, image: car?.image };
+function dateLabel(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const today = new Date();
+  const diff = Math.floor((today.getTime() - d.getTime()) / 86_400_000);
+  if (diff <= 0) return "오늘";
+  if (diff === 1) return "어제";
+  if (diff < 7) return `${diff}일 전`;
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
+function carIdFromUrl(url: string | null): string | undefined {
+  if (!url) return undefined;
+  const m = url.match(/\/car\/([^/?#]+)/);
+  return m?.[1];
+}
+
+export async function fetchNewsItems(): Promise<NewsItem[]> {
+  const { data, error } = await supabase
+    .from("news_items")
+    .select("id, kind, tag, title, subtitle, url, published_at")
+    .order("published_at", { ascending: false })
+    .limit(20);
+
+  if (error || !data?.length) return getNewsItemsSync();
+
+  return data.map((n) => {
+    const kind = (n.kind as NewsKind) || "launch";
+    const carId = carIdFromUrl(n.url);
+    const car = carId ? findCar(carId) ?? MOCK_CARS.find((c) => c.id === carId) : undefined;
+    return {
+      id: n.id,
+      kind,
+      tag: n.tag ?? NEWS_KIND_META[kind].label,
+      title: n.title,
+      subtitle: n.subtitle ?? "",
+      dateLabel: dateLabel(n.published_at),
+      carId,
+      image: car?.image,
+      accent: ACCENT[kind] ?? ACCENT.launch,
+    };
   });
+}
+
+/** hydrate 전 폴백 (빈 배열 우선 — DB 실패 시에만) */
+export function getNewsItems(): NewsItem[] {
+  return getNewsItemsSync();
+}
+
+function getNewsItemsSync(): NewsItem[] {
+  // 동기 호출처 호환: 캐시된 차 이미지로만 보강, 하드코딩 피드 제거
+  return [];
 }
 
 export const NEWS_KIND_META: Record<NewsKind, { label: string }> = {

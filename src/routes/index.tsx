@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target, Bookmark, AlertTriangle, X, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { MOCK_CARS, formatKRW, weeklyChangeFor } from "@/lib/mock-cars";
+import { formatKRW, weeklyChangeFor, type MockCar } from "@/lib/mock-cars";
+import { fetchCarsFromDb } from "@/lib/cars";
 import { SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -20,7 +22,6 @@ import { alertStatus, getAlerts, type PriceAlert } from "@/lib/alerts-store";
 import { daysSince, getLastVisit, stampLastVisit } from "@/lib/last-visit";
 import { getAllSnapshots, relativeAgo, type WatchSnapshot } from "@/lib/watch-snapshot";
 import { computeTriggers, ackRise, getRiseState, setDefaultPct, setCarPct, type RiseTrigger } from "@/lib/rise-alerts";
-import type { MockCar } from "@/lib/mock-cars";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -28,6 +29,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const { data: cars = [] } = useQuery({
+    queryKey: ["cars"],
+    queryFn: () => fetchCarsFromDb(),
+  });
+
   const [watchIds, setWatchIds] = useState<string[]>([]);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [personalized, setPersonalized] = useState(false);
@@ -72,14 +78,14 @@ function HomePage() {
   // 워치리스트 있으면 그것만, 없으면 온보딩 취향 기반 추천 3대
   const prefs = getPrefs();
   const watched = watchIds
-    .map((id) => MOCK_CARS.find((c) => c.id === id))
-    .filter((c): c is (typeof MOCK_CARS)[number] => !!c);
+    .map((id) => cars.find((c) => c.id === id))
+    .filter((c): c is MockCar => !!c);
   const recommend = (() => {
     if (watched.length > 0) return watched;
-    if (!prefs) return MOCK_CARS.slice(0, 3);
+    if (!prefs) return cars.slice(0, 3);
     // 아주 러프한 취향 정렬 데모
     const familyish = prefs.purpose === "family" || prefs.purpose === "leisure";
-    return [...MOCK_CARS]
+    return [...cars]
       .sort((a, b) => {
         const aScore = (familyish && a.bodyType.includes("SUV") ? 2 : 0) + (a.signal === "buy" ? 1 : 0);
         const bScore = (familyish && b.bodyType.includes("SUV") ? 2 : 0) + (b.signal === "buy" ? 1 : 0);

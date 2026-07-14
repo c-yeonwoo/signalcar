@@ -26,6 +26,21 @@ function isAdminEmail(email: string | undefined | null): boolean {
   return list.includes(email.toLowerCase());
 }
 
+async function isAdminUser(email: string | undefined | null, userId: string | undefined): Promise<boolean> {
+  if (!email) return false;
+  const list = adminEmails();
+  if (userId) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", userId)
+      .maybeSingle();
+    if (!error && data && (data as { is_admin?: boolean }).is_admin === true) return true;
+  }
+  if (list.length === 0) return true;
+  return list.includes(email.toLowerCase());
+}
+
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
   ssr: false,
@@ -33,9 +48,10 @@ export const Route = createFileRoute("/admin")({
     const { data } = await supabase.auth.getSession();
     const session = data.session;
     if (!session) {
-      throw redirect({ to: "/auth" });
+      throw redirect({ to: "/auth", search: { next: "/admin" } });
     }
-    if (!isAdminEmail(session.user.email)) {
+    const ok = await isAdminUser(session.user.email, session.user.id);
+    if (!ok) {
       throw redirect({ to: "/" });
     }
   },

@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Camera, ShieldCheck, LogIn, CheckCircle2, Star } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { MOCK_CARS, TRIM_ID_MAP } from "@/lib/mock-cars";
+import { TRIM_ID_MAP } from "@/lib/mock-cars";
+import { fetchCarsFromDb } from "@/lib/cars";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, PrimaryButton } from "@/components/ui-kit";
@@ -29,8 +32,12 @@ export const Route = createFileRoute("/report")({
 function ReportPage() {
   const { user, loading: sessionLoading } = useSession();
   const navigate = useNavigate();
+  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
   const [step, setStep] = useState<"intro" | "form" | "done">("intro");
-  const [trim, setTrim] = useState(MOCK_CARS[0].id);
+  const [trim, setTrim] = useState("");
+  useEffect(() => {
+    if (!trim && cars[0]) setTrim(cars[0].id);
+  }, [cars, trim]);
   const [discount, setDiscount] = useState("220");
   const [month, setMonth] = useState("2026-07");
   const [region, setRegion] = useState("수도권");
@@ -59,7 +66,7 @@ function ReportPage() {
         rawPath = path;
       }
 
-      const car = MOCK_CARS.find((c) => c.id === trim)!;
+      const car = cars.find((c) => c.id === trim)!;
       const discountWon = Number(discount) * 10000;
       const { error } = await supabase.from("deal_reports").insert({
         trim_id: trimId,
@@ -101,7 +108,7 @@ function ReportPage() {
           subtitle="익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요."
         />
         <section className="px-5">
-          <Link to="/auth" className="sc-btn-primary">
+          <Link to="/auth" search={{ next: "/report" }} className="sc-btn-primary">
             <LogIn className="h-4 w-4" /> 로그인하고 공유하기
           </Link>
         </section>
@@ -198,7 +205,7 @@ function ReportPage() {
                 onChange={(e) => setTrim(e.target.value)}
                 className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0"
               >
-                {MOCK_CARS.map((c) => (
+                {cars.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.brand} {c.model} · {c.trim}
                   </option>
@@ -267,7 +274,7 @@ function RewardRow({
 /* ============ 제보 완료 → 리뷰 남기기 트리거 ============ */
 
 function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
-  const car = MOCK_CARS.find((c) => c.id === carId);
+  const car = cars.find((c) => c.id === carId);
   const [rating, setRating] = useState(0);
   const [pros, setPros] = useState("");
   const [cons, setCons] = useState("");
