@@ -122,7 +122,7 @@ export async function fetchCarsFromDb(force = false): Promise<Car[]> {
   if (!force && hydrating) return hydrating;
 
   hydrating = (async () => {
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error } = await (supabase as any)
       .from("car_profiles")
       .select(
         `
@@ -148,8 +148,8 @@ export async function fetchCarsFromDb(force = false): Promise<Car[]> {
       return cache;
     }
 
-    const trimIds = profiles.map((p) => (p as DbRow).trim_id);
-    const { data: signals } = await supabase
+    const trimIds = profiles.map((p: any) => (p as DbRow).trim_id);
+    const { data: signals } = await (supabase as any)
       .from("price_signals")
       .select("trim_id, month, median_deal_price, sample_size, promo_percentile, timing_verdict")
       .in("trim_id", trimIds)
