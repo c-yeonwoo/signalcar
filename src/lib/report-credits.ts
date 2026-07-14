@@ -89,7 +89,7 @@ export function spendCreditToUnlock(carId: string): { ok: boolean; alreadyUnlock
 
   const trimId = TRIM_ID_MAP[carId];
   if (trimId) {
-    void supabase.rpc("unlock_briefing_with_credit", { p_trim_id: trimId }).then(({ error }: { error: { message: string } | null }) => {
+    void (supabase as any).rpc("unlock_briefing_with_credit", { p_trim_id: trimId }).then(({ error }: { error: { message: string } | null }) => {
       if (error) {
         console.warn("[report-credits] server unlock skipped:", error.message);
       }
