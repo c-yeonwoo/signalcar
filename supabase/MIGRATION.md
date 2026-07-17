@@ -11,6 +11,7 @@
    - `20260714140000_ingest_meta.sql`
    - `20260714200000_ingest_loop.sql`
    - `20260715010000_real_catalog.sql`
+   - `20260717010000_brain_p0.sql` (Brain: car_features_daily · outcome_events · buyer_prefs)
 
 ## CLI (권한 있는 계정)
 ```bash

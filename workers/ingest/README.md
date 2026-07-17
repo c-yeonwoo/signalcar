@@ -22,6 +22,10 @@ bun workers/ingest/run.ts news-index
 SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
   bun workers/ingest/run.ts aggregate-signals [--dry]
 
+# Brain 피처 스토어 + timing_verdict (SERVICE_ROLE 필요)
+bun workers/ingest/run.ts car-features [--dry]
+# 또는: bun run ingest:features
+
 # 교통안전공단 신규등록 (키는 .env.local 권장)
 # DATA_GO_KR_API_KEY=...
 # DATA_GO_KR_SERVICE_URL 생략 시 기본 엔드포인트 사용
@@ -43,6 +47,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 | 카탈로그·트림·MSRP·옵션 | 현대/기아/제네시스 공식 가격표 PDF | `vehicles`, `trims`, `trim_options` |
 | 공식 프로모션 | 브랜드 스페셜오퍼·구매혜택 페이지 | `official_promotions` |
 | 실계약가·시그널 | 유저 계약 공유 + 집계 워커 | `deal_reports` → `price_signals` |
+| Brain 피처·타이밍 | 시그널·판매·프로모·페이스리프트 | `car_features_daily` |
 | 판매/등록 추이 | KOTSA OpenAPI, KAMA PDF, MOTIE 파일 | `sales_stats` |
 | 신차·연식변경 뉴스 | 브랜드 뉴스룸 | `news_items` |
 | 세부가격 밴드 (유료) | KAIDA 등록 DB | `sales_stats` / signals |

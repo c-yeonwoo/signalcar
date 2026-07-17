@@ -5,6 +5,7 @@
  */
 import type { MockCar, Signal } from "@/lib/mock-cars";
 import { formatKRW } from "@/lib/mock-cars";
+import { computePriceBand } from "@/lib/brain";
 
 export type NegotiationBrief = {
   carId: string;
@@ -46,7 +47,18 @@ function regional(car: MockCar) {
 }
 
 function scriptsFor(car: MockCar, disc: { min: number; max: number }): NegotiationBrief["scripts"] {
-  const target = car.medianContract - Math.round(disc.min * 0.6);
+  const band = computePriceBand({
+    listPrice: car.listPrice,
+    medianDealPrice: car.medianContract,
+    p25DealPrice: car.minContract,
+    p75DealPrice: car.maxContract,
+    sampleSize: car.reports,
+    promoAmount: car.promoThisMonth.amount,
+  });
+  const target =
+    band.target != null
+      ? band.target - Math.round(disc.min * 0.4)
+      : car.medianContract - Math.round(disc.min * 0.6);
   const promo = car.promoThisMonth;
   return [
     {
