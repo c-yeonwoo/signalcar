@@ -121,6 +121,19 @@ export const LOOP_JOBS: LoopJobDef[] = [
     changeDetect: "fingerprint",
     requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
   },
+  {
+    id: "promo-etl",
+    name: "공식 프로모션 월 ETL",
+    description:
+      "기아 이달의 구매 혜택 HTML → official_promotions + car_profiles.promo_*. 금액 집합 해시 동일 시 스킵.",
+    cadence: "daily",
+    pipeline: "promo-etl",
+    domains: ["promo"],
+    targetTables: ["official_promotions", "car_profiles"],
+    defaultEnabled: true,
+    changeDetect: "fingerprint",
+    requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
 ];
 
 export type LoopJobRuntime = {

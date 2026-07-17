@@ -177,6 +177,17 @@ async function main() {
       break;
     }
 
+    case "promo-etl": {
+      const { runPromoEtl } = await import("./pipelines/promo-etl");
+      const result = await runPromoEtl({
+        dryRun: has("--dry"),
+        brand: "kia",
+        month: get("--month"),
+      });
+      console.log(result);
+      break;
+    }
+
     case "sales-kot": {
       const { fetchKotNewRegistrations } = await import("./pipelines/sales-kot");
       const year = get("--year") ?? new Date().getFullYear().toString();

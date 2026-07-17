@@ -331,6 +331,38 @@ async function runDanawaSalesPreview(cwd: string, prevFp: string | null): Promis
   };
 }
 
+async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobResult> {
+  const { runPromoEtl } = await import("./promo-etl");
+  const dry = await runPromoEtl({ cwd, dryRun: true, brand: "kia" });
+  const fp = fingerprint({
+    month: dry.month,
+    offers: dry.offers,
+    withAmount: dry.withAmount,
+  });
+  if (fp === prevFp) {
+    return {
+      jobId: "promo-etl",
+      status: "skipped_unchanged",
+      fingerprint: fp,
+      stats: { month: dry.month, offers: dry.offers, unchanged: true },
+      changed: false,
+    };
+  }
+  const written = await runPromoEtl({ cwd, dryRun: false, brand: "kia" });
+  return {
+    jobId: "promo-etl",
+    status: "ok",
+    fingerprint: fp,
+    stats: {
+      month: written.month,
+      offers: written.offers,
+      withAmount: written.withAmount,
+      db: written.db,
+    },
+    changed: true,
+  };
+}
+
 async function runCatalogParse(cwd: string, prevFp: string | null): Promise<JobResult> {
   const { parseOfficialCatalogPrices } = await import("./catalog-parse");
   const dry = await parseOfficialCatalogPrices({
@@ -440,6 +472,8 @@ async function executeJob(
       return runCarFeatures(prevFp);
     case "catalog-parse":
       return runCatalogParse(cwd, prevFp);
+    case "promo-etl":
+      return runPromoEtlJob(cwd, prevFp);
     default:
       return {
         jobId: job.id,

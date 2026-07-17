@@ -30,6 +30,10 @@ bun workers/ingest/run.ts car-features [--dry]
 bun workers/ingest/run.ts catalog-parse [--dry] [--limit 20] [--brand hyundai]
 # 또는: bun run ingest:catalog-parse
 
+# 공식 프로모션 월 ETL — 기아 이달의 구매 혜택 (SERVICE_ROLE 있으면 DB upsert)
+bun workers/ingest/run.ts promo-etl [--dry] [--month 2026-07-01]
+# 또는: bun run ingest:promo
+
 # 교통안전공단 신규등록 (키는 .env.local 권장)
 # DATA_GO_KR_API_KEY=...
 # DATA_GO_KR_SERVICE_URL 생략 시 기본 엔드포인트 사용
@@ -49,7 +53,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 | 제품 데이터 | 1순위 소스 | 테이블 |
 |-------------|------------|--------|
 | 카탈로그·트림·MSRP·옵션 | 현대/기아/제네시스 공식 가격표 PDF | `vehicles`, `trims` (`catalog-parse`) |
-| 공식 프로모션 | 브랜드 스페셜오퍼·구매혜택 페이지 | `official_promotions` |
+| 공식 프로모션 | 기아 special-offers (현대·제네시스 후속) | `official_promotions`, `car_profiles.promo_*` |
 | 실계약가·시그널 | 유저 계약 공유 + 집계 워커 | `deal_reports` → `price_signals` |
 | Brain 피처·타이밍 | 시그널·판매·프로모·페이스리프트 | `car_features_daily` |
 | 판매/등록 추이 | KOTSA OpenAPI, KAMA PDF, MOTIE 파일 | `sales_stats` |
@@ -58,8 +62,8 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## Roadmap
 
-1. **Now** — source registry + catalog/news index + signal aggregate + Brain features + **catalog-parse (MSRP)**
-2. **Next** — 공식 프로모션 월 ETL · trim_options 정교화 · 제네시스 POST 다운로드
+1. **Now** — catalog-parse (MSRP) + **promo-etl (기아)** + Brain features
+2. **Next** — 현대/제네시스 프로모 · trim_options 정교화 · 제네시스 POST 다운로드
 3. **Then** — KOTSA → Timing v2, 뉴스→market_events
 4. **License** — KAIDA DB ETL (계약 후)
 5. **Never** — 겟차/다나와/엔카 스크래핑
