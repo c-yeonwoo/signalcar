@@ -38,6 +38,18 @@ export function computeTiming(input: TimingInput): TimingResult {
       score -= 10;
       reasons.push("프로모션이 평소보다 아쉬워요");
     }
+  } else if (input.promoAmountRatio != null && Number.isFinite(input.promoAmountRatio)) {
+    const r = input.promoAmountRatio;
+    if (r >= 0.04) {
+      score += 18;
+      reasons.push("공식 프로모션 금액이 정가 대비 큰 편이에요");
+    } else if (r >= 0.02) {
+      score += 8;
+      reasons.push("공식 프로모션이 어느 정도 있어요");
+    } else if (r > 0 && r < 0.01) {
+      score -= 6;
+      reasons.push("공식 프로모션 금액이 작은 편이에요");
+    }
   }
 
   const disc = input.discountRatio;

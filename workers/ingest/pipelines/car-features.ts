@@ -170,10 +170,11 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
 
     let promoPercentile =
       sig?.promo_percentile != null ? Number(sig.promo_percentile) : null;
+    const promoAmountRatio =
+      promoAmount != null && listPrice && listPrice > 0 ? promoAmount / listPrice : null;
     // 프로모 금액만 있고 percentile 없으면 거친 추정 (정가 대비)
-    if (promoPercentile == null && promoAmount != null && listPrice && listPrice > 0) {
-      const ratio = promoAmount / listPrice;
-      promoPercentile = Math.max(5, Math.min(95, Math.round(ratio * 800)));
+    if (promoPercentile == null && promoAmountRatio != null) {
+      promoPercentile = Math.max(5, Math.min(95, Math.round(promoAmountRatio * 800)));
     }
 
     const salesRows = salesByTrim.get(profile.trim_id) ?? [];
@@ -198,6 +199,7 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
       daysToFacelift: days,
       salesMomentum,
       dayOfMonth,
+      promoAmountRatio,
     });
 
     return {

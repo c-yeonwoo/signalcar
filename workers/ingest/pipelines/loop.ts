@@ -446,7 +446,7 @@ async function runCarFeatures(prevFp: string | null): Promise<JobResult> {
     stats: {
       upserted: written.upserted,
       featureDate: written.featureDate,
-      brainVersion: "v1.0.0",
+      brainVersion: "v1.1.0",
     },
     changed: true,
   };

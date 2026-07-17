@@ -4,6 +4,7 @@ export { runMatch, scoreCandidate, reasonsFor } from "./match";
 export { computePriceBand, percentile } from "./price";
 export { logOutcome } from "./outcomes";
 export { fetchLatestFeatures } from "./features";
+export { explainCarTiming } from "./explain-car";
 export type {
   MatchAnswers,
   MatchCandidate,

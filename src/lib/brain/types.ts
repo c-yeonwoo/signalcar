@@ -60,6 +60,8 @@ export type TimingInput = {
   salesMomentum: number | null;
   /** 1–31, Asia/Seoul 기준 */
   dayOfMonth?: number;
+  /** 공식 프로모 금액 / 정가 (0–1). percentile 없을 때 v1.1 보정 */
+  promoAmountRatio?: number | null;
 };
 
 export type TimingResult = {
