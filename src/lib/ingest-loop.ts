@@ -95,6 +95,19 @@ export const LOOP_JOBS: LoopJobDef[] = [
     defaultEnabled: true,
     changeDetect: "fingerprint",
   },
+  {
+    id: "car-features",
+    name: "Brain 피처·타이밍",
+    description:
+      "시그널·판매·프로모·페이스리프트 → car_features_daily + timing_verdict. Brain v1 규칙.",
+    cadence: "daily",
+    pipeline: "car-features",
+    domains: ["deal_price", "promo", "sales"],
+    targetTables: ["car_features_daily", "price_signals"],
+    defaultEnabled: true,
+    changeDetect: "fingerprint",
+    requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
 ];
 
 export type LoopJobRuntime = {

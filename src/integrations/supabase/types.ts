@@ -44,6 +44,184 @@ export type Database = {
         }
         Relationships: []
       }
+      buyer_prefs: {
+        Row: {
+          answers: Json
+          body_pref: string | null
+          budget_max: number | null
+          created_at: string
+          fuel_pref: string | null
+          mileage: string | null
+          purpose: string | null
+          seats: string | null
+          timing: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          body_pref?: string | null
+          budget_max?: number | null
+          created_at?: string
+          fuel_pref?: string | null
+          mileage?: string | null
+          purpose?: string | null
+          seats?: string | null
+          timing?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          body_pref?: string | null
+          budget_max?: number | null
+          created_at?: string
+          fuel_pref?: string | null
+          mileage?: string | null
+          purpose?: string | null
+          seats?: string | null
+          timing?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      car_features_daily: {
+        Row: {
+          brain_version: string
+          computed_at: string
+          days_to_facelift: number | null
+          discount_ratio: number | null
+          facelift_note: string | null
+          feature_date: string
+          list_price: number | null
+          median_deal_price: number | null
+          p25_deal_price: number | null
+          p75_deal_price: number | null
+          promo_amount: number | null
+          promo_percentile: number | null
+          sales_momentum: number | null
+          sales_registered_count: number | null
+          sample_size: number
+          timing_reasons: Json
+          timing_score: number
+          timing_verdict: string
+          trim_id: string
+        }
+        Insert: {
+          brain_version: string
+          computed_at?: string
+          days_to_facelift?: number | null
+          discount_ratio?: number | null
+          facelift_note?: string | null
+          feature_date: string
+          list_price?: number | null
+          median_deal_price?: number | null
+          p25_deal_price?: number | null
+          p75_deal_price?: number | null
+          promo_amount?: number | null
+          promo_percentile?: number | null
+          sales_momentum?: number | null
+          sales_registered_count?: number | null
+          sample_size?: number
+          timing_reasons?: Json
+          timing_score?: number
+          timing_verdict?: string
+          trim_id: string
+        }
+        Update: {
+          brain_version?: string
+          computed_at?: string
+          days_to_facelift?: number | null
+          discount_ratio?: number | null
+          facelift_note?: string | null
+          feature_date?: string
+          list_price?: number | null
+          median_deal_price?: number | null
+          p25_deal_price?: number | null
+          p75_deal_price?: number | null
+          promo_amount?: number | null
+          promo_percentile?: number | null
+          sales_momentum?: number | null
+          sales_registered_count?: number | null
+          sample_size?: number
+          timing_reasons?: Json
+          timing_score?: number
+          timing_verdict?: string
+          trim_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_features_daily_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_profiles: {
+        Row: {
+          benefits: Json
+          body_type_label: string | null
+          coach: string | null
+          facelift: Json | null
+          fuel_efficiency: number | null
+          headline: string | null
+          image_color: string | null
+          insurance_annual: number | null
+          promo_amount: number | null
+          promo_label: string | null
+          promo_note: string | null
+          published: boolean
+          slug: string
+          trim_id: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json
+          body_type_label?: string | null
+          coach?: string | null
+          facelift?: Json | null
+          fuel_efficiency?: number | null
+          headline?: string | null
+          image_color?: string | null
+          insurance_annual?: number | null
+          promo_amount?: number | null
+          promo_label?: string | null
+          promo_note?: string | null
+          published?: boolean
+          slug: string
+          trim_id: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json
+          body_type_label?: string | null
+          coach?: string | null
+          facelift?: Json | null
+          fuel_efficiency?: number | null
+          headline?: string | null
+          image_color?: string | null
+          insurance_annual?: number | null
+          promo_amount?: number | null
+          promo_label?: string | null
+          promo_note?: string | null
+          published?: boolean
+          slug?: string
+          trim_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_profiles_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: true
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_reports: {
         Row: {
           contract_month: string | null
@@ -158,6 +336,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_events: {
+        Row: {
+          created_at: string
+          event_date: string | null
+          event_type: string
+          id: string
+          impact: string | null
+          source_url: string | null
+          title: string | null
+          trim_id: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string | null
+          event_type: string
+          id?: string
+          impact?: string | null
+          source_url?: string | null
+          title?: string | null
+          trim_id?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_date?: string | null
+          event_type?: string
+          id?: string
+          impact?: string | null
+          source_url?: string | null
+          title?: string | null
+          trim_id?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: []
+      }
+      outcome_events: {
+        Row: {
+          brain_version: string | null
+          car_slug: string | null
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json
+          session_id: string | null
+          trim_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          brain_version?: string | null
+          car_slug?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json
+          session_id?: string | null
+          trim_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          brain_version?: string | null
+          car_slug?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          session_id?: string | null
+          trim_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       official_promotions: {
         Row: {

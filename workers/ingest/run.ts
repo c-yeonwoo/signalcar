@@ -150,6 +150,18 @@ async function main() {
       break;
     }
 
+    case "car-features": {
+      const { buildCarFeatures } = await import("./pipelines/car-features");
+      const result = await buildCarFeatures({ dryRun: has("--dry") });
+      console.log({
+        upserted: result.upserted,
+        dryRun: result.dryRun,
+        featureDate: result.featureDate,
+        sample: result.rows.slice(0, 3),
+      });
+      break;
+    }
+
     case "sales-kot": {
       const { fetchKotNewRegistrations } = await import("./pipelines/sales-kot");
       const year = get("--year") ?? new Date().getFullYear().toString();

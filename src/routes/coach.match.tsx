@@ -43,8 +43,9 @@ import {
   catalogHasDetail,
   FUEL_LABEL,
   type CatalogEntry,
-  type Fuel,
 } from "@/lib/mock-cars";
+import { runMatch, logOutcome, type MatchAnswers } from "@/lib/brain";
+import { findCar } from "@/lib/cars";
 import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
 import { NewVsUsedBadge } from "@/components/new-vs-used-badge";
@@ -167,86 +168,20 @@ const QUESTIONS: Q[] = [
   },
 ];
 
-const BUDGET_RANGE: Record<NonNullable<Ans["budget"]>, [number, number]> = {
-  under2500: [0, 2500],
-  "2500-4000": [2500, 4000],
-  "4000-6000": [4000, 6000],
-  over6000: [6000, 99999],
-};
-
-const MAX_SCORE = 100;
-
-function scoreCar(c: CatalogEntry, a: Ans): number {
-  let s = 0;
-
-  if (a.budget) {
-    const [lo, hi] = BUDGET_RANGE[a.budget];
-    const mid = (c.priceFrom + c.priceTo) / 2;
-    if (mid >= lo && mid <= hi) s += 35;
-    else if (c.priceFrom <= hi && c.priceTo >= lo) s += 18;
-    else s -= 18;
-  }
-
-  if (a.body && a.body !== "any") {
-    const b = c.bodyType;
-    const match =
-      (a.body === "sedan" && b.includes("세단")) ||
-      (a.body === "suv" && b.includes("SUV")) ||
-      (a.body === "van" && b.includes("미니밴"));
-    s += match ? 22 : -8;
-  }
-
-  if (a.seats === "5+" && (c.bodyType.includes("미니밴") || c.bodyType.includes("대형"))) s += 14;
-  if (a.seats === "1-2" && (c.bodyType.includes("소형") || c.bodyType.includes("준중형") || c.bodyType.includes("경형"))) s += 10;
-
-  if (a.usage === "family" && (c.bodyType.includes("SUV") || c.bodyType.includes("미니밴"))) s += 12;
-  if (a.usage === "leisure" && c.bodyType.includes("SUV")) s += 12;
-  if (a.usage === "commute" && (c.bodyType.includes("세단") || c.bodyType.includes("소형") || c.bodyType.includes("준중형"))) s += 10;
-  if (a.usage === "longhaul" && (c.bodyType.includes("세단") || c.bodyType.includes("프리미엄"))) s += 8;
-
-  if (a.fuel && a.fuel !== "any") {
-    if (c.fuels.includes(a.fuel as Fuel)) s += 18;
-    else s -= 14;
-  }
-
-  if (c.tag === "hot") s += 4;
-  if (c.tag === "discount") s += 3;
-
-  return s;
-}
-
-function normalizedMatch(score: number, topScore: number): number {
-  // Map to 60~99 range based on rank/score
-  const clamped = Math.max(0, Math.min(MAX_SCORE, score));
-  const rel = topScore > 0 ? clamped / Math.max(topScore, 1) : 0;
-  return Math.round(60 + rel * 39);
-}
-
-function reasonsFor(c: CatalogEntry, a: Ans): string[] {
-  const bits: string[] = [];
-  if (a.body && a.body !== "any") {
-    const match =
-      (a.body === "sedan" && c.bodyType.includes("세단")) ||
-      (a.body === "suv" && c.bodyType.includes("SUV")) ||
-      (a.body === "van" && c.bodyType.includes("미니밴"));
-    if (match) bits.push(c.bodyType);
-  }
-  if (a.fuel && a.fuel !== "any" && c.fuels.includes(a.fuel as Fuel)) {
-    bits.push(`${FUEL_LABEL[a.fuel as Fuel]} 옵션`);
-  }
-  if (a.usage === "family" && (c.bodyType.includes("SUV") || c.bodyType.includes("미니밴"))) bits.push("가족 실용성");
-  if (a.usage === "leisure" && c.bodyType.includes("SUV")) bits.push("레저 활용도");
-  if (a.usage === "commute" && (c.bodyType.includes("세단") || c.bodyType.includes("준중형"))) bits.push("출퇴근 최적");
-  if (a.usage === "longhaul") bits.push("장거리 승차감");
-  if (a.seats === "5+" && c.bodyType.includes("미니밴")) bits.push("다인 탑승");
-  if (a.budget) {
-    const [lo, hi] = BUDGET_RANGE[a.budget];
-    const mid = (c.priceFrom + c.priceTo) / 2;
-    if (mid >= lo && mid <= hi) bits.push("예산 정합");
-  }
-  if (c.tag === "discount") bits.push("이달 프로모션 큼");
-  if (c.tag === "hot") bits.push("판매 상위권");
-  return Array.from(new Set(bits)).slice(0, 4);
+function catalogToCandidate(c: CatalogEntry) {
+  const live = findCar(c.id);
+  return {
+    id: c.id,
+    brand: c.brand,
+    model: c.model,
+    bodyType: c.bodyType,
+    priceFrom: c.priceFrom,
+    priceTo: c.priceTo,
+    fuels: c.fuels as string[],
+    tag: c.tag,
+    signal: live?.signal,
+    trimId: live?.trimId,
+  };
 }
 
 /* ============ Page ============ */
@@ -262,17 +197,35 @@ function MatchCoach() {
 
   const recs = useMemo(() => {
     if (!done) return [];
-    const scored = CATALOG.map((c) => ({ car: c, raw: scoreCar(c, answers) }))
-      .sort((a, b) => b.raw - a.raw)
-      .slice(0, 3);
-    const top = scored[0]?.raw ?? 0;
-    return scored.map(({ car, raw }) => ({
-      car,
-      raw,
-      match: normalizedMatch(raw, top),
-      reasons: reasonsFor(car, answers),
-    }));
+    const { hits } = runMatch({
+      answers: answers as MatchAnswers,
+      candidates: CATALOG.map(catalogToCandidate),
+      limit: 3,
+    });
+    return hits
+      .map((h) => {
+        const car = CATALOG.find((c) => c.id === h.id);
+        if (!car) return null;
+        return {
+          car,
+          raw: h.rawScore,
+          match: h.matchPercent,
+          reasons: h.reasons,
+        };
+      })
+      .filter((x): x is { car: CatalogEntry; raw: number; match: number; reasons: string[] } => !!x);
   }, [done, answers]);
+
+  useEffect(() => {
+    if (!done || recs.length === 0) return;
+    void logOutcome({
+      eventType: "match_result",
+      payload: {
+        answers,
+        hits: recs.map((r) => ({ id: r.car.id, match: r.match, reasons: r.reasons })),
+      },
+    });
+  }, [done, recs, answers]);
 
   const restart = () => {
     setStep(0);

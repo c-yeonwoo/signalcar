@@ -331,6 +331,52 @@ async function runDanawaSalesPreview(cwd: string, prevFp: string | null): Promis
   };
 }
 
+async function runCarFeatures(prevFp: string | null): Promise<JobResult> {
+  const { buildCarFeatures } = await import("./car-features");
+  const dry = await buildCarFeatures({ dryRun: true, syncSignals: false });
+  const fp = fingerprint(
+    dry.rows
+      .map((r) => {
+        const row = r as {
+          trim_id: string;
+          timing_verdict: string;
+          timing_score: number;
+          sample_size: number;
+          median_deal_price: number | null;
+        };
+        return {
+          trim_id: row.trim_id,
+          v: row.timing_verdict,
+          s: row.timing_score,
+          n: row.sample_size,
+          m: row.median_deal_price,
+        };
+      })
+      .sort((a, b) => a.trim_id.localeCompare(b.trim_id)),
+  );
+  if (fp === prevFp) {
+    return {
+      jobId: "car-features",
+      status: "skipped_unchanged",
+      fingerprint: fp,
+      stats: { rows: dry.rows.length, unchanged: true },
+      changed: false,
+    };
+  }
+  const written = await buildCarFeatures({ dryRun: false });
+  return {
+    jobId: "car-features",
+    status: "ok",
+    fingerprint: fp,
+    stats: {
+      upserted: written.upserted,
+      featureDate: written.featureDate,
+      brainVersion: "v1.0.0",
+    },
+    changed: true,
+  };
+}
+
 async function executeJob(
   job: LoopJobDef,
   cwd: string,
@@ -347,6 +393,8 @@ async function executeJob(
       return runSalesKot(cwd, prevFp);
     case "danawa-sales-preview":
       return runDanawaSalesPreview(cwd, prevFp);
+    case "car-features":
+      return runCarFeatures(prevFp);
     default:
       return {
         jobId: job.id,

@@ -3,6 +3,7 @@
  * service_role 또는 로컬 SUPABASE_SERVICE_ROLE_KEY 필요.
  */
 import { createClient } from "@supabase/supabase-js";
+import { computeTiming } from "../../../src/lib/brain/timing";
 
 type DealRow = {
   trim_id: string;
@@ -19,10 +20,13 @@ function median(nums: number[]): number | null {
 }
 
 function verdict(sample: number, promoHint?: number | null): "buy" | "wait" | "neutral" {
-  if (sample < 15) return "neutral";
-  if (promoHint != null && promoHint >= 70) return "buy";
-  if (promoHint != null && promoHint <= 30) return "wait";
-  return "neutral";
+  return computeTiming({
+    sampleSize: sample,
+    promoPercentile: promoHint ?? null,
+    discountRatio: null,
+    daysToFacelift: null,
+    salesMomentum: null,
+  }).verdict;
 }
 
 function monthKey(iso: string | null): string | null {
