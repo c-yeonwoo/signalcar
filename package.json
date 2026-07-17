@@ -13,6 +13,7 @@
     "ingest:sources": "bun workers/ingest/run.ts sources",
     "ingest:catalog": "bun workers/ingest/run.ts catalog-index",
     "ingest:catalog-parse": "bun workers/ingest/run.ts catalog-parse",
+    "ingest:promo": "bun workers/ingest/run.ts promo-etl",
     "ingest:signals": "bun workers/ingest/run.ts aggregate-signals",
     "ingest:features": "bun workers/ingest/run.ts car-features",
     "ingest:sales": "bun workers/ingest/run.ts sales-kot",
