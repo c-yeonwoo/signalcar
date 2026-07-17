@@ -30,9 +30,9 @@ bun workers/ingest/run.ts car-features [--dry]
 bun workers/ingest/run.ts catalog-parse [--dry] [--limit 20] [--brand hyundai]
 # 또는: bun run ingest:catalog-parse
 
-# 공식 프로모션 월 ETL — 기아 이달의 구매 혜택 (SERVICE_ROLE 있으면 DB upsert)
-bun workers/ingest/run.ts promo-etl [--dry] [--month 2026-07-01]
-# 또는: bun run ingest:promo
+# 공식 프로모션 월 ETL — 기아·현대 이달의 구매 혜택 (SERVICE_ROLE 있으면 DB upsert)
+bun workers/ingest/run.ts promo-etl [--dry] [--brand all|kia|hyundai] [--month 2026-07-01]
+# 또는: bun run ingest:promo -- --brand hyundai --dry
 
 # Brain P2 학습·평가·알림 큐
 bun run ingest:learn -- --dry

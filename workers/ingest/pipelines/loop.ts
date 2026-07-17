@@ -384,10 +384,10 @@ async function runSignalAlerts(cwd: string, prevFp: string | null): Promise<JobR
 
 async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobResult> {
   const { runPromoEtl } = await import("./promo-etl");
-  const dry = await runPromoEtl({ cwd, dryRun: true, brand: "kia" });
+  const dry = await runPromoEtl({ cwd, dryRun: true, brand: "all" });
   const fp = fingerprint({
     month: dry.month,
-    offers: dry.offers,
+    offers: dry.fingerprintOffers,
     withAmount: dry.withAmount,
   });
   if (fp === prevFp) {
@@ -399,7 +399,7 @@ async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobRe
       changed: false,
     };
   }
-  const written = await runPromoEtl({ cwd, dryRun: false, brand: "kia" });
+  const written = await runPromoEtl({ cwd, dryRun: false, brand: "all" });
   return {
     jobId: "promo-etl",
     status: "ok",
@@ -409,6 +409,7 @@ async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobRe
       offers: written.offers,
       withAmount: written.withAmount,
       db: written.db,
+      brands: written.brands,
     },
     changed: true,
   };
