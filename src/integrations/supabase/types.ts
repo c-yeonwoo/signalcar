@@ -44,6 +44,36 @@ export type Database = {
         }
         Relationships: []
       }
+      brain_weights: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          notes: string | null
+          scope: string
+          version: string
+          weights: Json
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          scope: string
+          version: string
+          weights: Json
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          scope?: string
+          version?: string
+          weights?: Json
+        }
+        Relationships: []
+      }
       buyer_prefs: {
         Row: {
           answers: Json
@@ -370,6 +400,90 @@ export type Database = {
           title?: string | null
           trim_id?: string | null
           vehicle_id?: string | null
+        }
+        Relationships: []
+      }
+      timing_evals: {
+        Row: {
+          actual_label: string | null
+          brain_version: string
+          created_at: string
+          evaluated_at: string | null
+          feature_date: string
+          id: string
+          median_after: number | null
+          median_at_prediction: number | null
+          payload: Json
+          predicted_score: number
+          predicted_verdict: string
+          price_change_ratio: number | null
+          trim_id: string
+        }
+        Insert: {
+          actual_label?: string | null
+          brain_version: string
+          created_at?: string
+          evaluated_at?: string | null
+          feature_date: string
+          id?: string
+          median_after?: number | null
+          median_at_prediction?: number | null
+          payload?: Json
+          predicted_score?: number
+          predicted_verdict: string
+          price_change_ratio?: number | null
+          trim_id: string
+        }
+        Update: {
+          actual_label?: string | null
+          brain_version?: string
+          created_at?: string
+          evaluated_at?: string | null
+          feature_date?: string
+          id?: string
+          median_after?: number | null
+          median_at_prediction?: number | null
+          payload?: Json
+          predicted_score?: number
+          predicted_verdict?: string
+          price_change_ratio?: number | null
+          trim_id?: string
+        }
+        Relationships: []
+      }
+      signal_alert_queue: {
+        Row: {
+          car_slug: string | null
+          created_at: string
+          email: string | null
+          id: string
+          kind: string
+          payload: Json
+          status: string
+          trim_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          car_slug?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          kind?: string
+          payload?: Json
+          status?: string
+          trim_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          car_slug?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          kind?: string
+          payload?: Json
+          status?: string
+          trim_id?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

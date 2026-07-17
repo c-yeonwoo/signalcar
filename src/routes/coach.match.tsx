@@ -44,7 +44,14 @@ import {
   FUEL_LABEL,
   type CatalogEntry,
 } from "@/lib/mock-cars";
-import { runMatch, logOutcome, type MatchAnswers } from "@/lib/brain";
+import {
+  runMatch,
+  logOutcome,
+  loadActiveMatchWeights,
+  DEFAULT_MATCH_WEIGHTS,
+  type MatchAnswers,
+  type MatchWeights,
+} from "@/lib/brain";
 import { findCar } from "@/lib/cars";
 import { toggleWatch, getWatchlist } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
@@ -189,6 +196,11 @@ function catalogToCandidate(c: CatalogEntry) {
 function MatchCoach() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Ans>({});
+  const [weights, setWeights] = useState<MatchWeights>(DEFAULT_MATCH_WEIGHTS);
+
+  useEffect(() => {
+    void loadActiveMatchWeights().then((r) => setWeights(r.weights));
+  }, []);
 
   const totalSteps = QUESTIONS.length;
   const done = step >= totalSteps;
@@ -197,11 +209,14 @@ function MatchCoach() {
 
   const recs = useMemo(() => {
     if (!done) return [];
-    const { hits } = runMatch({
-      answers: answers as MatchAnswers,
-      candidates: CATALOG.map(catalogToCandidate),
-      limit: 3,
-    });
+    const { hits } = runMatch(
+      {
+        answers: answers as MatchAnswers,
+        candidates: CATALOG.map(catalogToCandidate),
+        limit: 3,
+      },
+      weights,
+    );
     return hits
       .map((h) => {
         const car = CATALOG.find((c) => c.id === h.id);
@@ -214,7 +229,7 @@ function MatchCoach() {
         };
       })
       .filter((x): x is { car: CatalogEntry; raw: number; match: number; reasons: string[] } => !!x);
-  }, [done, answers]);
+  }, [done, answers, weights]);
 
   useEffect(() => {
     if (!done || recs.length === 0) return;

@@ -17,7 +17,7 @@ import { SampleSize, StickyCTA } from "@/components/ui-kit";
 import { ReportCreditCard } from "@/components/report-credit-card";
 import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
-import { explainCarTiming } from "@/lib/brain";
+import { explainCarTiming, logOutcome } from "@/lib/brain";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -86,6 +86,15 @@ function CarDetailPage() {
   const [watched, setWatched] = useState(false);
   const [alertPrice, setAlertPrice] = useState<number | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  useEffect(() => {
+    void logOutcome({
+      eventType: "click",
+      carSlug: car.id,
+      trimId: "trimId" in car ? (car as { trimId?: string }).trimId : undefined,
+      payload: { signal: car.signal },
+    });
+  }, [car.id]);
+
   useEffect(() => {
     const sync = () => {
       setInCompare(getCompareList().includes(car.id));

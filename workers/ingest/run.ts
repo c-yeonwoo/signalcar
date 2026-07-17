@@ -188,6 +188,24 @@ async function main() {
       break;
     }
 
+    case "learn-match": {
+      const { learnMatchWeights } = await import("./pipelines/learn-match");
+      console.log(await learnMatchWeights({ dryRun: has("--dry"), days: Number(get("--days") ?? "28") }));
+      break;
+    }
+
+    case "timing-eval": {
+      const { evaluateTimingPredictions } = await import("./pipelines/timing-eval");
+      console.log(await evaluateTimingPredictions({ dryRun: has("--dry") }));
+      break;
+    }
+
+    case "signal-alerts": {
+      const { buildSignalAlerts } = await import("./pipelines/signal-alerts");
+      console.log(await buildSignalAlerts({ dryRun: has("--dry") }));
+      break;
+    }
+
     case "sales-kot": {
       const { fetchKotNewRegistrations } = await import("./pipelines/sales-kot");
       const year = get("--year") ?? new Date().getFullYear().toString();
