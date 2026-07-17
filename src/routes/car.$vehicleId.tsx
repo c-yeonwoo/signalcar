@@ -17,6 +17,7 @@ import { SampleSize, StickyCTA } from "@/components/ui-kit";
 import { ReportCreditCard } from "@/components/report-credit-card";
 import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
+import { explainCarTiming } from "@/lib/brain";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -79,6 +80,7 @@ function CarDetailPage() {
   const accent = signalAccent(car.signal);
   const savings = car.listPrice - car.medianContract;
   const discountPct = Math.round((savings / car.listPrice) * 100);
+  const timingExplain = explainCarTiming(car);
 
   const [inCompare, setInCompare] = useState(false);
   const [watched, setWatched] = useState(false);
@@ -245,6 +247,29 @@ function CarDetailPage() {
           </div>
           <Sparkline values={car.history} color={accent.hex} width={400} height={44} />
         </div>
+
+        {timingExplain.reasons.length > 0 && (
+          <div className="mt-5 pt-4 border-t border-white/10">
+            <div className="flex items-baseline justify-between mb-2.5">
+              <span className="text-[11px] text-white/60">왜 이 타이밍인가요</span>
+              <span className="text-[10px] tabular-nums text-white/40">
+                score {timingExplain.score > 0 ? "+" : ""}
+                {timingExplain.score} · {timingExplain.brainVersion}
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {timingExplain.reasons.map((r) => (
+                <li key={r} className="flex gap-2 text-[12.5px] leading-snug text-white/85">
+                  <span
+                    className="mt-[6px] h-1 w-1 shrink-0 rounded-full"
+                    style={{ backgroundColor: accent.hex }}
+                  />
+                  <span>{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       {/* SECTION 04 · Price distribution */}
