@@ -1,7 +1,7 @@
 /**
  * 공식 카탈로그/가격표 통합 인덱싱.
  * 브랜드별 전용 파이프라인 → CatalogDoc 정규화.
- * PDF 파싱(트림·옵션)은 후속.
+ * PDF 파싱(트림·MSRP)은 catalog-parse 파이프라인.
  */
 import { indexHyundaiCatalogPdfs } from "./hyundai-catalog";
 import { indexKiaCatalogPdfs } from "./kia-catalog";
@@ -44,7 +44,13 @@ export async function indexOfficialCatalogPdfs(opts?: {
         url: d.url,
         fileName: d.fileName,
         kind: d.kind,
-        meta: { carCode: d.carCode, carName: d.carName, modified: d.modified },
+        meta: {
+          carCode: d.carCode,
+          carName: d.carName,
+          carEngName: d.carEngName,
+          carTypeCode: d.carTypeCode,
+          modified: d.modified,
+        },
         fetchedAt: d.fetchedAt,
       });
     }
