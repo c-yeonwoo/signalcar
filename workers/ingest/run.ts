@@ -179,9 +179,15 @@ async function main() {
 
     case "promo-etl": {
       const { runPromoEtl } = await import("./pipelines/promo-etl");
+      const brandRaw = (get("--brand") ?? "all").toLowerCase();
+      const brand = (
+        brandRaw === "kia" || brandRaw === "hyundai" || brandRaw === "all"
+          ? brandRaw
+          : "all"
+      ) as "kia" | "hyundai" | "all";
       const result = await runPromoEtl({
         dryRun: has("--dry"),
-        brand: "kia",
+        brand,
         month: get("--month"),
       });
       console.log(result);

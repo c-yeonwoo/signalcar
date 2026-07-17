@@ -4,7 +4,10 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { parseManAmount } from "../lib/promo-amount";
 import { slugify } from "../lib/parse-price-pdf";
+
+export { parseManAmount } from "../lib/promo-amount";
 
 const PAGE = "https://www.kia.com/kr/buy/special-offers";
 const UA =
@@ -39,19 +42,6 @@ function stripTags(html: string) {
     .replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-/**
- * `70만원` `100만` → 해당 금액.
- * `20/30만` `7/14/21/28만` 적립 구간 → 첫 구간(최소) 사용 (과대계상 방지).
- */
-export function parseManAmount(text: string): number {
-  const ladder = text.match(/(\d+)\s*(?:\/\s*\d+)+\s*만/);
-  if (ladder) return Number(ladder[1]) * 10_000;
-  const parts = [...text.matchAll(/(\d+)\s*만/g)].map((m) => Number(m[1]) * 10_000);
-  if (!parts.length) return 0;
-  // 기본/특별 혜택은 보통 단일 금액 — 복수면 최대
-  return Math.max(...parts);
 }
 
 function discountTypeOf(category: string): KiaPromoBenefit["discountType"] {

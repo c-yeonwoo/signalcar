@@ -130,16 +130,17 @@ export const INGEST_SOURCES: IngestSource[] = [
     targetTables: ["official_promotions"],
   },
   {
-    id: "hyundai-purchase-guide",
-    name: "현대 구매 가이드·혜택",
+    id: "hyundai-monthly-benefit",
+    name: "현대 이달의 구매혜택",
     kind: "official_promo",
     domains: ["promo"],
-    url: "https://www.hyundai.com/kr/ko/e/vehicles",
-    method: "html",
+    url: "https://www.hyundai.com/kr/ko/e/vehicles/monthly-benefit",
+    method: "openapi",
     cadence: "weekly",
     legal: "allowed",
-    notes: "차종별 구매 혜택·금융 이벤트 페이지.",
-    targetTables: ["official_promotions"],
+    notes:
+      "GW /customer-support/common/benefit/cars — 차종별 기본·생산월·기타·최대할인. promo-etl --brand hyundai",
+    targetTables: ["official_promotions", "car_profiles"],
   },
 
   // ─── 판매 / 등록 통계 ───
