@@ -331,6 +331,49 @@ async function runDanawaSalesPreview(cwd: string, prevFp: string | null): Promis
   };
 }
 
+async function runCatalogParse(cwd: string, prevFp: string | null): Promise<JobResult> {
+  const { parseOfficialCatalogPrices } = await import("./catalog-parse");
+  const dry = await parseOfficialCatalogPrices({
+    cwd,
+    dryRun: true,
+    limit: 60,
+    brands: ["hyundai", "kia", "genesis"],
+  });
+  const fp = fingerprint(dry.fingerprintPayload ?? { parsed: dry.parsed, trims: dry.trims });
+  if (fp === prevFp) {
+    return {
+      jobId: "catalog-parse",
+      status: "skipped_unchanged",
+      fingerprint: fp,
+      stats: {
+        docs: dry.docs,
+        parsed: dry.parsed,
+        trims: dry.trims,
+        unchanged: true,
+      },
+      changed: false,
+    };
+  }
+  const written = await parseOfficialCatalogPrices({
+    cwd,
+    dryRun: false,
+    limit: 60,
+    brands: ["hyundai", "kia", "genesis"],
+  });
+  return {
+    jobId: "catalog-parse",
+    status: "ok",
+    fingerprint: fp,
+    stats: {
+      docs: written.docs,
+      parsed: written.parsed,
+      trims: written.trims,
+      db: written.db,
+    },
+    changed: true,
+  };
+}
+
 async function runCarFeatures(prevFp: string | null): Promise<JobResult> {
   const { buildCarFeatures } = await import("./car-features");
   const dry = await buildCarFeatures({ dryRun: true, syncSignals: false });
@@ -395,6 +438,8 @@ async function executeJob(
       return runDanawaSalesPreview(cwd, prevFp);
     case "car-features":
       return runCarFeatures(prevFp);
+    case "catalog-parse":
+      return runCatalogParse(cwd, prevFp);
     default:
       return {
         jobId: job.id,

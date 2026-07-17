@@ -12,6 +12,7 @@
    - `20260714200000_ingest_loop.sql`
    - `20260715010000_real_catalog.sql`
    - `20260717010000_brain_p0.sql` (Brain: car_features_daily · outcome_events · buyer_prefs)
+   - `20260718010000_catalog_parse_job.sql` (ingest loop: catalog-parse)
 
 ## CLI (권한 있는 계정)
 ```bash

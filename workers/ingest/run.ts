@@ -162,6 +162,21 @@ async function main() {
       break;
     }
 
+    case "catalog-parse": {
+      const { parseOfficialCatalogPrices } = await import("./pipelines/catalog-parse");
+      const brandArg = get("--brand");
+      const brands = brandArg
+        ? ([brandArg] as Array<"hyundai" | "kia" | "genesis">)
+        : undefined;
+      const result = await parseOfficialCatalogPrices({
+        dryRun: has("--dry"),
+        limit: Number(get("--limit") ?? "60"),
+        brands,
+      });
+      console.log(result);
+      break;
+    }
+
     case "sales-kot": {
       const { fetchKotNewRegistrations } = await import("./pipelines/sales-kot");
       const year = get("--year") ?? new Date().getFullYear().toString();

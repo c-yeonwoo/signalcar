@@ -21,6 +21,8 @@ export type HyundaiCatalogDoc = {
   brandHint: "현대";
   carCode: string;
   carName: string;
+  carEngName?: string;
+  carTypeCode?: string;
   kind: "price" | "catalog";
   url: string;
   fileName: string;
@@ -66,6 +68,8 @@ export async function indexHyundaiCatalogPdfs(opts?: {
         brandHint: "현대",
         carCode: c.carCode,
         carName: c.carName,
+        carEngName: c.carEngName,
+        carTypeCode: c.carTypeCode,
         kind: "price",
         url: CDN + c.pTableFilePath,
         fileName: c.pTableFilePath.split("/").pop() ?? c.pTableFilePath,
@@ -79,6 +83,8 @@ export async function indexHyundaiCatalogPdfs(opts?: {
         brandHint: "현대",
         carCode: c.carCode,
         carName: c.carName,
+        carEngName: c.carEngName,
+        carTypeCode: c.carTypeCode,
         kind: "catalog",
         url: CDN + c.catalogFilePath,
         fileName: c.catalogFilePath.split("/").pop() ?? c.catalogFilePath,

@@ -34,3 +34,7 @@ dist-ssr
 # Local secrets (never commit)
 .env.local
 .env.*.local
+
+# Ingest PDF cache / samples (downloaded binaries)
+workers/ingest/out/pdf-cache/
+workers/ingest/out/pdf-samples/

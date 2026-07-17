@@ -108,6 +108,19 @@ export const LOOP_JOBS: LoopJobDef[] = [
     changeDetect: "fingerprint",
     requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
   },
+  {
+    id: "catalog-parse",
+    name: "OEM 가격표 PDF→MSRP",
+    description:
+      "현대·기아·제네시스 가격표 PDF 텍스트 파싱 → vehicles/trims.base_price. URL·트림 해시 동일 시 스킵.",
+    cadence: "daily",
+    pipeline: "catalog-parse",
+    domains: ["catalog", "msrp"],
+    targetTables: ["vehicles", "trims", "source_documents"],
+    defaultEnabled: true,
+    changeDetect: "fingerprint",
+    requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
 ];
 
 export type LoopJobRuntime = {
