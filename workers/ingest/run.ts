@@ -212,6 +212,30 @@ async function main() {
       break;
     }
 
+    case "send-alerts": {
+      const { sendPendingAlerts } = await import("./pipelines/send-alerts");
+      console.log(
+        await sendPendingAlerts({
+          dryRun: has("--dry"),
+          weekly: has("--weekly"),
+          limit: Number(get("--limit") ?? "100"),
+        }),
+      );
+      break;
+    }
+
+    case "profile-bootstrap": {
+      const { bootstrapCarProfiles } = await import("./pipelines/profile-bootstrap");
+      console.log(
+        await bootstrapCarProfiles({
+          dryRun: has("--dry"),
+          limit: Number(get("--limit") ?? "40"),
+          publish: !has("--draft"),
+        }),
+      );
+      break;
+    }
+
     case "sales-kot": {
       const { fetchKotNewRegistrations } = await import("./pipelines/sales-kot");
       const year = get("--year") ?? new Date().getFullYear().toString();

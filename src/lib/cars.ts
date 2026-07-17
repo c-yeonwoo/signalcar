@@ -98,7 +98,9 @@ function toCar(profile: DbRow, latest: SignalRow | undefined, history: number[])
     reports: latest?.sample_size ?? 0,
     signal,
     headline: profile.headline ?? `${brand} ${vehicle?.model_name ?? ""}`,
-    coach: profile.coach ?? "실거래·프로모션 데이터를 모으는 중이에요.",
+    coach:
+      profile.coach ??
+      "실계약 표본을 모으는 중이에요. 이달 공식 프로모·정가로 타이밍을 보세요.",
     promoPercentile: latest?.promo_percentile != null ? Number(latest.promo_percentile) : 50,
     facelift: profile.facelift ?? null,
     history: history.length ? history : [Math.round(median / 10_000)],

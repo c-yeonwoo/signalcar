@@ -382,6 +382,57 @@ async function runSignalAlerts(cwd: string, prevFp: string | null): Promise<JobR
   };
 }
 
+async function runSendAlerts(cwd: string, prevFp: string | null): Promise<JobResult> {
+  const { sendPendingAlerts } = await import("./send-alerts");
+  // 주중 daily: pending만. 월요일(1)에 weekly digest 큐잉
+  const weekly = new Date().getDay() === 1;
+  const written = await sendPendingAlerts({ cwd, dryRun: false, weekly });
+  const fp = fingerprint({
+    pending: written.pending,
+    mails: written.mails,
+    sent: written.sent,
+    weekly: written.weeklyQueued,
+  });
+  void prevFp;
+  return {
+    jobId: "send-alerts",
+    status: "ok",
+    fingerprint: fp,
+    stats: {
+      pending: written.pending,
+      mails: written.mails,
+      sent: written.sent,
+      failed: written.failed,
+      weeklyQueued: written.weeklyQueued,
+      dryRun: written.dryRun,
+    },
+    changed: written.sent > 0 || written.weeklyQueued > 0 || written.mails > 0,
+  };
+}
+
+async function runProfileBootstrap(cwd: string, prevFp: string | null): Promise<JobResult> {
+  const { bootstrapCarProfiles } = await import("./profile-bootstrap");
+  const dry = await bootstrapCarProfiles({ cwd, dryRun: true, limit: 40 });
+  const fp = fingerprint({ candidates: dry.candidates });
+  if (fp === prevFp || dry.candidates === 0) {
+    return {
+      jobId: "profile-bootstrap",
+      status: dry.candidates === 0 ? "skipped_unchanged" : "skipped_unchanged",
+      fingerprint: fp,
+      stats: { candidates: dry.candidates, unchanged: true },
+      changed: false,
+    };
+  }
+  const written = await bootstrapCarProfiles({ cwd, dryRun: false, limit: 40 });
+  return {
+    jobId: "profile-bootstrap",
+    status: "ok",
+    fingerprint: fp,
+    stats: { created: written.created, candidates: written.candidates },
+    changed: written.created > 0,
+  };
+}
+
 async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobResult> {
   const { runPromoEtl } = await import("./promo-etl");
   const dry = await runPromoEtl({ cwd, dryRun: true, brand: "all" });
@@ -532,6 +583,10 @@ async function executeJob(
       return runTimingEval(prevFp);
     case "signal-alerts":
       return runSignalAlerts(cwd, prevFp);
+    case "send-alerts":
+      return runSendAlerts(cwd, prevFp);
+    case "profile-bootstrap":
+      return runProfileBootstrap(cwd, prevFp);
     default:
       return {
         jobId: job.id,

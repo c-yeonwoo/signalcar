@@ -243,16 +243,30 @@ export function sampleConfidence(n: number): { level: "low" | "mid" | "high"; la
 
 export function SampleSize({
   count,
-  months = 6,
   compact = false,
   className,
 }: {
   count: number;
+  /** @deprecated 최신 시그널 월 기준 — months 표기 제거 */
   months?: number;
   compact?: boolean;
   className?: string;
 }) {
   const c = sampleConfidence(count);
+  if (count <= 0) {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center gap-1.5 text-[10.5px] text-slate-500",
+          className,
+        )}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden />
+        실계약 표본 수집 중
+        {!compact && <span className="text-slate-400">· 프로모·정가 기준</span>}
+      </span>
+    );
+  }
   return (
     <span
       className={cn(
@@ -265,7 +279,7 @@ export function SampleSize({
         style={{ background: c.hex }}
         aria-hidden
       />
-      실계약 {count}건 · 최근 {months}개월
+      실계약 {count}건 · 최신 시그널월
       {!compact && <span className="text-slate-400">· {c.label}</span>}
     </span>
   );

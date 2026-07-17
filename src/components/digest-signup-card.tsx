@@ -26,8 +26,8 @@ export function hasDigestSignup(): boolean {
 }
 
 /**
- * 주간 시그널 이메일 다이제스트 구독 (발송 인프라는 Sprint K).
- * Gate J': 이메일 캡처 + digest_signups 테이블 best-effort insert.
+ * 주간 시그널 이메일 다이제스트 구독.
+ * 캡처 → digest_signups · 발송은 ingest `send-alerts --weekly`.
  */
 export function DigestSignupCard({ compact }: { compact?: boolean }) {
   const { user } = useSession();
@@ -61,11 +61,11 @@ export function DigestSignupCard({ compact }: { compact?: boolean }) {
       }
       writeLocal(v);
       setDone(true);
-      toast.success("주간 시그널 메일 명단에 담았어요");
+      toast.success("주간 시그널 메일 구독 완료");
     } catch (err) {
       writeLocal(v);
       setDone(true);
-      toast.success("명단에 담았어요 · 발송 준비되면 보내드릴게요");
+      toast.success("구독 완료 · BUY 전환·주간 요약을 보내드릴게요");
       console.warn(err);
     } finally {
       setLoading(false);
@@ -87,7 +87,7 @@ export function DigestSignupCard({ compact }: { compact?: boolean }) {
             주간 시그널 메일 등록됨
           </div>
           <div className="text-[11.5px] text-slate-500 mt-0.5">
-            관심 차 변화가 있을 때 주 1회 보내드려요.
+            BUY 전환·주간 타이밍 요약을 메일로 보내드려요.
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ export function DigestSignupCard({ compact }: { compact?: boolean }) {
             주간 시그널 메일
           </div>
           <div className="text-[11.5px] text-slate-500 leading-snug">
-            관심 차 다이제스트를 매주 받아보세요.
+            WAIT→BUY 전환과 주간 타이밍 요약을 받아보세요.
           </div>
         </div>
       </div>

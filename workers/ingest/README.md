@@ -39,6 +39,14 @@ bun run ingest:learn -- --dry
 bun run ingest:timing-eval -- --dry
 bun run ingest:alerts -- --dry
 
+# 알림 이메일 발송 (RESEND_API_KEY 없으면 미리보기 JSON만)
+bun run ingest:send-alerts -- --dry
+bun run ingest:send-alerts -- --weekly --dry
+
+# 트림만 있는 차종 → car_profiles stub (표본 0, published)
+bun run ingest:profiles -- --dry
+# 검수용 draft: --draft
+
 # 교통안전공단 신규등록 (키는 .env.local 권장)
 # DATA_GO_KR_API_KEY=...
 # DATA_GO_KR_SERVICE_URL 생략 시 기본 엔드포인트 사용
@@ -67,7 +75,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## Roadmap
 
-1. **Now** — MSRP · promo-etl · Brain features · **learn-match / timing-eval / signal-alerts**
+1. **Now** — MSRP · promo-etl · profile-bootstrap · Brain features · **learn-match / timing-eval / signal-alerts / send-alerts**
 2. **Next** — 현대/제네시스 프로모 · 알림 메일 발송 · trim_options
 3. **Then** — 뉴스→market_events · KAIDA
 4. **License** — KAIDA DB ETL (계약 후)

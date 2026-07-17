@@ -2,7 +2,7 @@
  * BUY 전환 알림 큐 생성.
  * - 최신 car_features_daily 가 buy 이고, 직전 feature_date 가 wait/neutral
  * - watchlist 유저 + digest_signups 이메일로 signal_alert_queue pending 적재
- * 실제 메일 발송은 후속 (큐만).
+ * 메일 발송은 send-alerts (Resend).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
