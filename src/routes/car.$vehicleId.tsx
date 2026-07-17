@@ -1,10 +1,10 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, ScanLine, Bell, Target, Camera } from "lucide-react";
+import { createFileRoute, Link, notFound, useNavigate, useHydrated } from "@tanstack/react-router";
+import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, Bell, Target, Camera, FileText, Ticket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { findCar, formatKRW, signalLabel, BENEFIT_META, REVIEWS_BY_CAR } from "@/lib/mock-cars";
+import { findCar, formatKRW, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { resolveCarWithSignal } from "@/lib/price-signals";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
@@ -18,6 +18,11 @@ import { ReportCreditCard } from "@/components/report-credit-card";
 import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
 import { explainCarTiming, logOutcome } from "@/lib/brain";
+import {
+  getCreditBalance,
+  isUnlocked,
+  spendCreditToUnlock,
+} from "@/lib/report-credits";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -77,6 +82,8 @@ export const Route = createFileRoute("/car/$vehicleId")({
 
 function CarDetailPage() {
   const { car } = Route.useLoaderData();
+  const navigate = useNavigate();
+  const hydrated = useHydrated();
   const accent = signalAccent(car.signal);
   const savings = car.listPrice - car.medianContract;
   const discountPct = Math.round((savings / car.listPrice) * 100);
@@ -86,6 +93,9 @@ function CarDetailPage() {
   const [watched, setWatched] = useState(false);
   const [alertPrice, setAlertPrice] = useState<number | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [reportUnlocked, setReportUnlocked] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(0);
+
   useEffect(() => {
     void logOutcome({
       eventType: "click",
@@ -100,21 +110,43 @@ function CarDetailPage() {
       setInCompare(getCompareList().includes(car.id));
       setWatched(getWatchlist().includes(car.id));
       setAlertPrice(getAlert(car.id)?.targetPrice ?? null);
+      setReportUnlocked(isUnlocked(car.id));
+      setCreditBalance(getCreditBalance());
     };
     sync();
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:alerts-change", sync);
+    window.addEventListener("sc:report-credits-change", sync);
     return () => {
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:alerts-change", sync);
+      window.removeEventListener("sc:report-credits-change", sync);
     };
   }, [car.id]);
 
   const handleCompare = () => {
     const { added, list } = toggleCompare(car.id);
     toast.success(added ? `비교함에 담았어요 (${list.length}/3)` : "비교함에서 뺐어요");
+  };
+
+  const handlePrimaryBrief = () => {
+    if (reportUnlocked) {
+      void navigate({ to: "/car/$vehicleId/briefing", params: { vehicleId: car.id } });
+      return;
+    }
+    if (creditBalance > 0) {
+      const r = spendCreditToUnlock(car.id);
+      if (!r.ok) {
+        toast.error("열람권이 부족해요. 계약을 공유하면 +1장이 지급돼요.");
+        return;
+      }
+      toast.success(`협상 리포트가 열렸어요 · ${car.brand} ${car.model}`);
+      void navigate({ to: "/car/$vehicleId/briefing", params: { vehicleId: car.id } });
+      return;
+    }
+    void navigate({ to: "/report" });
   };
 
   const handleWatch = () => {
@@ -333,9 +365,6 @@ function CarDetailPage() {
         accentHex={accent.hex}
       />
 
-      {/* SECTION 06 · Reviews */}
-      <ReviewsSection bundle={REVIEWS_BY_CAR[car.id]} carId={car.id} />
-
       {/* SECTION 07 · Facelift timeline */}
       <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
         <h3 className={`${SECTION_TITLE} mb-2.5`}>모델 사이클</h3>
@@ -357,14 +386,15 @@ function CarDetailPage() {
 
       <div className="h-4" />
 
-      {/* Sticky CTA — 견적 + 비교 (공용 StickyCTA 프리미티브) */}
+      {/* Sticky CTA — 협상 리포트(코어) + 비교 */}
       <StickyCTA
         above={
           <Link
-            to="/diagnose"
+            to="/coach/options"
+            search={{ carId: car.id }}
             className="inline-flex items-center gap-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 px-3 py-1 text-[11px] font-medium text-slate-600 shadow-sm"
           >
-            <ScanLine className="h-3 w-3" /> 이 차 견적 함정 체크
+            옵션·견적 상담
           </Link>
         }
       >
@@ -380,13 +410,26 @@ function CarDetailPage() {
             {inCompare ? <Check className="h-4 w-4" /> : <GitCompare className="h-4 w-4" />}
             {inCompare ? "비교함에 담김" : "비교에 담기"}
           </button>
-          <Link
-            to="/coach/options"
-            search={{ carId: car.id }}
-            className="flex-[1.4] text-center bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90"
+          <button
+            type="button"
+            onClick={handlePrimaryBrief}
+            disabled={!hydrated}
+            className="flex-[1.4] inline-flex items-center justify-center gap-1.5 bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90 disabled:opacity-60"
           >
-            이 차로 견적 →
-          </Link>
+            {reportUnlocked ? (
+              <>
+                <FileText className="h-4 w-4" /> 협상 리포트 열기
+              </>
+            ) : creditBalance > 0 ? (
+              <>
+                <Ticket className="h-4 w-4" /> 열람권으로 리포트
+              </>
+            ) : (
+              <>
+                <Camera className="h-4 w-4" /> 계약 공유 → 리포트
+              </>
+            )}
+          </button>
         </div>
       </StickyCTA>
       <PriceAlertSheet car={car} open={alertOpen} onOpenChange={setAlertOpen} />
@@ -445,7 +488,7 @@ function DepreciationSection({
   return (
     <section className="bg-white px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
       <div className="flex items-center justify-between">
-        <h3 className={SECTION_TITLE}>신차 vs 중고 · 지금 사도 될까?</h3>
+        <h3 className={SECTION_TITLE}>신차 vs 중고 · 참고 추정치</h3>
         <span className={`text-[10.5px] ${MUTED}`}>참고 시세</span>
       </div>
       <p className={`text-[12px] ${MUTED} mt-1 leading-relaxed`}>

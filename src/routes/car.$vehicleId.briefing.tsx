@@ -86,6 +86,11 @@ function BriefingPage() {
         <div className="mt-3">
           <SampleSize count={brief.sampleSize} />
         </div>
+        {brief.sampleSize < 15 && (
+          <p className="mt-3 rounded-xl bg-amber-50 border border-amber-100 px-3.5 py-2.5 text-[12px] text-amber-900 leading-relaxed">
+            {brief.sampleNote}
+          </p>
+        )}
       </section>
 
       {/* Price band */}
@@ -104,6 +109,7 @@ function BriefingPage() {
             <span className="font-semibold text-[color:var(--color-brand-navy)]">
               {formatKRW(brief.dealerDiscretionMin)} ~ {formatKRW(brief.dealerDiscretionMax)}
             </span>
+            <span className="text-slate-400"> · 추정</span>
           </p>
         </div>
       </section>
@@ -121,43 +127,6 @@ function BriefingPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* Regional */}
-      <section className="px-5 pb-5">
-        <h2 className="text-[15px] font-bold text-[color:var(--color-brand-navy)]">
-          지역별 편차 (참고)
-        </h2>
-        <div className="mt-3 rounded-2xl border border-[color:var(--color-brand-mist)] overflow-hidden">
-          {brief.regionalSpread.map((r: any) => (
-            <div
-              key={r.region}
-              className="flex items-start justify-between gap-3 px-3.5 py-3 border-b border-slate-100 last:border-0"
-            >
-              <div className="min-w-0">
-                <div className="text-[13px] font-semibold text-[color:var(--color-brand-navy)]">
-                  {r.region}
-                </div>
-                <div className="text-[11.5px] text-slate-500 mt-0.5">{r.note}</div>
-              </div>
-              <div
-                className={`text-[13px] font-bold tabular-nums shrink-0 ${
-                  r.medianDelta < 0
-                    ? "text-[color:var(--color-signal-buy)]"
-                    : r.medianDelta > 0
-                      ? "text-[color:var(--color-signal-wait)]"
-                      : "text-slate-500"
-                }`}
-              >
-                {r.medianDelta === 0
-                  ? "기준"
-                  : r.medianDelta < 0
-                    ? `${formatKRW(r.medianDelta)}`
-                    : `+${formatKRW(r.medianDelta)}`}
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* Scripts */}

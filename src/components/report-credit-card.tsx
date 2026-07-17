@@ -79,13 +79,14 @@ export function ReportCreditCard({
         {/* Body */}
         <div className="px-4 py-4">
           <p className="text-[12.5px] text-slate-600 leading-relaxed">
-            최근 30일 실계약 데이터로 만든 협상 포인트, 딜러 재량 폭, 지역별 프로모션 편차를 열람할 수 있어요.
+            실계약 밴드·이번 달 공식 프로모·목표가 스크립트로 “얼마까지 밀지”를 정리해 드려요.
+            표본이 얇은 차종은 참고용으로 표시됩니다.
           </p>
 
           {/* Perk list */}
           <ul className="mt-3 space-y-1.5 text-[12px]">
-            <PerkItem text="이 차종 실계약 중앙값 상세 분포" />
-            <PerkItem text="지역·딜러사별 할인율 편차" />
+            <PerkItem text="실계약 중앙값·밴드 + 표본 신뢰도" />
+            <PerkItem text="이달 공식 프로모 반영 목표가" />
             <PerkItem text="협상 스크립트 3종 (전화·현장·문자)" />
           </ul>
 
@@ -119,10 +120,10 @@ export function ReportCreditCard({
                 className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 text-[13.5px] font-semibold active:opacity-90"
               >
                 <Camera className="h-4 w-4" />
-                계약 공유하고 열람권 받기
+                내 계약 1건 공유 → 리포트 열기
               </Link>
               <p className="text-center text-[11px] text-slate-500">
-                내 계약 1건 공유 → 열람권 <b>+1장</b> · 어느 차종에나 쓸 수 있어요.
+                열람권 <b>+1장</b> 즉시 · 어느 차종 협상 리포트에나 사용 · 시세 표본도 같이 두꺼워져요.
               </p>
             </div>
           )}
