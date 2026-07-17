@@ -129,8 +129,8 @@ function ReportPage() {
         <>
           <PageHeader
             eyebrow="Give to Get"
-            title={<>실계약가 하나 알려주면,<br />이 차 진짜 시세를<br />열어드려요</>}
-            subtitle="계약서·견적서 사진을 올리면 자동으로 값을 읽어드려요. 확인만 하면 끝."
+            title={<>내 계약 1건이면,<br />협상 리포트가<br />열립니다</>}
+            subtitle="공유할수록 시세 표본이 두꺼워지고, 당신은 열람권으로 목표가·스크립트를 받아요."
           />
 
           <section className="px-5 space-y-3">
@@ -156,8 +156,8 @@ function ReportPage() {
                 />
                 <RewardRow
                   icon={<Users className="h-4 w-4" />}
-                  title="다음 구매자에게 실시세 기여"
-                  desc={`현재 보유 열람권 ${getCreditBalance()}장`}
+                  title="시세 표본에 기여"
+                  desc={`다음 BUY/WAIT가 더 정확해져요 · 내 열람권 ${getCreditBalance()}장`}
                 />
               </div>
             </div>
