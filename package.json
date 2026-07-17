@@ -17,6 +17,8 @@
     "ingest:learn": "bun workers/ingest/run.ts learn-match",
     "ingest:timing-eval": "bun workers/ingest/run.ts timing-eval",
     "ingest:alerts": "bun workers/ingest/run.ts signal-alerts",
+    "ingest:send-alerts": "bun workers/ingest/run.ts send-alerts",
+    "ingest:profiles": "bun workers/ingest/run.ts profile-bootstrap",
     "ingest:signals": "bun workers/ingest/run.ts aggregate-signals",
     "ingest:features": "bun workers/ingest/run.ts car-features",
     "ingest:sales": "bun workers/ingest/run.ts sales-kot",

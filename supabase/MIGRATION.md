@@ -15,6 +15,7 @@
    - `20260718010000_catalog_parse_job.sql` (ingest loop: catalog-parse)
    - `20260718020000_promo_etl_job.sql` (ingest loop: promo-etl)
    - `20260718030000_brain_p2_learning.sql` (brain_weights · timing_evals · signal_alert_queue)
+   - `20260718040000_send_alerts_jobs.sql` (send-alerts · profile-bootstrap)
 
 ## CLI (권한 있는 계정)
 ```bash
