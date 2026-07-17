@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 import { addMyReview } from "@/lib/onboarding-store";
 import { earnCredit, getCreditBalance } from "@/lib/report-credits";
+import { logOutcome } from "@/lib/brain";
 import { Ticket, BadgeCheck, Users } from "lucide-react";
 
 export const Route = createFileRoute("/report")({
@@ -89,6 +90,12 @@ function ReportPage() {
       });
       if (error) throw error;
       earnCredit(1);
+      void logOutcome({
+        eventType: "report",
+        carSlug: car.id,
+        trimId,
+        payload: { region, month, discount: Number(discount) },
+      });
       setStep("done");
       toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요 · 열람권 +1장" : "고마워요! 열람권 +1장이 지급됐어요");
     } catch (err) {

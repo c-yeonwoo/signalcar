@@ -8,6 +8,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { TRIM_ID_MAP } from "@/lib/mock-cars";
 import { carIdFromTrimId } from "@/lib/price-signals";
+import { logOutcome } from "@/lib/brain";
+import { trimIdForCar } from "@/lib/cars";
 
 const CREDIT_KEY = "sc.reportCredits.v1";
 const UNLOCK_KEY = "sc.reportUnlocks.v1";
@@ -87,7 +89,8 @@ export function spendCreditToUnlock(carId: string): { ok: boolean; alreadyUnlock
   writeCredits(s);
   writeUnlocks([...unlocks, carId]);
 
-  const trimId = TRIM_ID_MAP[carId];
+  const trimId = trimIdForCar(carId) ?? TRIM_ID_MAP[carId];
+  void logOutcome({ eventType: "unlock", carSlug: carId, trimId });
   if (trimId) {
     void (supabase as any).rpc("unlock_briefing_with_credit", { p_trim_id: trimId }).then(({ error }: { error: { message: string } | null }) => {
       if (error) {

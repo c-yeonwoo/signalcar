@@ -1,4 +1,5 @@
 import { BRAIN_VERSION } from "./version";
+import { DEFAULT_MATCH_WEIGHTS, type MatchWeights } from "./weights";
 import type {
   MatchAnswers,
   MatchCandidate,
@@ -17,15 +18,19 @@ const BUDGET_RANGE: Record<NonNullable<MatchAnswers["budget"]>, [number, number]
 const MAX_SCORE = 120;
 
 /** 예산·차체·좌석·용도·연료·타이밍 가중 스코어 */
-export function scoreCandidate(c: MatchCandidate, a: MatchAnswers): number {
+export function scoreCandidate(
+  c: MatchCandidate,
+  a: MatchAnswers,
+  w: MatchWeights = DEFAULT_MATCH_WEIGHTS,
+): number {
   let s = 0;
 
   if (a.budget) {
     const [lo, hi] = BUDGET_RANGE[a.budget];
     const mid = (c.priceFrom + c.priceTo) / 2;
-    if (mid >= lo && mid <= hi) s += 35;
-    else if (c.priceFrom <= hi && c.priceTo >= lo) s += 18;
-    else s -= 18;
+    if (mid >= lo && mid <= hi) s += w.budget_in;
+    else if (c.priceFrom <= hi && c.priceTo >= lo) s += w.budget_overlap;
+    else s += w.budget_miss;
   }
 
   if (a.body && a.body !== "any") {
@@ -34,46 +39,49 @@ export function scoreCandidate(c: MatchCandidate, a: MatchAnswers): number {
       (a.body === "sedan" && b.includes("세단")) ||
       (a.body === "suv" && b.includes("SUV")) ||
       (a.body === "van" && b.includes("미니밴"));
-    s += match ? 22 : -8;
+    s += match ? w.body_match : w.body_miss;
   }
 
-  if (a.seats === "5+" && (c.bodyType.includes("미니밴") || c.bodyType.includes("대형"))) s += 14;
+  if (a.seats === "5+" && (c.bodyType.includes("미니밴") || c.bodyType.includes("대형"))) {
+    s += w.seats_5plus;
+  }
   if (
     a.seats === "1-2" &&
     (c.bodyType.includes("소형") || c.bodyType.includes("준중형") || c.bodyType.includes("경형"))
   ) {
-    s += 10;
+    s += w.seats_12;
   }
 
-  if (a.usage === "family" && (c.bodyType.includes("SUV") || c.bodyType.includes("미니밴"))) s += 12;
-  if (a.usage === "leisure" && c.bodyType.includes("SUV")) s += 12;
+  if (a.usage === "family" && (c.bodyType.includes("SUV") || c.bodyType.includes("미니밴"))) {
+    s += w.usage_family;
+  }
+  if (a.usage === "leisure" && c.bodyType.includes("SUV")) s += w.usage_leisure;
   if (
     a.usage === "commute" &&
     (c.bodyType.includes("세단") || c.bodyType.includes("소형") || c.bodyType.includes("준중형"))
   ) {
-    s += 10;
+    s += w.usage_commute;
   }
   if (a.usage === "longhaul" && (c.bodyType.includes("세단") || c.bodyType.includes("프리미엄"))) {
-    s += 8;
+    s += w.usage_longhaul;
   }
 
   if (a.fuel && a.fuel !== "any") {
-    if (c.fuels.includes(a.fuel)) s += 18;
-    else s -= 14;
+    if (c.fuels.includes(a.fuel)) s += w.fuel_match;
+    else s += w.fuel_miss;
   }
 
-  // Timing 반영 (인터뷰 + 시그널)
   if (a.timing === "now" || a.timing === "1-3m") {
-    if (c.signal === "buy") s += 12;
-    else if (c.signal === "wait") s -= 8;
-    if (c.timingScore != null && c.timingScore >= 20) s += 6;
+    if (c.signal === "buy") s += w.timing_now_buy;
+    else if (c.signal === "wait") s += w.timing_now_wait;
+    if (c.timingScore != null && c.timingScore >= 20) s += w.timing_now_score;
   } else if (a.timing === "3m" || a.timing === "3-6m" || a.timing === "6m+") {
-    if (c.signal === "wait") s += 6;
-    if (c.signal === "buy") s += 2;
+    if (c.signal === "wait") s += w.timing_later_wait;
+    if (c.signal === "buy") s += w.timing_later_buy;
   }
 
-  if (c.tag === "hot") s += 4;
-  if (c.tag === "discount") s += 3;
+  if (c.tag === "hot") s += w.tag_hot;
+  if (c.tag === "discount") s += w.tag_discount;
 
   return s;
 }
@@ -114,12 +122,15 @@ function normalizedMatch(score: number, topScore: number): number {
   return Math.round(60 + rel * 39);
 }
 
-export function runMatch(req: MatchRequest): MatchResponse {
+export function runMatch(
+  req: MatchRequest,
+  weights: MatchWeights = DEFAULT_MATCH_WEIGHTS,
+): MatchResponse {
   const limit = req.limit ?? 3;
   const scored = req.candidates
     .map((c) => ({
       c,
-      raw: scoreCandidate(c, req.answers),
+      raw: scoreCandidate(c, req.answers, weights),
     }))
     .sort((a, b) => b.raw - a.raw)
     .slice(0, limit);

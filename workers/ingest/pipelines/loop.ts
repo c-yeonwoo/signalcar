@@ -331,6 +331,57 @@ async function runDanawaSalesPreview(cwd: string, prevFp: string | null): Promis
   };
 }
 
+async function runLearnMatch(_prevFp: string | null): Promise<JobResult> {
+  const { learnMatchWeights } = await import("./learn-match");
+  const written = await learnMatchWeights({ dryRun: false });
+  return {
+    jobId: "learn-match",
+    status: "ok",
+    fingerprint: fingerprint(written.stats),
+    stats: written.stats as Record<string, unknown>,
+    changed: true,
+  };
+}
+
+async function runTimingEval(_prevFp: string | null): Promise<JobResult> {
+  const { evaluateTimingPredictions } = await import("./timing-eval");
+  const written = await evaluateTimingPredictions({ dryRun: false });
+  return {
+    jobId: "timing-eval",
+    status: "ok",
+    fingerprint: fingerprint(written.summary),
+    stats: { ...written.summary, upserted: "upserted" in written ? written.upserted : 0 },
+    changed: true,
+  };
+}
+
+async function runSignalAlerts(cwd: string, prevFp: string | null): Promise<JobResult> {
+  const { buildSignalAlerts } = await import("./signal-alerts");
+  const dry = await buildSignalAlerts({ cwd, dryRun: true });
+  const fp = fingerprint({ t: dry.transitions, q: dry.queued });
+  if (fp === prevFp) {
+    return {
+      jobId: "signal-alerts",
+      status: "skipped_unchanged",
+      fingerprint: fp,
+      stats: { transitions: dry.transitions, queued: dry.queued, unchanged: true },
+      changed: false,
+    };
+  }
+  const written = await buildSignalAlerts({ cwd, dryRun: false });
+  return {
+    jobId: "signal-alerts",
+    status: "ok",
+    fingerprint: fp,
+    stats: {
+      transitions: written.transitions,
+      queued: written.queued,
+      inserted: "inserted" in written ? written.inserted : 0,
+    },
+    changed: true,
+  };
+}
+
 async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobResult> {
   const { runPromoEtl } = await import("./promo-etl");
   const dry = await runPromoEtl({ cwd, dryRun: true, brand: "kia" });
@@ -446,7 +497,7 @@ async function runCarFeatures(prevFp: string | null): Promise<JobResult> {
     stats: {
       upserted: written.upserted,
       featureDate: written.featureDate,
-      brainVersion: "v1.1.0",
+      brainVersion: "v1.2.0",
     },
     changed: true,
   };
@@ -474,6 +525,12 @@ async function executeJob(
       return runCatalogParse(cwd, prevFp);
     case "promo-etl":
       return runPromoEtlJob(cwd, prevFp);
+    case "learn-match":
+      return runLearnMatch(prevFp);
+    case "timing-eval":
+      return runTimingEval(prevFp);
+    case "signal-alerts":
+      return runSignalAlerts(cwd, prevFp);
     default:
       return {
         jobId: job.id,

@@ -5,6 +5,12 @@ export { computePriceBand, percentile } from "./price";
 export { logOutcome } from "./outcomes";
 export { fetchLatestFeatures } from "./features";
 export { explainCarTiming } from "./explain-car";
+export {
+  DEFAULT_MATCH_WEIGHTS,
+  loadActiveMatchWeights,
+  mergeMatchWeights,
+  type MatchWeights,
+} from "./weights";
 export type {
   MatchAnswers,
   MatchCandidate,

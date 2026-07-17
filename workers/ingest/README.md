@@ -34,6 +34,11 @@ bun workers/ingest/run.ts catalog-parse [--dry] [--limit 20] [--brand hyundai]
 bun workers/ingest/run.ts promo-etl [--dry] [--month 2026-07-01]
 # 또는: bun run ingest:promo
 
+# Brain P2 학습·평가·알림 큐
+bun run ingest:learn -- --dry
+bun run ingest:timing-eval -- --dry
+bun run ingest:alerts -- --dry
+
 # 교통안전공단 신규등록 (키는 .env.local 권장)
 # DATA_GO_KR_API_KEY=...
 # DATA_GO_KR_SERVICE_URL 생략 시 기본 엔드포인트 사용
@@ -62,9 +67,9 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## Roadmap
 
-1. **Now** — catalog-parse (MSRP) + **promo-etl (기아)** + Brain features
-2. **Next** — 현대/제네시스 프로모 · trim_options 정교화 · 제네시스 POST 다운로드
-3. **Then** — KOTSA → Timing v2, 뉴스→market_events
+1. **Now** — MSRP · promo-etl · Brain features · **learn-match / timing-eval / signal-alerts**
+2. **Next** — 현대/제네시스 프로모 · 알림 메일 발송 · trim_options
+3. **Then** — 뉴스→market_events · KAIDA
 4. **License** — KAIDA DB ETL (계약 후)
 5. **Never** — 겟차/다나와/엔카 스크래핑
 

@@ -14,6 +14,7 @@
    - `20260717010000_brain_p0.sql` (Brain: car_features_daily · outcome_events · buyer_prefs)
    - `20260718010000_catalog_parse_job.sql` (ingest loop: catalog-parse)
    - `20260718020000_promo_etl_job.sql` (ingest loop: promo-etl)
+   - `20260718030000_brain_p2_learning.sql` (brain_weights · timing_evals · signal_alert_queue)
 
 ## CLI (권한 있는 계정)
 ```bash
