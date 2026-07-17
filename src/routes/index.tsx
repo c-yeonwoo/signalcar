@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { formatKRW, weeklyChangeFor, type MockCar } from "@/lib/mock-cars";
-import { fetchCarsFromDb } from "@/lib/cars";
+import { fetchCarsFromDb, type Car } from "@/lib/cars";
 import { SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -79,7 +79,7 @@ function HomePage() {
   const prefs = getPrefs();
   const watched = watchIds
     .map((id) => cars.find((c) => c.id === id))
-    .filter((c): c is MockCar => !!c);
+    .filter((c): c is Car => !!c);
   const recommend = (() => {
     if (watched.length > 0) return watched;
     if (!prefs) return cars.slice(0, 3);

@@ -52,7 +52,7 @@ export function DigestSignupCard({ compact }: { compact?: boolean }) {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.from("digest_signups").insert({
+      const { error } = await (supabase as any).from("digest_signups").insert({
         email: v,
         user_id: user?.id ?? null,
       });
