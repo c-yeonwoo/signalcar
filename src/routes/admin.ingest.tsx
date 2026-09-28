@@ -243,12 +243,14 @@ function IngestLoopPage() {
                 const rt = runtimeOf(job.id);
                 const st = statusMeta(rt?.lastStatus ?? "never");
                 const Icon = st.icon;
+                const priceAlertPaused = job.id === "signal-alerts" || job.id === "send-alerts";
                 return (
                   <TableRow key={job.id}>
                     <TableCell>
                       <Switch
                         checked={enabledOf(job.id)}
-                        disabled={toggleMut.isPending || dbUnavailable}
+                        disabled={priceAlertPaused || toggleMut.isPending || dbUnavailable}
+                        aria-label={`${job.name} ${priceAlertPaused ? "검수 전 중단" : "활성화"}`}
                         onCheckedChange={(v) => toggleMut.mutate({ jobId: job.id, enabled: v })}
                       />
                     </TableCell>
@@ -262,6 +264,7 @@ function IngestLoopPage() {
                           preview only
                         </Badge>
                       )}
+                      {priceAlertPaused && <Badge variant="outline" className="mt-1 text-[10px]">검수 전 중단</Badge>}
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{job.cadence}</Badge>
@@ -289,7 +292,7 @@ function IngestLoopPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        disabled={requestMut.isPending || dbUnavailable}
+                        disabled={priceAlertPaused || requestMut.isPending || dbUnavailable}
                         onClick={() => requestMut.mutate(job.id)}
                       >
                         <Play className="h-3.5 w-3.5 mr-1" />
