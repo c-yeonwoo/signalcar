@@ -17,7 +17,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { hydrateWatchlistFromServer } from "@/lib/watchlist-store";
 import { hydratePrefsFromServer } from "@/lib/onboarding-store";
 import { hydrateAlertsFromServer } from "@/lib/alerts-store";
-import { hydrateUnlocksFromServer } from "@/lib/report-credits";
 import { hydrateCars } from "@/lib/cars";
 
 function NotFoundComponent() {
@@ -146,14 +145,12 @@ function RootComponent() {
         void hydrateWatchlistFromServer();
         void hydratePrefsFromServer();
         void hydrateAlertsFromServer();
-        void hydrateUnlocksFromServer();
       }
     });
     // 새로고침으로 이미 세션이 있는 경우
     void hydrateWatchlistFromServer();
     void hydratePrefsFromServer();
     void hydrateAlertsFromServer();
-    void hydrateUnlocksFromServer();
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
 

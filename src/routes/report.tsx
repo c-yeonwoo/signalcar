@@ -1,123 +1,113 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Camera, ShieldCheck, LogIn, CheckCircle2, Star } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { TRIM_ID_MAP } from "@/lib/mock-cars";
-import { fetchCarsFromDb } from "@/lib/cars";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
-import { PageHeader, PrimaryButton } from "@/components/ui-kit";
-import { addMyReview } from "@/lib/onboarding-store";
-import { earnCredit, getCreditBalance } from "@/lib/report-credits";
-import { logOutcome } from "@/lib/brain";
-import { Ticket, BadgeCheck, Users } from "lucide-react";
+import { fetchCarsFromDb } from "@/lib/cars";
 
 export const Route = createFileRoute("/report")({
   component: ReportPage,
   ssr: false,
   head: () => ({
     meta: [
-      { title: "계약 공유하기 · 시그널카" },
-      { name: "description", content: "내 계약서를 공유하면 다른 사람의 협상 리포트를 열어볼 열람권이 쌓여요." },
-      { property: "og:title", content: "계약 공유하기 · 시그널카" },
-      { property: "og:description", content: "공유하고 리포트 열람권 받기." },
+      { title: "계약 정보 공유 · 시그널카" },
+      { name: "description", content: "개인정보가 담긴 문서 없이 계약 금액과 조건을 직접 입력해 공유하세요." },
+      { property: "og:title", content: "계약 정보 공유 · 시그널카" },
+      { property: "og:description", content: "계약 정보는 검증 전까지 가격 통계에 반영되지 않습니다." },
       { property: "og:url", content: "/report" },
     ],
     links: [{ rel: "canonical", href: "/report" }],
   }),
 });
 
+const EMPTY_CARS: Awaited<ReturnType<typeof fetchCarsFromDb>> = [];
+
 function ReportPage() {
   const { user, loading: sessionLoading } = useSession();
-  const navigate = useNavigate();
-  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
-  const [step, setStep] = useState<"intro" | "form" | "done">("intro");
+  const carsQuery = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb(), retry: 1 });
+  const cars = carsQuery.data ?? EMPTY_CARS;
   const [trim, setTrim] = useState("");
+  const [contractPrice, setContractPrice] = useState("");
+  const [month, setMonth] = useState("");
+  const [region, setRegion] = useState("");
+  const [finance, setFinance] = useState<"cash" | "installment" | "lease" | "rent">("cash");
+  const [submitting, setSubmitting] = useState(false);
+  const [reportId, setReportId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!trim && cars[0]) setTrim(cars[0].id);
   }, [cars, trim]);
-  const [discount, setDiscount] = useState("220");
-  const [month, setMonth] = useState("2026-07");
-  const [region, setRegion] = useState("수도권");
-  const [finance, setFinance] = useState("할부");
-  const [file, setFile] = useState<File | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
-    if (!user) {
-      toast.error("로그인이 필요해요");
+    if (!user) return;
+    const car = cars.find((item) => item.id === trim);
+    if (!car) {
+      toast.error("차량을 다시 선택해주세요.");
       return;
     }
-    const trimId = TRIM_ID_MAP[trim];
-    if (!trimId) {
-      toast.error("이 트림은 아직 준비 중이에요");
+    const priceInManwon = Number(contractPrice);
+    if (!Number.isSafeInteger(priceInManwon) || priceInManwon <= 0) {
+      toast.error("실제 계약 금액을 만원 단위로 입력해주세요.");
       return;
     }
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+      toast.error("계약월을 YYYY-MM 형식으로 입력해주세요.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      // 이미지가 있으면 quote-docs 버킷에 업로드 (본인 폴더)
-      let rawPath: string | null = null;
-      if (file) {
-        const path = `${user.id}/${Date.now()}-${file.name}`;
-        const { error: upErr } = await supabase.storage.from("quote-docs").upload(path, file);
-        if (upErr) throw upErr;
-        rawPath = path;
-      }
-
-      const car = cars.find((c) => c.id === trim)!;
-      const discountWon = Number(discount) * 10000;
-      const { error } = await supabase.from("deal_reports").insert({
-        trim_id: trimId,
-        user_id: user.id,
-        contract_price: car.listPrice - discountWon,
-        list_price: car.listPrice,
-        discount_amount: discountWon,
-        finance_type: (finance.includes("리스")
-          ? "lease"
-          : finance.includes("현금")
-            ? "cash"
-            : finance.includes("렌트")
-              ? "rent"
-              : "installment") as any,
-        region,
-        contract_month: `${month}-01`,
-        source: file ? ("receipt_ocr" as any) : ("manual" as any),
-        // raw_doc_ref는 인서트 정책상 유저가 못 넣음 → 외부 워커가 upload된 파일 검증 후 채움.
-        // 파일 경로는 별도로 관리하거나 워커가 storage 이벤트로 알림. 여기선 클라 참조만.
-      });
+      const { data, error } = await supabase
+        .from("deal_reports")
+        .insert({
+          trim_id: car.trimId,
+          user_id: user.id,
+          contract_price: priceInManwon * 10_000,
+          list_price: null,
+          discount_amount: null,
+          finance_type: finance,
+          region: region || null,
+          contract_month: `${month}-01`,
+          source: "manual",
+        })
+        .select("id")
+        .single();
       if (error) throw error;
-      earnCredit(1);
-      void logOutcome({
-        eventType: "report",
-        carSlug: car.id,
-        trimId,
-        payload: { region, month, discount: Number(discount) },
-      });
-      setStep("done");
-      toast.success(rawPath ? "고마워요! 견적서도 함께 접수됐어요 · 열람권 +1장" : "고마워요! 열람권 +1장이 지급됐어요");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "공유 실패");
+      setReportId(data.id);
+      toast.success("계약 정보가 접수됐어요.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "접수에 실패했어요. 다시 시도해주세요.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // 비로그인 게이트
-  if (!sessionLoading && !user) {
+  if (sessionLoading) {
+    return <ConsumerShell><p className="px-5 py-10 text-sm text-slate-500">계정 정보를 확인하는 중이에요…</p></ConsumerShell>;
+  }
+
+  if (!user) {
     return (
       <ConsumerShell>
-        <PageHeader
-          eyebrow="Report"
-          title={<>계약을 공유하려면<br />로그인이 필요해요</>}
-          subtitle="익명으로 저장되지만, 중복·조작 방지를 위해 계정이 필요해요. 30초면 끝나요."
-        />
+        <PageHeader eyebrow="계약 공유" title="계약 정보를 공유하려면 로그인해주세요" subtitle="본인 제보를 관리할 수 있도록 계정에 연결해 보관해요." />
         <section className="px-5">
-          <Link to="/auth" search={{ next: "/report" }} className="sc-btn-primary">
-            <LogIn className="h-4 w-4" /> 로그인하고 공유하기
-          </Link>
+          <Link to="/auth" search={{ next: "/report" }} className="sc-btn-primary"><LogIn className="h-4 w-4" /> 로그인</Link>
+        </section>
+      </ConsumerShell>
+    );
+  }
+
+  if (reportId) {
+    return (
+      <ConsumerShell>
+        <PageHeader eyebrow="접수 완료" title="계약 정보가 접수됐어요" subtitle="제보는 검증되기 전까지 실거래 통계나 구매 시그널에 반영되지 않아요." />
+        <section className="px-5 space-y-3 text-sm text-slate-600">
+          <p className="sc-card p-4 break-all">접수 ID: {reportId}</p>
+          <Link to="/" className="sc-btn-primary">홈으로 돌아가기</Link>
         </section>
       </ConsumerShell>
     );
@@ -125,291 +115,66 @@ function ReportPage() {
 
   return (
     <ConsumerShell>
-      {step === "intro" && (
-        <>
-          <PageHeader
-            eyebrow="Give to Get"
-            title={<>내 계약 1건이면,<br />협상 리포트가<br />열립니다</>}
-            subtitle="공유할수록 시세 표본이 두꺼워지고, 당신은 열람권으로 목표가·스크립트를 받아요."
-          />
+      <PageHeader
+        eyebrow="계약 공유"
+        title="계약 조건을 직접 알려주세요"
+        subtitle="문서 업로드 없이 계약 정보를 입력할 수 있어요. 검증 전에는 실거래 통계에 쓰지 않아요."
+      />
 
-          <section className="px-5 space-y-3">
-            {/* 명확한 보상 3종 */}
-            <div className="rounded-2xl border border-[color:var(--color-brand-mist)] overflow-hidden">
-              <div className="bg-[color:var(--color-brand-navy)] text-white px-4 py-3">
-                <div className="text-[10.5px] font-semibold text-white/60 uppercase tracking-wider">
-                  공유 1건 완료 시 즉시 지급
-                </div>
-                <div className="text-[15px] font-bold mt-0.5">받게 될 보상 3가지</div>
-              </div>
-              <div className="divide-y divide-slate-100 bg-white">
-                <RewardRow
-                  icon={<Ticket className="h-4 w-4" />}
-                  title="협상 리포트 열람권 +1장"
-                  desc="어느 차종에나 사용 가능 · 한 번 열면 계속 열람"
-                  highlight
-                />
-                <RewardRow
-                  icon={<BadgeCheck className="h-4 w-4" />}
-                  title="실제 구매자 배지"
-                  desc="내 리뷰에 인증 배지가 붙어 노출 우선순위 상승"
-                />
-                <RewardRow
-                  icon={<Users className="h-4 w-4" />}
-                  title="시세 표본에 기여"
-                  desc={`다음 BUY/WAIT가 더 정확해져요 · 내 열람권 ${getCreditBalance()}장`}
-                />
-              </div>
-            </div>
+      {carsQuery.isPending ? (
+        <p className="px-5 text-sm text-slate-500" aria-live="polite">차량 정보를 불러오는 중이에요…</p>
+      ) : carsQuery.isError ? (
+        <section className="mx-5 sc-card p-5 text-sm" role="alert">
+          <p>차량 정보를 연결하지 못했어요.</p>
+          <button type="button" className="mt-2 underline" onClick={() => void carsQuery.refetch()}>다시 시도</button>
+        </section>
+      ) : cars.length === 0 ? (
+        <p className="mx-5 sc-card p-5 text-sm text-slate-500">현재 선택할 수 있는 차량이 없어요.</p>
+      ) : (
+        <section className="px-5 space-y-4">
+          <p className="sc-card p-4 text-[12.5px] text-slate-600 leading-relaxed">
+            본인이 실제로 계약한 차량만 입력해주세요. 연락처·차대번호·상세 주소는 받지 않아요. 이 화면에서는 견적서 이미지를 저장하지 않습니다.
+          </p>
 
-            <div className="sc-card p-5 flex gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[color:var(--color-brand-blue)]/10 grid place-items-center flex-shrink-0">
-                <ShieldCheck className="h-5 w-5 text-[color:var(--color-brand-blue)]" />
-              </div>
-              <div>
-                <div className="text-[14px] font-semibold text-[color:var(--color-brand-navy)]">개인정보는 저장하지 않아요</div>
-                <div className="text-[12.5px] text-slate-500 mt-1 leading-relaxed">
-                  이름·연락처·차대번호는 업로드 즉시 자동 마스킹돼요. 트림·할인액·지역만 익명으로 저장됩니다.
-                </div>
-              </div>
-            </div>
-
-            <label className="sc-btn-primary cursor-pointer mt-2">
-              <Camera className="h-4 w-4" /> 견적서/계약서 올리기
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0] ?? null;
-                  setFile(f);
-                  if (f) setStep("form");
-                }}
-              />
-            </label>
-            {file && (
-              <div className="text-center text-[12px] text-slate-500">첨부: {file.name}</div>
-            )}
-
-            <button onClick={() => setStep("form")} className="w-full text-[13px] text-slate-500 py-2">
-              사진 없이 직접 입력하기
-            </button>
-          </section>
-        </>
-      )}
-
-      {step === "form" && (
-        <>
-          <PageHeader
-            eyebrow="확인만 하면 끝"
-            title="자동으로 읽은 값이 맞나요?"
-          />
-
-          <section className="px-5 space-y-3">
-            <FormRow label="트림">
-              <select
-                value={trim}
-                onChange={(e) => setTrim(e.target.value)}
-                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0"
-              >
-                {cars.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.brand} {c.model} · {c.trim}
-                  </option>
-                ))}
-              </select>
-            </FormRow>
-            <FormRow label="계약월">
-              <input value={month} onChange={(e) => setMonth(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0" placeholder="YYYY-MM" />
-            </FormRow>
-            <FormRow label="총 할인액 (만원)">
-              <input inputMode="numeric" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0" />
-            </FormRow>
-            <FormRow label="지역">
-              <input value={region} onChange={(e) => setRegion(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0" />
-            </FormRow>
-            <FormRow label="결제 방식">
-              <input value={finance} onChange={(e) => setFinance(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-[14px] font-medium border-0" />
-            </FormRow>
-
-            <PrimaryButton onClick={submit} disabled={submitting} className="mt-3 disabled:opacity-60">
-              {submitting ? "공유 중…" : "공유하고 리포트 열기"}
-            </PrimaryButton>
-          </section>
-        </>
-      )}
-
-      {step === "done" && (
-        <ReportDone carId={trim} onSkip={() => navigate({ to: "/" })} />
+          <label className="block text-[12px] font-semibold text-slate-600">
+            차량·트림
+            <select value={trim} onChange={(event) => setTrim(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm">
+              {cars.map((car) => <option key={car.id} value={car.id}>{car.brand} {car.model} · {car.trim}</option>)}
+            </select>
+          </label>
+          <label className="block text-[12px] font-semibold text-slate-600">
+            계약 금액 (만원)
+            <input inputMode="numeric" type="number" min="1" step="1" value={contractPrice} onChange={(event) => setContractPrice(event.target.value)} placeholder="실제 계약 금액" className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm" />
+          </label>
+          <label className="block text-[12px] font-semibold text-slate-600">
+            계약월
+            <input type="month" value={month} onChange={(event) => setMonth(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm" />
+          </label>
+          <label className="block text-[12px] font-semibold text-slate-600">
+            지역 (선택)
+            <select value={region} onChange={(event) => setRegion(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm">
+              <option value="">공유하지 않기</option>
+              <option value="수도권">수도권</option>
+              <option value="충청권">충청권</option>
+              <option value="전라권">전라권</option>
+              <option value="경상권">경상권</option>
+              <option value="강원·제주">강원·제주</option>
+            </select>
+          </label>
+          <label className="block text-[12px] font-semibold text-slate-600">
+            결제 방식
+            <select value={finance} onChange={(event) => setFinance(event.target.value as typeof finance)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm">
+              <option value="cash">현금</option>
+              <option value="installment">할부</option>
+              <option value="lease">리스</option>
+              <option value="rent">장기렌트</option>
+            </select>
+          </label>
+          <PrimaryButton onClick={submit} disabled={submitting} className="disabled:opacity-60">
+            {submitting ? "접수 중…" : "계약 정보 접수하기"}
+          </PrimaryButton>
+        </section>
       )}
     </ConsumerShell>
-  );
-}
-
-function RewardRow({
-  icon,
-  title,
-  desc,
-  highlight,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div className="px-4 py-3 flex items-start gap-3">
-      <div
-        className={`w-8 h-8 rounded-lg grid place-items-center flex-shrink-0 ${
-          highlight
-            ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
-            : "bg-slate-100 text-slate-500"
-        }`}
-      >
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className={`text-[13px] font-semibold text-[color:var(--color-brand-navy)] ${highlight ? "" : ""}`}>
-          {title}
-        </div>
-        <div className="text-[11.5px] text-slate-500 mt-0.5 leading-relaxed">{desc}</div>
-      </div>
-    </div>
-  );
-}
-
-/* ============ 제보 완료 → 리뷰 남기기 트리거 ============ */
-
-function ReportDone({ carId, onSkip }: { carId: string; onSkip: () => void }) {
-  const { data: cars = [] } = useQuery({ queryKey: ["cars"], queryFn: () => fetchCarsFromDb() });
-  const car = cars.find((c) => c.id === carId);
-  const [rating, setRating] = useState(0);
-  const [pros, setPros] = useState("");
-  const [cons, setCons] = useState("");
-  const [saved, setSaved] = useState(false);
-
-  const save = () => {
-    if (!car) return;
-    if (rating === 0) {
-      toast.error("별점을 남겨주세요");
-      return;
-    }
-    addMyReview({ carId: car.id, rating, pros: pros.trim(), cons: cons.trim() });
-    setSaved(true);
-    toast.success("리뷰가 저장됐어요 · 실제 구매자 배지가 붙어요");
-  };
-
-  return (
-    <div className="px-5 pt-10 pb-4">
-      <div className="mx-auto w-14 h-14 rounded-full bg-[color:var(--color-signal-buy-soft)] grid place-items-center">
-        <CheckCircle2 className="h-7 w-7 text-[color:var(--color-signal-buy)]" strokeWidth={2.2} />
-      </div>
-      <h1 className="text-center text-[22px] font-bold text-[color:var(--color-brand-navy)] mt-4">
-        고마워요!
-      </h1>
-      <p className="text-center text-[13px] text-slate-500 mt-1.5 leading-relaxed">
-        계약 공유 덕분에 다른 구매자도 더 정확한 시세를 볼 수 있어요.
-      </p>
-
-      <div className="mt-4 mx-auto w-fit inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] px-3 py-1.5 text-[12.5px] font-bold">
-        <Ticket className="h-3.5 w-3.5" /> 협상 리포트 열람권 +1장 지급
-      </div>
-      {car && (
-        <Link
-          to="/car/$vehicleId"
-          params={{ vehicleId: car.id }}
-          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-3 text-[13.5px] font-semibold active:opacity-90"
-        >
-          지금 {car.model} 리포트 열러 가기
-        </Link>
-      )}
-
-      {!saved ? (
-        <section className="mt-7 sc-card p-5">
-          <div className="text-[11px] font-semibold text-[color:var(--color-brand-blue)]">
-            실제 구매자 리뷰
-          </div>
-          <h2 className="text-[16px] font-bold text-[color:var(--color-brand-navy)] mt-1 leading-snug">
-            {car ? `${car.model} 실사용, ` : ""}한 줄만 남겨주실래요?
-          </h2>
-          <p className="text-[11.5px] text-slate-500 mt-1.5 leading-relaxed">
-            계약이 확인된 리뷰만 노출돼요. 다음 구매자에게 큰 도움이 됩니다.
-          </p>
-
-          <div className="mt-4 flex items-center gap-1.5">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                onClick={() => setRating(n)}
-                className="p-0.5"
-                aria-label={`${n}점`}
-              >
-                <Star
-                  className={`h-7 w-7 ${
-                    n <= rating
-                      ? "fill-[color:var(--color-signal-wait)] text-[color:var(--color-signal-wait)]"
-                      : "text-slate-200"
-                  }`}
-                  strokeWidth={1.6}
-                />
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4 space-y-2">
-            <textarea
-              value={pros}
-              onChange={(e) => setPros(e.target.value)}
-              placeholder="좋았던 점 (예: 승차감이 안정적이에요)"
-              rows={2}
-              className="w-full bg-slate-50 rounded-xl px-3.5 py-2.5 text-[13px] border-0 resize-none placeholder:text-slate-400"
-            />
-            <textarea
-              value={cons}
-              onChange={(e) => setCons(e.target.value)}
-              placeholder="아쉬웠던 점 (예: 뒷좌석 소음이 있어요)"
-              rows={2}
-              className="w-full bg-slate-50 rounded-xl px-3.5 py-2.5 text-[13px] border-0 resize-none placeholder:text-slate-400"
-            />
-          </div>
-
-          <PrimaryButton onClick={save} className="mt-4">
-            리뷰 남기기
-          </PrimaryButton>
-          <button onClick={onSkip} className="w-full mt-2 py-2 text-[12.5px] text-slate-400">
-            나중에 할게요
-          </button>
-        </section>
-      ) : (
-        <section className="mt-7 sc-card p-5 text-center">
-          <p className="text-[13.5px] text-slate-600">
-            소중한 리뷰가 등록됐어요.<br />마이 탭에서 확인할 수 있어요.
-          </p>
-          <div className="mt-4 flex gap-2">
-            <Link to="/" className="flex-1 rounded-xl bg-slate-100 py-2.5 text-[13px] font-medium text-slate-700 text-center">
-              홈으로
-            </Link>
-            {car && (
-              <Link
-                to="/car/$vehicleId"
-                params={{ vehicleId: car.id }}
-                className="flex-1 rounded-xl bg-[color:var(--color-brand-navy)] text-white py-2.5 text-[13px] font-semibold text-center"
-              >
-                내 차 상세 보기
-              </Link>
-            )}
-          </div>
-        </section>
-      )}
-    </div>
-  );
-}
-
-function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-[12px] font-medium text-slate-500 mb-1.5">{label}</div>
-      {children}
-    </div>
   );
 }

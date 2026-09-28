@@ -12,7 +12,6 @@ import { getMyReviews } from "@/lib/onboarding-store";
 import { hasSignedUpForPro } from "@/components/pro-signup-card";
 import { getAllSnapshots } from "@/lib/watch-snapshot";
 import { getRiseState } from "@/lib/rise-alerts";
-import { getCreditBalance, getUnlockedIds } from "@/lib/report-credits";
 import { DigestSignupCard } from "@/components/digest-signup-card";
 
 export const Route = createFileRoute("/me")({
@@ -21,9 +20,9 @@ export const Route = createFileRoute("/me")({
   head: () => ({
     meta: [
       { title: "마이 · 시그널카" },
-      { name: "description", content: "관심 차량, 비교함, 열람권, 계약 제보 이력을 한 곳에서 관리해요." },
+      { name: "description", content: "관심 차량, 비교함, 계약 제보 이력을 한 곳에서 관리해요." },
       { property: "og:title", content: "마이 · 시그널카" },
-      { property: "og:description", content: "내 관심 차·열람권·제보 이력." },
+      { property: "og:description", content: "내 관심 차·비교함·제보 이력." },
       { property: "og:url", content: "/me" },
     ],
     links: [{ rel: "canonical", href: "/me" }],
@@ -38,8 +37,6 @@ function MePage() {
   const [proSignedUp, setProSignedUp] = useState(false);
   const [snapCount, setSnapCount] = useState(0);
   const [thresholdPct, setThresholdPct] = useState(2);
-  const [creditBalance, setCreditBalance] = useState(0);
-  const [unlockedCount, setUnlockedCount] = useState(0);
   useEffect(() => {
     const sync = () =>
       setCounts((c) => ({
@@ -62,12 +59,6 @@ function MePage() {
     window.addEventListener("sc:pro-signup-change", syncPro);
     window.addEventListener("sc:watch-snapshot-change", syncAlerts);
     window.addEventListener("sc:rise-alerts-change", syncAlerts);
-    const syncCredits = () => {
-      setCreditBalance(getCreditBalance());
-      setUnlockedCount(getUnlockedIds().length);
-    };
-    syncCredits();
-    window.addEventListener("sc:report-credits-change", syncCredits);
     return () => {
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:compare-change", sync);
@@ -75,7 +66,6 @@ function MePage() {
       window.removeEventListener("sc:pro-signup-change", syncPro);
       window.removeEventListener("sc:watch-snapshot-change", syncAlerts);
       window.removeEventListener("sc:rise-alerts-change", syncAlerts);
-      window.removeEventListener("sc:report-credits-change", syncCredits);
     };
   }, []);
 
@@ -139,9 +129,9 @@ function MePage() {
           icon={FileText}
           title="내가 공유한 계약"
           count={counts.reports}
-          desc={`열람권 ${creditBalance}장 · 언락 ${unlockedCount}대`}
+          desc="검증 전 가격 통계에 미반영"
         />
-        <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="실제 구매자 배지" />
+        <HubCard to="/report" icon={MessageSquareQuote} title="내 리뷰" count={counts.reviews} desc="리뷰 검증 상태 확인 필요" />
       </section>
 
       {/* 담은 시점 가격 · 가격 상승 알림 상태 */}
@@ -197,7 +187,7 @@ function MePage() {
       </section>
 
       <section className="px-5 space-y-3">
-        <ActionLink to="/report" icon={Camera} title="계약서 공유" desc="1건 공유하면 리포트 열람권을 드려요." />
+        <ActionLink to="/report" icon={Camera} title="계약 정보 공유" desc="문서 없이 금액·계약월 직접 입력" />
         <ActionLink to="/diagnose" icon={ScanLine} title="견적서 진단" desc="딜러 견적서 함정 여부를 사진으로 체크." />
       </section>
 

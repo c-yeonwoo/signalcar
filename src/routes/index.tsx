@@ -589,20 +589,15 @@ function HomePage() {
       <section className="px-5 mt-5 grid grid-cols-2 gap-2.5">
         <Link to="/report" className="sc-card p-3.5 active:scale-[0.99] transition">
           <Camera className="h-4 w-4 text-[color:var(--color-brand-blue)]" />
-          <div className="flex items-center gap-1.5 mt-2">
-            <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)]">계약서 공유</div>
-            <span className="text-[9.5px] font-bold bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)] rounded-full px-1.5 py-[1px]">
-              +1 열람권
-            </span>
-          </div>
+          <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">계약 정보 공유</div>
           <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-            내 계약 1건 = 어느 차종에나 쓰는 협상 리포트
+            계약 금액·조건을 직접 입력 · 검증 전 통계 미반영
           </div>
         </Link>
         <Link to="/diagnose" className="sc-card p-3.5 active:scale-[0.99] transition">
           <ScanLine className="h-4 w-4 text-[color:var(--color-brand-blue)]" />
           <div className="text-[13px] font-bold text-[color:var(--color-brand-navy)] mt-2">견적서 진단</div>
-          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">사진 한 장으로 함정 체크</div>
+          <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">개인정보를 가린 사진 접수 · 처리 상태 확인</div>
         </Link>
       </section>
       <div className="h-6" />

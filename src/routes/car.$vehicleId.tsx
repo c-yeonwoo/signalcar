@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound, useNavigate, useHydrated, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, Bell, Target, Camera, FileText, Ticket } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, Bell, Target, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { formatKRW, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
-import { resolveCarWithSignal } from "@/lib/price-signals";
+import { resolveCar } from "@/lib/cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
@@ -14,15 +14,9 @@ import { alertStatus, getAlert } from "@/lib/alerts-store";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
 import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
-import { ReportCreditCard } from "@/components/report-credit-card";
 import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
 import { explainCarTiming, logOutcome } from "@/lib/brain";
-import {
-  getCreditBalance,
-  isUnlocked,
-  spendCreditToUnlock,
-} from "@/lib/report-credits";
 
 /* ============================================================
  *  Editorial Navy design system for the car detail page.
@@ -51,7 +45,7 @@ export const Route = createFileRoute("/car/$vehicleId")({
   component: CarDetailPage,
   ssr: false,
   loader: async ({ params }) => {
-    const car = await resolveCarWithSignal(params.vehicleId);
+    const car = await resolveCar(params.vehicleId);
     if (!car) throw notFound();
     return { car };
   },
@@ -118,36 +112,30 @@ function CarDetailPage() {
   const [watched, setWatched] = useState(false);
   const [alertPrice, setAlertPrice] = useState<number | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [reportUnlocked, setReportUnlocked] = useState(false);
-  const [creditBalance, setCreditBalance] = useState(0);
 
   useEffect(() => {
     void logOutcome({
       eventType: "click",
       carSlug: car.id,
-      trimId: "trimId" in car ? (car as { trimId?: string }).trimId : undefined,
+      trimId: car.trimId,
       payload: { signal: car.signal },
     });
-  }, [car.id]);
+  }, [car.id, car.signal, car.trimId]);
 
   useEffect(() => {
     const sync = () => {
       setInCompare(getCompareList().includes(car.id));
       setWatched(getWatchlist().includes(car.id));
       setAlertPrice(getAlert(car.id)?.targetPrice ?? null);
-      setReportUnlocked(isUnlocked(car.id));
-      setCreditBalance(getCreditBalance());
     };
     sync();
     window.addEventListener("sc:compare-change", sync);
     window.addEventListener("sc:watchlist-change", sync);
     window.addEventListener("sc:alerts-change", sync);
-    window.addEventListener("sc:report-credits-change", sync);
     return () => {
       window.removeEventListener("sc:compare-change", sync);
       window.removeEventListener("sc:watchlist-change", sync);
       window.removeEventListener("sc:alerts-change", sync);
-      window.removeEventListener("sc:report-credits-change", sync);
     };
   }, [car.id]);
 
@@ -157,20 +145,6 @@ function CarDetailPage() {
   };
 
   const handlePrimaryBrief = () => {
-    if (reportUnlocked) {
-      void navigate({ to: "/car/$vehicleId/briefing", params: { vehicleId: car.id } });
-      return;
-    }
-    if (creditBalance > 0) {
-      const r = spendCreditToUnlock(car.id);
-      if (!r.ok) {
-        toast.error("열람권이 부족해요. 계약을 공유하면 +1장이 지급돼요.");
-        return;
-      }
-      toast.success(`협상 리포트가 열렸어요 · ${car.brand} ${car.model}`);
-      void navigate({ to: "/car/$vehicleId/briefing", params: { vehicleId: car.id } });
-      return;
-    }
     void navigate({ to: "/report" });
   };
 
@@ -379,9 +353,6 @@ function CarDetailPage() {
         period={car.benefitsPeriod}
       />
 
-      {/* SECTION 05.2 · Give-to-get gated report */}
-      <ReportCreditCard carId={car.id} brand={car.brand} model={car.model} />
-
       {/* SECTION 05.5 · Depreciation & used market band */}
       <DepreciationSection
         listPrice={car.listPrice}
@@ -441,19 +412,7 @@ function CarDetailPage() {
             disabled={!hydrated}
             className="flex-[1.4] inline-flex items-center justify-center gap-1.5 bg-[color:var(--color-brand-navy)] text-white py-3 rounded-xl font-semibold text-[13.5px] active:opacity-90 disabled:opacity-60"
           >
-            {reportUnlocked ? (
-              <>
-                <FileText className="h-4 w-4" /> 협상 리포트 열기
-              </>
-            ) : creditBalance > 0 ? (
-              <>
-                <Ticket className="h-4 w-4" /> 열람권으로 리포트
-              </>
-            ) : (
-              <>
-                <Camera className="h-4 w-4" /> 계약 공유 → 리포트
-              </>
-            )}
+            <Camera className="h-4 w-4" /> 계약 정보 공유
           </button>
         </div>
       </StickyCTA>
