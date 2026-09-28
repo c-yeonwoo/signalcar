@@ -6,6 +6,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { priceAlertsEnabled } from "../lib/price-alert-gate";
 
 type QueueRow = {
   id: string;
@@ -201,6 +202,9 @@ export async function sendPendingAlerts(opts?: {
   limit?: number;
   weekly?: boolean;
 }) {
+  if (!priceAlertsEnabled()) {
+    return { dryRun: true as const, pending: 0, mails: 0, weeklyQueued: 0, sent: 0, failed: 0, outPath: "" };
+  }
   const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY required");

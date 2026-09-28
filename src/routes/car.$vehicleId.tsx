@@ -1,18 +1,17 @@
 import { createFileRoute, Link, notFound, useNavigate, useHydrated, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, Bell, Target, Camera } from "lucide-react";
+import { ArrowLeft, Info, ExternalLink, GitCompare, Check, Heart, Bell, Target, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
 import { formatKRW, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
-import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
+import type { Benefit, Signal } from "@/lib/mock-cars";
 import { resolveCar } from "@/lib/cars";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getWatchlist, toggleWatch } from "@/lib/watchlist-store";
 import { SnapshotBadge } from "@/components/snapshot-badge";
 import { alertStatus, getAlert } from "@/lib/alerts-store";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
-import { getMyReviews } from "@/lib/onboarding-store";
 import { SampleSize, StickyCTA } from "@/components/ui-kit";
 import { SimilarCarsSection } from "@/components/similar-cars-section";
 import { computeNewVsUsed, VERDICT_LABEL, VERDICT_TONE } from "@/lib/new-vs-used";
@@ -757,183 +756,5 @@ function BenefitsSection({
         </span>
       </div>
     </section>
-  );
-}
-
-function reviewSourceLabel(src: ReviewItem["source"]) {
-  return src === "owner" ? "실제 구매자" : src === "video" ? "영상" : "미디어";
-}
-
-function ReviewsSection({ bundle, carId }: { bundle?: ReviewBundle; carId: string }) {
-  const [myItems, setMyItems] = useState<ReviewItem[]>([]);
-  useEffect(() => {
-    const sync = () => {
-      const mine = getMyReviews()
-        .filter((r) => r.carId === carId)
-        .map<ReviewItem>((r) => ({
-          id: `my-${r.id}`,
-          source: "owner",
-          author: "나",
-          rating: r.rating,
-          date: new Date(r.createdAt).toISOString().slice(0, 7),
-          quote: [r.pros && `👍 ${r.pros}`, r.cons && `👎 ${r.cons}`].filter(Boolean).join("  ·  ") || "리뷰를 남겼어요.",
-          verified: true,
-        }));
-      setMyItems(mine);
-    };
-    sync();
-    window.addEventListener("sc:reviews-change", sync);
-    return () => window.removeEventListener("sc:reviews-change", sync);
-  }, [carId]);
-
-  if (!bundle) return null;
-  const { aiSummary, aspects, items: baseItems } = bundle;
-  const items = [...myItems, ...baseItems];
-
-  return (
-    <>
-      {/* Owner summary — soft card */}
-      <section className="bg-[color:var(--color-brand-mist)]/50 px-5 py-6 border-t border-[color:var(--color-brand-mist)]">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className={SECTION_TITLE}>실제 구매자 리뷰 요약</h3>
-            <p className={`text-[11.5px] ${MUTED} mt-0.5`}>AI가 정리한 한 줄</p>
-          </div>
-          <div className="text-right shrink-0 ml-3">
-            <div className="flex items-center gap-1 justify-end">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" strokeWidth={0} />
-              <span className={`${NAVY} text-[22px] font-bold leading-none tabular-nums`}>
-                {aiSummary.overall.toFixed(1)}
-              </span>
-            </div>
-            <p className={`text-[11px] ${MUTED} mt-1`}>
-              리뷰 {aiSummary.sampleSize.toLocaleString()}개
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-xl bg-white px-4 py-3 border border-[color:var(--color-brand-mist)]">
-          <p className={`text-[13.5px] ${INK} leading-relaxed`}>{aiSummary.tldr}</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2.5 mt-3">
-          <div className="rounded-xl bg-white p-3 border border-[color:var(--color-brand-mist)]">
-            <div className="flex items-center gap-1.5 mb-2">
-              <ThumbsUp className="h-3.5 w-3.5 text-emerald-600" />
-              <span className="text-[11.5px] font-semibold text-emerald-700">좋아요</span>
-            </div>
-            <ul className="space-y-1">
-              {aiSummary.pros.map((p) => (
-                <li key={p} className={`text-[12px] ${INK} leading-snug`}>· {p}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-xl bg-white p-3 border border-[color:var(--color-brand-mist)]">
-            <div className="flex items-center gap-1.5 mb-2">
-              <ThumbsDown className="h-3.5 w-3.5 text-rose-500" />
-              <span className="text-[11.5px] font-semibold text-rose-600">아쉬워요</span>
-            </div>
-            <ul className="space-y-1">
-              {aiSummary.cons.map((p) => (
-                <li key={p} className={`text-[12px] ${INK} leading-snug`}>· {p}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Aspect bars */}
-        <div className="mt-4 rounded-xl bg-white p-4 border border-[color:var(--color-brand-mist)] space-y-2.5">
-          {aspects.map((a) => (
-            <div key={a.label} className="flex items-center gap-3">
-              <span className={`text-[12px] ${INK} w-16 shrink-0`}>{a.label}</span>
-              <div className="flex-1 h-1.5 rounded-full bg-[color:var(--color-brand-mist)] overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[color:var(--color-brand-navy)]/85"
-                  style={{ width: `${(a.score / 5) * 100}%` }}
-                />
-              </div>
-              <span className={`${NAVY} text-[12px] font-semibold tabular-nums w-8 text-right`}>
-                {a.score.toFixed(1)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Individual reviews */}
-      <section className="bg-white">
-        <div className="px-5 pt-5 pb-3 flex items-baseline justify-between">
-          <h3 className={SECTION_TITLE}>리뷰 {items.length}개</h3>
-          <span className={`text-[11.5px] text-[color:var(--color-brand-blue)]`}>최신순</span>
-        </div>
-        <ul className="px-5 pb-2 space-y-3">
-          {items.map((r) => {
-            const initial = r.author.trim().charAt(0);
-            const badgeTone =
-              r.source === "owner"
-                ? "bg-emerald-50 text-emerald-700"
-                : r.source === "video"
-                ? "bg-rose-50 text-rose-600"
-                : "bg-slate-100 text-slate-600";
-            return (
-              <li
-                key={r.id}
-                className="rounded-2xl bg-white border border-[color:var(--color-brand-mist)] p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-full bg-[color:var(--color-brand-mist)] flex items-center justify-center shrink-0">
-                    <span className={`${NAVY} text-[13px] font-bold`}>{initial}</span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={`text-[13px] font-semibold ${NAVY}`}>{r.author}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${badgeTone}`}>
-                        {reviewSourceLabel(r.source)}
-                      </span>
-                      {r.verified && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[color:var(--color-brand-navy)]/8 text-[color:var(--color-brand-navy)]">
-                          검증
-                        </span>
-                      )}
-                    </div>
-                    <div className={`flex items-center gap-1.5 mt-0.5 text-[11px] ${MUTED}`}>
-                      <span className="flex items-center gap-0.5">
-                        {[0, 1, 2, 3, 4].map((i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${i < Math.round(r.rating) ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
-                            strokeWidth={0}
-                          />
-                        ))}
-                      </span>
-                      <span className="tabular-nums">{r.rating.toFixed(1)}</span>
-                      <span>·</span>
-                      <span>{r.date}</span>
-                      {r.ownershipMonths ? <span>· {r.ownershipMonths}개월 보유</span> : null}
-                      {r.channel ? <span>· {r.channel}</span> : null}
-                    </div>
-                  </div>
-                </div>
-                <p className={`text-[13px] ${INK} mt-2.5 leading-relaxed`}>{r.quote}</p>
-                {r.url && (
-                  <a
-                    href={r.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`inline-flex items-center gap-1 text-[11.5px] ${NAVY} mt-2 hover:opacity-70`}
-                  >
-                    원문 보기 <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-        <div className={`px-5 py-3 text-[11.5px] ${MUTED} leading-relaxed flex gap-2 bg-[color:var(--color-brand-mist)]/40`}>
-          <Info className="h-3 w-3 mt-0.5 shrink-0" />
-          <span>실제 구매자 리뷰는 시그널카 견적서·계약 공유와 연결된 사용자만 작성 가능합니다.</span>
-        </div>
-      </section>
-    </>
   );
 }

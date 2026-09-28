@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import type { ReactNode, ButtonHTMLAttributes } from "react";
+import type { ReactNode, ButtonHTMLAttributes, HTMLAttributes } from "react";
 import type { Signal } from "@/lib/mock-cars";
 import { cn } from "@/lib/utils";
 
@@ -55,9 +55,9 @@ export function Card({
   className?: string;
   children: ReactNode;
   as?: "div" | "section" | "article";
-} & Record<string, unknown>) {
+} & HTMLAttributes<HTMLElement>) {
   return (
-    <As className={cn("sc-card", className)} {...(rest as any)}>
+    <As className={cn("sc-card", className)} {...rest}>
       {children}
     </As>
   );
@@ -162,36 +162,6 @@ export function SignalPill({
       <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.dot }} />
       {label ?? s.label}
     </span>
-  );
-}
-
-export function TabPills<T extends string>({
-  value,
-  onChange,
-  tabs,
-}: {
-  value: T;
-  onChange: (v: T) => void;
-  tabs: { id: T; label: ReactNode }[];
-}) {
-  return (
-    <div className="inline-flex w-full bg-slate-100 rounded-full p-1 gap-1">
-      {tabs.map((t) => {
-        const active = t.id === value;
-        return (
-          <button
-            key={t.id}
-            onClick={() => onChange(t.id)}
-            className={cn(
-              "flex-1 rounded-full py-1.5 text-[12.5px] font-semibold transition",
-              active ? "bg-white text-[color:var(--color-brand-navy)] shadow-sm" : "text-slate-500",
-            )}
-          >
-            {t.label}
-          </button>
-        );
-      })}
-    </div>
   );
 }
 

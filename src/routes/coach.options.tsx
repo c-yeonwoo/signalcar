@@ -3,25 +3,22 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import {
   Sparkles,
-  Lock,
   ChevronLeft,
   RotateCcw,
   CheckCircle2,
-  Crown,
   Fuel,
   ShieldCheck,
   Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
-import { formatKRW, estimateOwnership, MILEAGE_MAP, MOCK_CARS } from "@/lib/mock-cars";
+import { formatKRW, estimateOwnership, MILEAGE_MAP } from "@/lib/mock-cars";
 import { fetchCarsFromDb } from "@/lib/cars";
 import { useQuery } from "@tanstack/react-query";
 import { SnapshotBadge } from "@/components/snapshot-badge";
-import { PageHeader, TabPills, SampleSize } from "@/components/ui-kit";
-import { Share2, TrendingDown, Percent } from "lucide-react";
+import { PageHeader, SampleSize } from "@/components/ui-kit";
+import { Share2 } from "lucide-react";
 import { getPrefs } from "@/lib/onboarding-store";
-import { ProSignupCard } from "@/components/pro-signup-card";
 
 export const Route = createFileRoute("/coach/options")({
   component: CoachPage,
@@ -155,7 +152,6 @@ function CoachPage() {
     queryKey: ["cars"],
     queryFn: () => fetchCarsFromDb(),
   });
-  const [tab, setTab] = useState<"interview" | "briefing">("interview");
 
   return (
     <ConsumerShell>
@@ -163,18 +159,7 @@ function CoachPage() {
         eyebrow="옵션·견적 상담"
         title={<>차 잘 모르셔도 괜찮아요.<br />몇 가지만 여쭤볼게요</>}
       />
-      <div className="px-5">
-        <TabPills
-          value={tab}
-          onChange={setTab}
-          tabs={[
-            { id: "interview", label: "AI 인터뷰" },
-            { id: "briefing", label: (<span>협상 리포트 <Crown className="inline h-3 w-3 -mt-0.5 ml-0.5" /></span>) },
-          ]}
-        />
-      </div>
-
-      {tab === "interview" ? <Interview /> : <BriefingLocked />}
+      <Interview />
 
       <div className="h-6" />
     </ConsumerShell>
@@ -423,9 +408,6 @@ function Interview() {
           </button>
         </div>
 
-        {/* Upsell → 협상 브리핑 (얼리버드 이메일 캡처) */}
-        <ProSignupCard source="coach-result" carId={car.id} />
-
         <button
           onClick={restart}
           className="w-full rounded-2xl border border-slate-200 bg-white py-3 text-[13px] font-medium text-slate-600 inline-flex items-center justify-center gap-1.5"
@@ -489,89 +471,7 @@ function Interview() {
   );
 }
 
-/* ============ Locked briefing (paid teaser) ============ */
-
-function BriefingLocked() {
-  const previewCar = MOCK_CARS[0];
-  if (!previewCar) return null;
-  // 딜러 첫 제시가 예측: 정가 - (정가-중앙값)*0.35 러프 (실제는 서버 모델)
-  const predictedFirstAsk = Math.round(
-    (previewCar.listPrice - (previewCar.listPrice - previewCar.medianContract) * 0.35) / 10000,
-  ) * 10000;
-  const targetPrice = previewCar.medianContract - 500000;
-  const gap = predictedFirstAsk - targetPrice;
-
-  return (
-    <section className="px-5 mt-5 space-y-4">
-      <div className="rounded-2xl bg-gradient-to-br from-[color:var(--color-brand-navy)] to-slate-800 text-white p-5">
-        <div className="flex items-center gap-1.5 text-[11.5px] opacity-80">
-          <Crown className="h-3.5 w-3.5" /> 상담 PRO · 월 9,900원
-        </div>
-        <div className="text-[18px] font-bold mt-1.5 leading-snug">
-          매장 앞에서 떨지 마세요.<br />브리핑 한 장으로 무장하세요
-        </div>
-        <ul className="mt-3 space-y-1.5 text-[12.5px] opacity-90">
-          <li>· 딜러가 처음 부를 예상가 예측</li>
-          <li>· 내 견적 기준 협상 스크립트 자동 생성</li>
-          <li>· 옵션 → 현금할인 전환 팁</li>
-          <li>· 금융 함정(저리 할부·리스) 실질금리 체크</li>
-        </ul>
-        <button className="mt-4 w-full rounded-full bg-white text-[color:var(--color-brand-navy)] py-3 text-[13px] font-semibold inline-flex items-center justify-center gap-1.5">
-          <Lock className="h-3.5 w-3.5" /> 7일 무료로 열어보기
-        </button>
-      </div>
-
-      {/* 티저 1 — 딜러 첫 제시가 예측 (오픈) */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-5">
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-          <TrendingDown className="h-3.5 w-3.5" /> 딜러 첫 제시가 예측 · {previewCar.model} 예시
-        </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 items-end">
-          <TeaserCol label="딜러 첫 제시" value={formatKRW(predictedFirstAsk)} tone="wait" />
-          <TeaserCol label="내 목표가" value={formatKRW(targetPrice)} tone="buy" />
-          <TeaserCol label="협상 여지" value={`−${formatKRW(gap)}`} tone="ink" />
-        </div>
-        <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
-          최근 실계약 중앙값과 이달 프로모션을 기준으로 계산한 러프 예측이에요.
-          <br />PRO에서는 매장·시기별 시나리오 3가지가 함께 제공돼요.
-        </p>
-      </div>
-
-      {/* 티저 2 — 실질금리 미니 (오픈 → 상세는 잠금) */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-5">
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-          <Percent className="h-3.5 w-3.5" /> 저리 할부 실질금리 체크
-        </div>
-        <p className="text-[13px] text-slate-800 mt-2 leading-relaxed">
-          "무이자 60개월"이 진짜인지, 현금할인 대비 실질금리로 뒤집어 보여드려요.
-        </p>
-        <div className="mt-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 text-[12px] text-slate-600 flex items-center justify-between">
-          <span>예: 300만원 현금할인 포기 시</span>
-          <span className="font-bold text-[color:var(--color-signal-wait)] blur-[3px] select-none">
-            연 5.4%
-          </span>
-        </div>
-      </div>
-
-      <ProSignupCard source="coach-briefing-locked" variant="compact" />
-    </section>
-  );
-}
-
 /* ============ Small UI atoms ============ */
-
-function TabBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex-1 rounded-full py-2 text-[12.5px] font-medium transition ${
-        active ? "bg-white text-[color:var(--color-brand-navy)] shadow-sm" : "text-slate-500"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 function ProgressBar({ current, total }: { current: number; total: number }) {
   const pct = Math.round((current / total) * 100);
@@ -637,29 +537,6 @@ function CostRow({
         </div>
         <div className="text-[10.5px] text-slate-400 mt-1">연 {formatKRW(annual)}</div>
       </div>
-    </div>
-  );
-}
-
-function TeaserCol({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "buy" | "wait" | "ink";
-}) {
-  const color =
-    tone === "buy"
-      ? "text-[color:var(--color-signal-buy)]"
-      : tone === "wait"
-        ? "text-[color:var(--color-signal-wait)]"
-        : "text-[color:var(--color-brand-navy)]";
-  return (
-    <div className="rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-2.5">
-      <div className="text-[10.5px] text-slate-500">{label}</div>
-      <div className={`text-[13.5px] font-bold mt-1 tabular-nums ${color}`}>{value}</div>
     </div>
   );
 }

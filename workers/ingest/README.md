@@ -53,6 +53,8 @@ bun run ingest:profiles -- --dry
 bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 ```
 
+가격 시그널 메일의 큐 생성과 발송은 자료 출처·수신 동의·철회 절차를 검수하는 동안 기본 중단된다. `SIGNALCAR_PRICE_ALERTS_ENABLED=true`가 명시되지 않으면 위 두 명령도 DB에 접속하거나 발송하지 않는다. 과거 대기 큐와 수신자를 확인하기 전에는 플래그를 켜지 않는다.
+
 ## Catalog sources (키 없음)
 
 | 브랜드 | 방법 | 결과물 |
@@ -75,7 +77,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## Roadmap
 
-1. **Now** — MSRP · promo-etl · profile-bootstrap · Brain features · **learn-match / timing-eval / signal-alerts / send-alerts**
+1. **Now** — MSRP · promo-etl · profile-bootstrap · Brain features · learn-match / timing-eval. 신호 알림·발송은 검수까지 중단
 2. **Next** — 현대/제네시스 프로모 · 알림 메일 발송 · trim_options
 3. **Then** — 뉴스→market_events · KAIDA
 4. **License** — KAIDA DB ETL (계약 후)
@@ -87,6 +89,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 |-----|-------|---------|
 | `SUPABASE_URL` | DB 쓰기 시 | project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | DB 쓰기 시 | master 테이블 write |
+| `SIGNALCAR_PRICE_ALERTS_ENABLED` | 알림 재개 시 | 기본 중단. 출처·동의·철회·대기 큐 검수 후에만 `true` |
 | `DATA_GO_KR_API_KEY` | 판매통계 시 | 공공데이터포털 (`.env.local`) |
 | `DATA_GO_KR_SERVICE_URL` | 선택 | 기본: `.../newRegistlnfoService_02/getnewRegistlnfoService02` |
 

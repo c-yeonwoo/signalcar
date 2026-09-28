@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Tag, Minus, Search, Bell, BellRing, Target, Bookmark, AlertTriangle, X, Settings2 } from "lucide-react";
+import { Plus, ChevronRight, GitCompare, Camera, ScanLine, Heart, Check, Sparkles, TrendingDown, TrendingUp, Minus, Search, Bell, BellRing, Target, Bookmark, AlertTriangle, X, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { formatKRW, weeklyChangeFor, type MockCar } from "@/lib/mock-cars";
+import { formatKRW, recordedPriceChangeFor, type MockCar } from "@/lib/mock-cars";
 import { fetchCarsFromDb, type Car } from "@/lib/cars";
 import { SectionTitle, SignalPill, CarThumb, SampleSize } from "@/components/ui-kit";
 import logo from "@/assets/logo.png";
@@ -14,7 +14,6 @@ import { getWatchlist } from "@/lib/watchlist-store";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
 import { getPrefs } from "@/lib/onboarding-store";
 import { DiscoveryCarousel } from "@/components/discovery-carousel";
-import { DigestSignupCard } from "@/components/digest-signup-card";
 import { NewsHero } from "@/components/news-hero";
 import { WatchlistAddSheet } from "@/components/watchlist-add-sheet";
 import { PriceAlertSheet } from "@/components/price-alert-sheet";
@@ -114,12 +113,12 @@ function HomePage() {
   const digest = (() => {
     if (watched.length === 0) return null;
     const withChange = watched
-      .map((c) => ({ car: c, wk: weeklyChangeFor(c) }))
-      .filter((x) => x.wk.direction !== "flat" || x.wk.promoRefreshed);
-    if (withChange.length === 0) {
-      return { quiet: true as const, count: watched.length };
+      .map((c) => ({ car: c, change: recordedPriceChangeFor(c) }));
+    const changed = withChange.filter((x) => x.change.direction !== "flat");
+    if (changed.length === 0) {
+      return { quiet: true as const, comparable: withChange.some((x) => x.change.comparable), count: watched.length };
     }
-    return { quiet: false as const, count: watched.length, changed: withChange };
+    return { quiet: false as const, comparable: true, count: watched.length, changed };
   })();
 
   const revisit = daysSince(lastVisit) >= 1 && lastVisit !== null;
@@ -164,7 +163,6 @@ function HomePage() {
       <div className="px-5 pt-6 flex items-center gap-2">
         <img src={logo} alt="시그널카" width={24} height={24} className="h-6 w-6" />
         <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)] tracking-tight">시그널카</span>
-        <span className="ml-auto text-[11px] text-slate-400 tabular-nums">2026.07</span>
       </div>
       {/* 가격 상승 알림 — 재방문자에게, 스냅샷 대비 임계값 이상 오른 관심차가 있을 때만 */}
       {revisit && riseTriggers.length > 0 && (
@@ -342,13 +340,13 @@ function HomePage() {
             />
             <span className="min-w-0">
               <span className="font-semibold text-slate-600">
-                {revisit ? "지난 방문 이후" : "이번주"}:
+                가격 기록 비교:
               </span>{" "}
               {digest.quiet
-                ? "유의미한 변화 없음, 조용해요."
+                ? digest.comparable ? "마지막 두 기록의 계약 가격이 같아요." : "비교 가능한 계약 가격 기록이 아직 없어요."
                 : digest.changed
                     .slice(0, 2)
-                    .map(({ car, wk }) => `${car.model} ${wk.headline}`)
+                    .map(({ car, change }) => `${car.model} ${change.headline}`)
                     .join(" · ")}
             </span>
           </div>
@@ -359,7 +357,7 @@ function HomePage() {
             <p className="text-[12px] text-slate-500">
               {prefs
                 ? "온보딩에서 알려주신 취향을 바탕으로 골랐어요. 카드의 하트로 관심에 담아보세요."
-                : "관심 있는 차의 하트를 눌러 담아두면, 매일 시그널을 알려드려요."}
+                : "관심 있는 차의 하트를 눌러 담아두고 한곳에서 비교해 보세요."}
             </p>
             <Link
               to="/explore"
@@ -382,24 +380,20 @@ function HomePage() {
             c.signal === "buy" ? "#16A34A" : c.signal === "wait" ? "#F59E0B" : "#64748B";
           const inCompare = compareIds.includes(c.id);
           const isWatched = watchIds.includes(c.id);
-          const wk = weeklyChangeFor(c);
+          const change = recordedPriceChangeFor(c);
           const alert = alerts[c.id];
           const alertHit = alert ? alertStatus(c.medianContract, alert.targetPrice) : null;
-          const wkTone =
-            wk.direction === "down"
+          const changeTone =
+            change.direction === "down"
               ? "bg-[color:var(--color-signal-buy-soft)] text-[color:var(--color-signal-buy)]"
-              : wk.direction === "up"
+              : change.direction === "up"
                 ? "bg-[color:var(--color-signal-wait-soft)] text-[color:var(--color-signal-wait)]"
-                : wk.promoRefreshed
-                  ? "bg-[color:var(--color-brand-blue)]/10 text-[color:var(--color-brand-blue)]"
                   : "bg-slate-100 text-slate-500";
-          const WkIcon =
-            wk.direction === "down"
+          const ChangeIcon =
+            change.direction === "down"
               ? TrendingDown
-              : wk.direction === "up"
+              : change.direction === "up"
                 ? TrendingUp
-                : wk.promoRefreshed
-                  ? Tag
                   : Minus;
           return (
             <Link
@@ -410,9 +404,9 @@ function HomePage() {
             >
               {isWatched && (
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${wkTone}`}>
-                    <WkIcon className="h-3 w-3" />
-                    {wk.headline}
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${changeTone}`}>
+                    <ChangeIcon className="h-3 w-3" />
+                    {change.headline}
                   </div>
                   <button
                     onClick={(e) => handleAlertOpen(c, e)}
@@ -540,7 +534,7 @@ function HomePage() {
               </span>
             </div>
             <p className="text-[12.5px] text-slate-600 leading-snug mb-3">
-              요즘 뜨는 신차 소식부터 훑어보세요. 마음에 드는 차는 하트로 담아두면 매일 시그널을 알려드려요.
+              신차 소식부터 살펴보세요. 마음에 드는 차는 하트로 담아두고 한곳에서 비교할 수 있어요.
             </p>
             <button
               onClick={() => setShowAddSheet(true)}
@@ -556,13 +550,6 @@ function HomePage() {
 
       {/* 발견 — 구경하다 담기 */}
       <DiscoveryCarousel />
-
-      {/* 주간 메일 다이제스트 (발송은 Sprint K) */}
-      {!personalized && (
-        <section className="px-5 mt-5">
-          <DigestSignupCard />
-        </section>
-      )}
 
       {/* 폴백/디스커버리 — 관심 차 외에도 다른 차들을 훑을 수 있게 */}
       <section className="px-5 mt-6">

@@ -5,7 +5,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
 const PREF_KEY = "sc.prefs.v1";
-const REVIEW_KEY = "sc.myreviews.v1";
 
 export type BuyerPrefs = {
   purpose: "commute" | "family" | "longhaul" | "leisure";
@@ -105,39 +104,4 @@ export async function hydratePrefsFromServer() {
   } catch {
     /* silent */
   }
-}
-
-/* ----------- 내가 남긴 리뷰 (제보 → 리뷰 트리거용, 로컬 저장 데모) ----------- */
-
-export type MyReview = {
-  id: string;
-  carId: string;
-  rating: number; // 1-5
-  pros: string;
-  cons: string;
-  createdAt: number;
-};
-
-export function getMyReviews(): MyReview[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(REVIEW_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
-}
-
-export function addMyReview(r: Omit<MyReview, "id" | "createdAt">) {
-  const list = getMyReviews();
-  const next: MyReview = {
-    ...r,
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    createdAt: Date.now(),
-  };
-  list.unshift(next);
-  window.localStorage.setItem(REVIEW_KEY, JSON.stringify(list.slice(0, 20)));
-  window.dispatchEvent(new CustomEvent("sc:reviews-change"));
-  return next;
 }

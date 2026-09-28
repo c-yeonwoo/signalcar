@@ -7,6 +7,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import { priceAlertsEnabled } from "../lib/price-alert-gate";
 
 type FeatureRow = {
   trim_id: string;
@@ -18,6 +19,9 @@ type FeatureRow = {
 type ProfileRow = { trim_id: string; slug: string };
 
 export async function buildSignalAlerts(opts?: { dryRun?: boolean; cwd?: string }) {
+  if (!priceAlertsEnabled()) {
+    return { dryRun: true as const, transitions: 0, queued: 0, inserted: 0, outPath: "" };
+  }
   const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY required");
