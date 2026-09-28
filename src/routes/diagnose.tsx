@@ -42,7 +42,7 @@ function DiagnosePage() {
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [diagnosisId, setDiagnosisId] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "pending" | "done" | "failed">("idle");
+  const [status, setStatus] = useState<"idle" | "pending" | "reviewing" | "done" | "failed">("idle");
   const [result, setResult] = useState<Json | null>(null);
   const diagnoses = useQuery({
     queryKey: ["quote-diagnoses", user?.id],
@@ -149,7 +149,7 @@ function DiagnosePage() {
         { event: "UPDATE", schema: "public", table: "quote_diagnoses", filter: `id=eq.${diagnosisId}` },
         (payload) => {
           const row = payload.new;
-          if (row.status === "pending" || row.status === "done" || row.status === "failed") {
+          if (row.status === "pending" || row.status === "reviewing" || row.status === "done" || row.status === "failed") {
             setStatus(row.status);
           }
           setResult((row.result ?? null) as Json | null);
@@ -254,12 +254,12 @@ function DiagnosePage() {
         )}
       </section>}
 
-      {status === "pending" && (
+      {(status === "pending" || status === "reviewing") && (
         <section className="px-5 mt-4">
           <div className="sc-card p-6 text-center">
             <Loader2 className="h-6 w-6 mx-auto animate-spin text-[color:var(--color-brand-blue)]" />
             <div className="mt-3 text-[14px] font-semibold text-[color:var(--color-brand-navy)]">
-              견적서가 접수됐어요
+              {status === "reviewing" ? "담당자가 검토 중이에요" : "견적서가 접수됐어요"}
             </div>
             <p className="text-[12.5px] text-slate-500 mt-1">
               검토 처리 상태를 확인 중이에요. 결과가 준비되면 이 화면에 표시돼요.
@@ -282,7 +282,9 @@ function DiagnosePage() {
       )}
 
       {status === "failed" && (
-        <p className="px-5 mt-4 text-sm text-slate-600" role="alert">검토에 실패했어요. 파일을 확인해 다시 접수해주세요.</p>
+        <p className="px-5 mt-4 text-sm text-slate-600" role="alert">
+          검토에 실패했어요. {resultText(result, "reason") ?? "파일을 확인한 뒤 다시 접수해주세요."}
+        </p>
       )}
 
       <section className="px-5 mt-6 pb-8">
@@ -304,7 +306,7 @@ function DiagnosePage() {
                     setResult(item.result);
                   }}
                 >
-                  {item.created_at.slice(0, 10)} · {item.status === "done" ? "완료" : item.status === "failed" ? "실패" : "대기"}
+                  {item.created_at.slice(0, 10)} · {item.status === "done" ? "완료" : item.status === "failed" ? "실패" : item.status === "reviewing" ? "검토 중" : "대기"}
                 </button>
                 <button type="button" className="text-slate-500 underline disabled:opacity-50" disabled={deleting} onClick={() => void deleteDiagnosis(item.id)}>
                   {deleting ? "삭제 중…" : "삭제"}

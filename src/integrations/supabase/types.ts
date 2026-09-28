@@ -695,6 +695,9 @@ export type Database = {
           doc_path: string
           id: string
           result: Json | null
+          review_started_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: Database["public"]["Enums"]["brief_status"]
           trim_id: string | null
           updated_at: string
@@ -705,6 +708,9 @@ export type Database = {
           doc_path: string
           id?: string
           result?: Json | null
+          review_started_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["brief_status"]
           trim_id?: string | null
           updated_at?: string
@@ -715,6 +721,9 @@ export type Database = {
           doc_path?: string
           id?: string
           result?: Json | null
+          review_started_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["brief_status"]
           trim_id?: string | null
           updated_at?: string
@@ -729,6 +738,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      quote_review_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          diagnosis_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          diagnosis_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          diagnosis_id?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      quote_reviewers: {
+        Row: {
+          active: boolean
+          appointed_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          appointed_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          appointed_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       report_unlocks: {
         Row: {
@@ -969,7 +1020,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_quote_reviewer: { Args: Record<PropertyKey, never>; Returns: boolean }
+      review_quote_diagnosis: {
+        Args: {
+          p_diagnosis_id: string
+          p_action: string
+          p_headline?: string | null
+          p_summary?: string | null
+        }
+        Returns: Database["public"]["Tables"]["quote_diagnoses"]["Row"]
+      }
     }
     Enums: {
       body_type:
@@ -983,7 +1043,7 @@ export type Database = {
         | "van"
         | "minivan"
         | "other"
-      brief_status: "pending" | "done" | "failed"
+      brief_status: "pending" | "reviewing" | "done" | "failed"
       deal_source: "manual" | "receipt_ocr" | "community"
       finance_type: "cash" | "installment" | "lease" | "rent"
       fuel_type:
@@ -1146,7 +1206,7 @@ export const Constants = {
         "minivan",
         "other",
       ],
-      brief_status: ["pending", "done", "failed"],
+      brief_status: ["pending", "reviewing", "done", "failed"],
       deal_source: ["manual", "receipt_ocr", "community"],
       finance_type: ["cash", "installment", "lease", "rent"],
       fuel_type: [

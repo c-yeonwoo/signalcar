@@ -26,6 +26,7 @@ import { Route as CoachOptionsRouteImport } from './routes/coach.options'
 import { Route as CoachMatchRouteImport } from './routes/coach.match'
 import { Route as CarVehicleIdRouteImport } from './routes/car.$vehicleId'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
+import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-reports'
@@ -119,6 +120,11 @@ const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
   path: '/vehicles',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminQuotesRoute = AdminQuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
   id: '/promotions',
   path: '/promotions',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/car/$vehicleId': typeof CarVehicleIdRouteWithChildren
   '/coach/match': typeof CoachMatchRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/deal-reports'
     | '/admin/ingest'
     | '/admin/promotions'
+    | '/admin/quotes'
     | '/admin/vehicles'
     | '/car/$vehicleId'
     | '/coach/match'
@@ -274,6 +284,7 @@ export interface FileRouteTypes {
     | '/admin/deal-reports'
     | '/admin/ingest'
     | '/admin/promotions'
+    | '/admin/quotes'
     | '/admin/vehicles'
     | '/car/$vehicleId'
     | '/coach/match'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/admin/deal-reports'
     | '/admin/ingest'
     | '/admin/promotions'
+    | '/admin/quotes'
     | '/admin/vehicles'
     | '/car/$vehicleId'
     | '/coach/match'
@@ -447,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVehiclesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/quotes': {
+      id: '/admin/quotes'
+      path: '/quotes'
+      fullPath: '/admin/quotes'
+      preLoaderRoute: typeof AdminQuotesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/promotions': {
       id: '/admin/promotions'
       path: '/promotions'
@@ -516,6 +535,7 @@ interface AdminRouteChildren {
   AdminDealReportsRoute: typeof AdminDealReportsRoute
   AdminIngestRoute: typeof AdminIngestRoute
   AdminPromotionsRoute: typeof AdminPromotionsRoute
+  AdminQuotesRoute: typeof AdminQuotesRoute
   AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -525,6 +545,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDealReportsRoute: AdminDealReportsRoute,
   AdminIngestRoute: AdminIngestRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,
+  AdminQuotesRoute: AdminQuotesRoute,
   AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
 }
