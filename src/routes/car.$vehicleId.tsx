@@ -1,10 +1,10 @@
-import { createFileRoute, Link, notFound, useNavigate, useHydrated } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate, useHydrated, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, Info, ExternalLink, Star, ThumbsUp, ThumbsDown, GitCompare, Check, Heart, Bell, Target, Camera, FileText, Ticket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { Sparkline } from "@/components/sparkline";
-import { findCar, formatKRW, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
+import { formatKRW, signalLabel, BENEFIT_META } from "@/lib/mock-cars";
 import type { Benefit, ReviewBundle, ReviewItem, Signal } from "@/lib/mock-cars";
 import { resolveCarWithSignal } from "@/lib/price-signals";
 import { getCompareList, toggleCompare } from "@/lib/compare-store";
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/car/$vehicleId")({
   component: CarDetailPage,
   ssr: false,
   loader: async ({ params }) => {
-    const car = (await resolveCarWithSignal(params.vehicleId)) ?? findCar(params.vehicleId);
+    const car = await resolveCarWithSignal(params.vehicleId);
     if (!car) throw notFound();
     return { car };
   },
@@ -75,10 +75,35 @@ export const Route = createFileRoute("/car/$vehicleId")({
   },
   notFoundComponent: () => (
     <ConsumerShell>
-      <div className="p-10 text-center text-slate-500">차종을 찾을 수 없어요.</div>
+      <div className="p-10 text-center text-slate-500">
+        <p>이 차량은 현재 제공 범위에 없어요.</p>
+        <Link to="/explore" className="mt-3 inline-block font-semibold underline">제공 차량 살펴보기</Link>
+      </div>
     </ConsumerShell>
   ),
+  errorComponent: ({ reset }) => <CarDetailError reset={reset} />,
 });
+
+function CarDetailError({ reset }: { reset: () => void }) {
+  const router = useRouter();
+  return (
+    <ConsumerShell>
+      <div className="p-10 text-center text-slate-500" role="alert">
+        <p>차량 정보를 연결하지 못했어요.</p>
+        <button
+          type="button"
+          className="mt-3 font-semibold underline"
+          onClick={() => {
+            void router.invalidate();
+            reset();
+          }}
+        >
+          다시 시도
+        </button>
+      </div>
+    </ConsumerShell>
+  );
+}
 
 function CarDetailPage() {
   const { car } = Route.useLoaderData();

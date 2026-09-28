@@ -29,10 +29,12 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { data: cars = [] } = useQuery({
+  const carsQuery = useQuery({
     queryKey: ["cars"],
     queryFn: () => fetchCarsFromDb(),
+    retry: 1,
   });
+  const cars = carsQuery.data ?? [];
 
   const [watchIds, setWatchIds] = useState<string[]>([]);
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -130,6 +132,31 @@ function HomePage() {
     );
   })();
   const riseState = (() => { void riseTick; return getRiseState(); })();
+
+  if (carsQuery.isPending || carsQuery.isError || cars.length === 0) {
+    return (
+      <ConsumerShell>
+        <div className="px-5 pt-6 flex items-center gap-2">
+          <img src={logo} alt="시그널카" width={24} height={24} className="h-6 w-6" />
+          <span className="text-[13.5px] font-bold text-[color:var(--color-brand-navy)]">시그널카</span>
+        </div>
+        <section className="mx-5 mt-8 sc-card p-6 text-sm text-slate-600">
+          {carsQuery.isPending ? (
+            <p aria-live="polite">차량 정보를 불러오는 중이에요…</p>
+          ) : carsQuery.isError ? (
+            <div role="alert">
+              <p>차량 정보를 연결하지 못했어요. 잠시 후 다시 시도해주세요.</p>
+              <button type="button" className="mt-3 underline" onClick={() => void carsQuery.refetch()}>
+                다시 시도
+              </button>
+            </div>
+          ) : (
+            <p>현재 공개 가능한 차량 자료가 없어요. 자료를 확인한 뒤 다시 보여드릴게요.</p>
+          )}
+        </section>
+      </ConsumerShell>
+    );
+  }
 
   return (
     <ConsumerShell>

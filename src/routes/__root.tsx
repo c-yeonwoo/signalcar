@@ -137,7 +137,7 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    void hydrateCars();
+    void hydrateCars().catch(() => {});
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();

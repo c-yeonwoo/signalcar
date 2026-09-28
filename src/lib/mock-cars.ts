@@ -267,7 +267,7 @@ export let MOCK_CARS: MockCar[] = [];
 
 export function bindLiveCars(cars: MockCar[]) {
   MOCK_CARS = cars;
-  CATALOG = rebuildCatalogFromCars(cars);
+  CATALOG = buildCatalogFromCars(cars);
 }
 
 export function findCar(id: string) {
@@ -383,7 +383,7 @@ export function weeklyChangeFor(car: MockCar): WeeklyChange {
 
 /* ============ 전체 차량 카탈로그 (탐색 · 관심 담기 소스) ============
  * 실데이터는 car_profiles + price_signals. bindLiveCars()로 주입.
- * CATALOG는 앱이 인지하는 전 차종. catalogHasDetail이면 상세 링크.
+ * CATALOG는 현재 제공하는 차종. 항목마다 상세 링크가 있다.
  */
 export type Fuel = MockCar["fuelType"];
 export type CatalogTag = "hot" | "new" | "facelift" | "discount";
@@ -401,7 +401,7 @@ export type CatalogEntry = {
 
 export let CATALOG: CatalogEntry[] = [];
 
-function rebuildCatalogFromCars(cars: MockCar[]): CatalogEntry[] {
+export function buildCatalogFromCars(cars: MockCar[]): CatalogEntry[] {
   const map = new Map<string, CatalogEntry>();
   for (const c of cars) {
     const key = `${c.brand}|${c.model}`;

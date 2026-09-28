@@ -24,11 +24,15 @@ export const Route = createFileRoute("/compare")({
   }),
 });
 
+const EMPTY_CARS: Awaited<ReturnType<typeof fetchCarsFromDb>> = [];
+
 function ComparePage() {
-  const { data: allCars = [] } = useQuery({
+  const carsQuery = useQuery({
     queryKey: ["cars"],
     queryFn: () => fetchCarsFromDb(),
+    retry: 1,
   });
+  const allCars = carsQuery.data ?? EMPTY_CARS;
   const [selected, setSelected] = useState<string[]>([]);
 
   // 초기 하이드레이션: 비교함(로컬스토리지) → 없으면 관심 차량 2대 기본
@@ -54,6 +58,28 @@ function ComparePage() {
       if (prev.length >= 3) return [...prev.slice(1), id];
       return [...prev, id];
     });
+  }
+
+  if (carsQuery.isPending || carsQuery.isError || allCars.length === 0) {
+    return (
+      <ConsumerShell>
+        <PageHeader backTo="/" backLabel="홈" eyebrow="Compare" title="관심 차량 비교" />
+        <div className="mx-5 mt-4 sc-card p-5 text-sm text-slate-600">
+          {carsQuery.isPending ? (
+            <p aria-live="polite">차량 정보를 불러오는 중이에요…</p>
+          ) : carsQuery.isError ? (
+            <div role="alert">
+              <p>차량 정보를 연결하지 못했어요.</p>
+              <button type="button" className="mt-2 underline" onClick={() => void carsQuery.refetch()}>
+                다시 시도
+              </button>
+            </div>
+          ) : (
+            <p>현재 비교할 수 있는 차량 자료가 없어요. 제공 범위를 확인 중이에요.</p>
+          )}
+        </div>
+      </ConsumerShell>
+    );
   }
 
   const bestMedian = Math.min(...cars.map((c) => c.medianContract));

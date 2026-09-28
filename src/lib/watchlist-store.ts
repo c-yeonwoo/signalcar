@@ -96,7 +96,11 @@ export async function hydrateWatchlistFromServer() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await fetchCarsFromDb();
+  try {
+    await fetchCarsFromDb();
+  } catch {
+    return;
+  }
   const { data, error } = await supabase.from("watchlist").select("trim_id");
   if (error || !data) return;
   const serverCarIds = data

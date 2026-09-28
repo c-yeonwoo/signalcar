@@ -121,10 +121,10 @@ function toCar(profile: DbRow, latest: SignalRow | undefined, history: number[])
 export async function fetchCarsFromDb(force = false): Promise<Car[]> {
   const now = Date.now();
   if (!force && cache.length && now - cacheAt < CACHE_MS) return cache;
-  if (!force && hydrating) return hydrating;
+  if (hydrating) return hydrating;
 
-  hydrating = (async () => {
-    const { data: profiles, error } = await (supabase as any)
+  const load = (async () => {
+    const { data: profiles, error } = await supabase
       .from("car_profiles")
       .select(
         `
@@ -142,20 +142,22 @@ export async function fetchCarsFromDb(force = false): Promise<Car[]> {
       )
       .eq("published", true);
 
-    if (error || !profiles?.length) {
-      console.warn("[cars] DB load failed or empty", error?.message);
+    if (error) throw new Error(`차량 정보를 불러오지 못했습니다: ${error.message}`);
+    if (!profiles?.length) {
       cache = [];
       cacheAt = Date.now();
-      hydrating = null;
+      const { bindLiveCars } = await import("@/lib/mock-cars");
+      bindLiveCars(cache);
       return cache;
     }
 
-    const trimIds = profiles.map((p: any) => (p as DbRow).trim_id);
-    const { data: signals } = await (supabase as any)
+    const trimIds = profiles.map((p) => p.trim_id);
+    const { data: signals, error: signalError } = await supabase
       .from("price_signals")
       .select("trim_id, month, median_deal_price, sample_size, promo_percentile, timing_verdict")
       .in("trim_id", trimIds)
       .order("month", { ascending: false });
+    if (signalError) throw new Error(`가격 정보를 불러오지 못했습니다: ${signalError.message}`);
 
     const signalRows = (signals ?? []) as SignalRow[];
     const latestByTrim = new Map<string, SignalRow>();
@@ -169,9 +171,12 @@ export async function fetchCarsFromDb(force = false): Promise<Car[]> {
     const { bindLiveCars } = await import("@/lib/mock-cars");
     bindLiveCars(cache);
     cacheAt = Date.now();
-    hydrating = null;
     return cache;
   })();
+
+  hydrating = load.finally(() => {
+    hydrating = null;
+  });
 
   return hydrating;
 }
