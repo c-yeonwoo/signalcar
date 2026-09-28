@@ -3,7 +3,7 @@
  * service_role 또는 로컬 SUPABASE_SERVICE_ROLE_KEY 필요.
  */
 import { createClient } from "@supabase/supabase-js";
-import { computeTiming } from "../../../src/lib/brain/timing";
+import { percentile } from "../../../src/lib/brain/price";
 
 type DealRow = {
   trim_id: string;
@@ -12,26 +12,37 @@ type DealRow = {
   verification_status: string | null;
 };
 
-function median(nums: number[]): number | null {
-  if (!nums.length) return null;
-  const s = [...nums].sort((a, b) => a - b);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid]! : Math.round((s[mid - 1]! + s[mid]!) / 2);
-}
-
-function verdict(sample: number, promoHint?: number | null): "buy" | "wait" | "neutral" {
-  return computeTiming({
-    sampleSize: sample,
-    promoPercentile: promoHint ?? null,
-    discountRatio: null,
-    daysToFacelift: null,
-    salesMomentum: null,
-  }).verdict;
-}
-
 function monthKey(iso: string | null): string | null {
-  if (!iso) return null;
+  if (!iso || !/^\d{4}-(0[1-9]|1[0-2])-\d{2}$/.test(iso)) return null;
   return `${iso.slice(0, 7)}-01`;
+}
+
+export function buildVerifiedPriceSignalRows(deals: DealRow[], computedAt: string) {
+  const buckets = new Map<string, number[]>();
+  for (const deal of deals) {
+    if (deal.verification_status !== "receipt_verified") continue;
+    const month = monthKey(deal.contract_month);
+    const price = Number(deal.contract_price);
+    if (!month || !deal.trim_id || !Number.isFinite(price) || price <= 0) continue;
+    const key = `${deal.trim_id}|${month}`;
+    const prices = buckets.get(key) ?? [];
+    prices.push(price);
+    buckets.set(key, prices);
+  }
+
+  return [...buckets.entries()].map(([key, prices]) => {
+    const [trim_id, month] = key.split("|") as [string, string];
+    const sorted = prices.sort((a, b) => a - b);
+    return {
+      trim_id,
+      month,
+      median_deal_price: percentile(sorted, 0.5),
+      sample_size: sorted.length,
+      promo_percentile: null as number | null,
+      timing_verdict: "neutral" as const,
+      computed_at: computedAt,
+    };
+  });
 }
 
 export async function aggregatePriceSignals(opts?: { dryRun?: boolean }) {
@@ -46,34 +57,11 @@ export async function aggregatePriceSignals(opts?: { dryRun?: boolean }) {
   const { data: deals, error } = await sb
     .from("deal_reports")
     .select("trim_id, contract_price, contract_month, verification_status")
-    .neq("verification_status", "flagged");
+    .eq("verification_status", "receipt_verified");
 
   if (error) throw error;
 
-  const buckets = new Map<string, number[]>();
-  for (const d of (deals ?? []) as DealRow[]) {
-    const m = monthKey(d.contract_month);
-    if (!m || !d.trim_id || !d.contract_price) continue;
-    const k = `${d.trim_id}|${m}`;
-    const arr = buckets.get(k) ?? [];
-    arr.push(Number(d.contract_price));
-    buckets.set(k, arr);
-  }
-
-  const rows = [...buckets.entries()].map(([k, prices]) => {
-    const [trim_id, month] = k.split("|") as [string, string];
-    const sample_size = prices.length;
-    const median_deal_price = median(prices);
-    return {
-      trim_id,
-      month,
-      median_deal_price,
-      sample_size,
-      promo_percentile: null as number | null,
-      timing_verdict: verdict(sample_size),
-      computed_at: new Date().toISOString(),
-    };
-  });
+  const rows = buildVerifiedPriceSignalRows((deals ?? []) as DealRow[], new Date().toISOString());
 
   console.log(`[aggregate-signals] buckets=${rows.length} deals=${deals?.length ?? 0}`);
 

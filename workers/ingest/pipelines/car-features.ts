@@ -26,7 +26,6 @@ type DealRow = {
   trim_id: string;
   contract_price: number;
   contract_month: string | null;
-  verification_status: string | null;
 };
 
 type SalesRow = {
@@ -100,9 +99,9 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
       .order("month", { ascending: false }),
     sb
       .from("deal_reports")
-      .select("trim_id, contract_price, contract_month, verification_status")
+      .select("trim_id, contract_price, contract_month")
       .in("trim_id", trimIds)
-      .neq("verification_status", "flagged"),
+      .eq("verification_status", "receipt_verified"),
     sb
       .from("sales_stats")
       .select("trim_id, month, registered_count")
