@@ -18,9 +18,7 @@ export const Route = createFileRoute("/car/$vehicleId/history")({
   head: ({ loaderData, params }) => {
     const car = loaderData?.car;
     const title = car ? `${car.model} 가격·프로모션 히스토리 · 시그널카` : "가격 히스토리 · 시그널카";
-    const desc = car
-      ? `${car.brand} ${car.model}의 계약가·할인 흐름을 한눈에.`
-      : "계약가·할인 흐름을 한눈에.";
+    const desc = "계약가와 할인 자료의 출처를 검수 중입니다.";
     return {
       meta: [
         { title },

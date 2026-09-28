@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -18,6 +19,7 @@ import { hydrateWatchlistFromServer } from "@/lib/watchlist-store";
 import { hydratePrefsFromServer } from "@/lib/onboarding-store";
 import { hydrateAlertsFromServer } from "@/lib/alerts-store";
 import { hydrateCars } from "@/lib/cars";
+import { PriceReviewGate } from "@/components/price-review-gate";
 
 function NotFoundComponent() {
   return (
@@ -85,10 +87,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#12203A" },
-      { title: "시그널카 — 지금 사도 될까?" },
-      { name: "description", content: "실거래가·프로모션·연식변경 신호로 신차 구매 타이밍을 알려주는 소비자 편 코치, 시그널카" },
+      { title: "시그널카 — 차량 자료 검수 중" },
+      { name: "description", content: "차량 정보의 출처를 검수하며 계약 공유와 견적 진단을 준비하는 시그널카" },
       { property: "og:title", content: "시그널카" },
-      { property: "og:description", content: "지금이 살 때일까? 시그널카가 신호로 알려드릴게요." },
+      { property: "og:description", content: "차량 가격과 구매 시점 근거를 검수하고 있어요." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -119,7 +121,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <head>
         <HeadContent />
       </head>
@@ -134,6 +136,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const path = pathname.replace(/\/+$/, "") || "/";
+  const priceRoute = path === "/" || path === "/explore" || path === "/compare" ||
+    path === "/me" || path === "/report" || path === "/diagnose" ||
+    path === "/coach" || path.startsWith("/coach/") || path.startsWith("/car/");
 
   useEffect(() => {
     void hydrateCars().catch(() => {});
@@ -156,7 +163,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      {priceRoute ? <PriceReviewGate /> : <Outlet />}
       <Toaster richColors position="top-center" />
       <SplashScreen />
     </QueryClientProvider>

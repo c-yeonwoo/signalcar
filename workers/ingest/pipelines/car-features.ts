@@ -20,6 +20,7 @@ type SignalRow = {
   median_deal_price: number | null;
   sample_size: number;
   promo_percentile: number | null;
+  evidence_kind: string;
 };
 
 type DealRow = {
@@ -94,8 +95,9 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
   const [{ data: signals }, { data: deals }, { data: sales }, { data: promos }] = await Promise.all([
     sb
       .from("price_signals")
-      .select("trim_id, month, median_deal_price, sample_size, promo_percentile")
+      .select("trim_id, month, median_deal_price, sample_size, promo_percentile, evidence_kind")
       .in("trim_id", trimIds)
+      .eq("evidence_kind", "verified_contract")
       .order("month", { ascending: false }),
     sb
       .from("deal_reports")
@@ -116,7 +118,7 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
 
   const latestSignal = new Map<string, SignalRow>();
   for (const s of (signals ?? []) as SignalRow[]) {
-    if (!latestSignal.has(s.trim_id)) latestSignal.set(s.trim_id, s);
+    if (s.month === month && !latestSignal.has(s.trim_id)) latestSignal.set(s.trim_id, s);
   }
 
   const pricesByTrim = new Map<string, number[]>();
@@ -144,13 +146,8 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
     const sig = latestSignal.get(profile.trim_id);
     const listPrice = profile.trim?.base_price != null ? Number(profile.trim.base_price) : null;
     const monthPrices = (pricesByTrim.get(profile.trim_id) ?? []).sort((a, b) => a - b);
-    const sampleSize = monthPrices.length || sig?.sample_size || 0;
-    const median =
-      monthPrices.length > 0
-        ? percentile(monthPrices, 0.5)
-        : sig?.median_deal_price != null
-          ? Number(sig.median_deal_price)
-          : null;
+    const sampleSize = monthPrices.length;
+    const median = sampleSize > 0 ? percentile(monthPrices, 0.5) : null;
     const p25 = monthPrices.length >= 4 ? percentile(monthPrices, 0.25) : null;
     const p75 = monthPrices.length >= 4 ? percentile(monthPrices, 0.75) : null;
 
@@ -240,7 +237,7 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
 
   if (syncSignals) {
     const signalRows = rows
-      .filter((r) => r.sample_size > 0 || r.median_deal_price != null)
+      .filter((r) => (pricesByTrim.get(r.trim_id)?.length ?? 0) > 0)
       .map((r) => ({
         trim_id: r.trim_id,
         month,
@@ -248,6 +245,7 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
         sample_size: r.sample_size,
         promo_percentile: r.promo_percentile,
         timing_verdict: r.timing_verdict,
+        evidence_kind: "verified_contract" as const,
         computed_at: r.computed_at,
       }));
     if (signalRows.length) {

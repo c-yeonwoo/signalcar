@@ -52,6 +52,7 @@ type SignalRow = {
   sample_size: number;
   promo_percentile: number | null;
   timing_verdict: Signal | null;
+  evidence_kind: "verified_contract" | "legacy_unverified";
 };
 
 let cache: Car[] = [];
@@ -79,9 +80,11 @@ function toCar(profile: DbRow, latest: SignalRow | undefined, history: number[])
   const vehicle = trim?.vehicle;
   const brand = vehicle?.brand?.name ?? "";
   const listPrice = Number(trim?.base_price ?? 0);
-  const median = latest?.median_deal_price ?? listPrice;
+  const verifiedSignal = latest?.evidence_kind === "verified_contract" &&
+    latest.sample_size > 0 && Number(latest.median_deal_price) > 0 ? latest : undefined;
+  const median = verifiedSignal ? Number(verifiedSignal.median_deal_price) : listPrice;
   const spread = Math.max(Math.round(median * 0.04), 400_000);
-  const signal = (latest?.timing_verdict ?? "neutral") as Signal;
+  const signal = verifiedSignal ? (verifiedSignal.timing_verdict ?? "neutral") as Signal : "neutral";
   const slug = profile.slug;
 
   return {
@@ -95,15 +98,16 @@ function toCar(profile: DbRow, latest: SignalRow | undefined, history: number[])
     medianContract: median,
     minContract: Math.round(median - spread / 2),
     maxContract: Math.round(median + spread / 2),
-    reports: latest?.sample_size ?? 0,
+    reports: verifiedSignal?.sample_size ?? 0,
+    priceEvidence: verifiedSignal ? "verified_contract" : "unverified",
     signal,
-    headline: profile.headline ?? `${brand} ${vehicle?.model_name ?? ""}`,
+    headline: verifiedSignal ? (profile.headline ?? `${brand} ${vehicle?.model_name ?? ""}`) : "가격 근거를 확인하고 있어요",
     coach:
-      profile.coach ??
-      "실계약 표본을 모으는 중이에요. 이달 공식 프로모·정가로 타이밍을 보세요.",
+      verifiedSignal ? (profile.coach ?? "검증된 계약 정보가 있어요. 조건과 시점을 함께 확인하세요.") :
+      "검증된 계약 표본과 가격 출처가 없어 구매 시점 판단을 제공하지 않아요.",
     promoPercentile: latest?.promo_percentile != null ? Number(latest.promo_percentile) : 50,
     facelift: profile.facelift ?? null,
-    history: history.length ? history : [Math.round(median / 10_000)],
+    history: verifiedSignal ? history : [],
     promoThisMonth: {
       label: profile.promo_label ?? "프로모션",
       amount: Number(profile.promo_amount ?? 0),
@@ -154,8 +158,9 @@ export async function fetchCarsFromDb(force = false): Promise<Car[]> {
     const trimIds = profiles.map((p) => p.trim_id);
     const { data: signals, error: signalError } = await supabase
       .from("price_signals")
-      .select("trim_id, month, median_deal_price, sample_size, promo_percentile, timing_verdict")
+      .select("trim_id, month, median_deal_price, sample_size, promo_percentile, timing_verdict, evidence_kind")
       .in("trim_id", trimIds)
+      .eq("evidence_kind", "verified_contract")
       .order("month", { ascending: false });
     if (signalError) throw new Error(`가격 정보를 불러오지 못했습니다: ${signalError.message}`);
 

@@ -78,6 +78,7 @@ export async function evaluateTimingPredictions(opts?: {
         .from("price_signals")
         .select("trim_id, month, median_deal_price")
         .in("trim_id", trimIds)
+        .eq("evidence_kind", "verified_contract")
         .order("month", { ascending: false })
     : { data: [] as SignalRow[] };
 

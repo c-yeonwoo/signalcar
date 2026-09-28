@@ -51,10 +51,8 @@ export const Route = createFileRoute("/car/$vehicleId")({
   },
   head: ({ loaderData, params }) => {
     const car = loaderData?.car;
-    const title = car ? `${car.brand} ${car.model} · 지금 사도 될까? · 시그널카` : "차량 상세 · 시그널카";
-    const desc = car
-      ? `${car.brand} ${car.model} 실거래가·프로모션·가격 히스토리를 시그널카가 신호로 알려드려요.`
-      : "실거래가·프로모션 신호로 신차 구매 타이밍을 알려주는 시그널카.";
+    const title = car ? `${car.brand} ${car.model} · 자료 검수 중 · 시그널카` : "차량 자료 검수 중 · 시그널카";
+    const desc = "차량 가격과 구매 시점 근거를 검수 중입니다.";
     return {
       meta: [
         { title },

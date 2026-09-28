@@ -15,9 +15,9 @@ export const Route = createFileRoute("/compare")({
   head: () => ({
     meta: [
       { title: "관심 차량 비교 · 시그널카" },
-      { name: "description", content: "관심 차량을 나란히 놓고 가격·시그널·연비를 비교하세요." },
+      { name: "description", content: "차량 가격과 비교 자료의 근거를 검수 중입니다." },
       { property: "og:title", content: "관심 차량 비교 · 시그널카" },
-      { property: "og:description", content: "가격·시그널·연비를 나란히 비교." },
+      { property: "og:description", content: "비교 자료 검수 안내를 확인하세요." },
       { property: "og:url", content: "/compare" },
     ],
     links: [{ rel: "canonical", href: "/compare" }],

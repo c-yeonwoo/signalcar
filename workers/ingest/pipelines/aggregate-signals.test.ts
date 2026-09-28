@@ -26,6 +26,7 @@ describe("verified price signal aggregation", () => {
         sample_size: 2,
         promo_percentile: null,
         timing_verdict: "neutral",
+        evidence_kind: "verified_contract",
         computed_at: computedAt,
       },
     ]);

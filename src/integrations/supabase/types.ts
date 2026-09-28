@@ -600,6 +600,7 @@ export type Database = {
       price_signals: {
         Row: {
           computed_at: string
+          evidence_kind: string
           id: string
           median_deal_price: number | null
           month: string
@@ -610,6 +611,7 @@ export type Database = {
         }
         Insert: {
           computed_at?: string
+          evidence_kind?: string
           id?: string
           median_deal_price?: number | null
           month: string
@@ -620,6 +622,7 @@ export type Database = {
         }
         Update: {
           computed_at?: string
+          evidence_kind?: string
           id?: string
           median_deal_price?: number | null
           month?: string

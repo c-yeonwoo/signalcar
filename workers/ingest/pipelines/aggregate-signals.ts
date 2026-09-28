@@ -40,6 +40,7 @@ export function buildVerifiedPriceSignalRows(deals: DealRow[], computedAt: strin
       sample_size: sorted.length,
       promo_percentile: null as number | null,
       timing_verdict: "neutral" as const,
+      evidence_kind: "verified_contract" as const,
       computed_at: computedAt,
     };
   });

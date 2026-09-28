@@ -22,9 +22,9 @@ export const Route = createFileRoute("/diagnose")({
   head: () => ({
     meta: [
       { title: "견적서 진단 · 시그널카" },
-      { name: "description", content: "개인정보를 가린 견적서 사진을 접수해 검토 상태를 확인하세요." },
+      { name: "description", content: "견적 진단 접수는 개인정보와 검토 운영 절차를 확인하는 동안 중단됩니다." },
       { property: "og:title", content: "견적서 진단 · 시그널카" },
-      { property: "og:description", content: "가린 견적서 사진 접수와 상태 확인." },
+      { property: "og:description", content: "견적 진단 접수 준비 중입니다." },
       { property: "og:url", content: "/diagnose" },
     ],
     links: [{ rel: "canonical", href: "/diagnose" }],

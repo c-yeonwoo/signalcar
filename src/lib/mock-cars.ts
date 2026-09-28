@@ -12,6 +12,7 @@ export type MockCar = {
   minContract: number;
   maxContract: number;
   reports: number;
+  priceEvidence?: "verified_contract" | "unverified";
   signal: Signal;
   headline: string;
   coach: string;

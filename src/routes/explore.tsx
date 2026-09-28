@@ -15,12 +15,12 @@ export const Route = createFileRoute("/explore")({
       { title: "차 둘러보기 · 시그널카" },
       {
         name: "description",
-        content: "실거래 시그널이 있는 차종을 둘러보고 관심에 담으세요.",
+        content: "차량 가격과 구매 시점의 근거를 검수 중입니다.",
       },
       { property: "og:title", content: "차 둘러보기 · 시그널카" },
       {
         property: "og:description",
-        content: "카탈로그와 BUY 시그널로 관심 차를 고르세요.",
+        content: "차량 자료 검수 안내를 확인하세요.",
       },
     ],
   }),

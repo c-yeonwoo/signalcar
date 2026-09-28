@@ -15,9 +15,9 @@ export const Route = createFileRoute("/report")({
   head: () => ({
     meta: [
       { title: "계약 정보 공유 · 시그널카" },
-      { name: "description", content: "개인정보가 담긴 문서 없이 계약 금액과 조건을 직접 입력해 공유하세요." },
+      { name: "description", content: "계약 정보 접수는 개인정보와 검토 운영 절차를 확인하는 동안 중단됩니다." },
       { property: "og:title", content: "계약 정보 공유 · 시그널카" },
-      { property: "og:description", content: "계약 정보는 검증 전까지 가격 통계에 반영되지 않습니다." },
+      { property: "og:description", content: "계약 정보 접수 준비 중입니다." },
       { property: "og:url", content: "/report" },
     ],
     links: [{ rel: "canonical", href: "/report" }],
