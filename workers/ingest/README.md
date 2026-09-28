@@ -89,7 +89,6 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 | `SUPABASE_SERVICE_ROLE_KEY` | DB 쓰기 시 | master 테이블 write |
 | `DATA_GO_KR_API_KEY` | 판매통계 시 | 공공데이터포털 (`.env.local`) |
 | `DATA_GO_KR_SERVICE_URL` | 선택 | 기본: `.../newRegistlnfoService_02/getnewRegistlnfoService02` |
-| `VITE_ADMIN_EMAILS` | 선택 | 관리자 allowlist |
 
 **불필요:** 현대/기아/제네시스 공식 카탈로그·뉴스 인덱싱.
 

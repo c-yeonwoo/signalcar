@@ -3,42 +3,15 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 
-/**
- * Admin allowlist.
- * VITE_ADMIN_EMAILS=a@x.com,b@y.com  (comma-separated)
- * 미설정 시 로그인만 요구 (개발 편의). 프로덕션에서는 반드시 env 설정.
- */
-function adminEmails(): string[] {
-  const raw = import.meta.env.VITE_ADMIN_EMAILS as string | undefined;
-  if (!raw?.trim()) return [];
-  return raw
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isAdminEmail(email: string | undefined | null): boolean {
-  if (!email) return false;
-  const list = adminEmails();
-  // allowlist 비어 있으면 로그인한 누구나 (로컬/프리뷰). 배포 시 env로 잠금.
-  if (list.length === 0) return true;
-  return list.includes(email.toLowerCase());
-}
-
-async function isAdminUser(email: string | undefined | null, userId: string | undefined): Promise<boolean> {
-  if (!email) return false;
-  const list = adminEmails();
-  if (userId) {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", userId)
-      .maybeSingle();
-    if (!error && data && (data as { is_admin?: boolean }).is_admin === true) return true;
-  }
-  if (list.length === 0) return true;
-  return list.includes(email.toLowerCase());
+async function isAdminUser(userId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userId)
+    .maybeSingle();
+  return !error && (data as { is_admin?: boolean } | null)?.is_admin === true;
 }
 
 export const Route = createFileRoute("/admin")({
@@ -50,7 +23,7 @@ export const Route = createFileRoute("/admin")({
     if (!session) {
       throw redirect({ to: "/auth", search: { next: "/admin" } });
     }
-    const ok = await isAdminUser(session.user.email, session.user.id);
+    const ok = await isAdminUser(session.user.id);
     if (!ok) {
       throw redirect({ to: "/" });
     }
@@ -59,8 +32,21 @@ export const Route = createFileRoute("/admin")({
 
 function AdminLayout() {
   const { user, loading } = useSession();
+  const userId = user?.id;
+  const [access, setAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
 
-  if (loading) {
+  useEffect(() => {
+    if (!userId) return;
+    let current = true;
+    isAdminUser(userId).then((allowed) => {
+      if (current) setAccess({ userId, allowed });
+    });
+    return () => {
+      current = false;
+    };
+  }, [userId]);
+
+  if (loading || (user && access?.userId !== user.id)) {
     return (
       <div className="min-h-screen grid place-items-center text-sm text-muted-foreground">
         권한 확인 중…
@@ -68,7 +54,7 @@ function AdminLayout() {
     );
   }
 
-  if (!user || !isAdminEmail(user.email)) {
+  if (!user || !access?.allowed) {
     return (
       <div className="min-h-screen grid place-items-center p-6 text-center">
         <div>

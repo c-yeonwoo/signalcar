@@ -10,9 +10,9 @@ import { PageHeader } from "@/components/ui-kit";
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({
-    next: typeof s.next === "string" ? s.next : "/",
-    mode: s.mode === "signup" || s.mode === "reset" ? s.mode : undefined,
+  validateSearch: (s: Record<string, unknown>): { next?: string; mode?: "signup" | "reset" } => ({
+    ...(typeof s.next === "string" ? { next: s.next } : {}),
+    ...(s.mode === "signup" || s.mode === "reset" ? { mode: s.mode } : {}),
   }),
 });
 
@@ -130,13 +130,20 @@ function AuthPage() {
   if (checkEmail) {
     return (
       <ConsumerShell hideTabs>
-        <PageHeader backTo="/" backLabel="홈" eyebrow="Check email" title={<>메일을 확인해주세요</>} />
+        <PageHeader
+          backTo="/"
+          backLabel="홈"
+          eyebrow="Check email"
+          title={<>메일을 확인해주세요</>}
+        />
         <section className="px-5 mt-4 text-sm text-slate-600 space-y-3">
           <p>
             <strong className="text-[color:var(--color-brand-navy)]">{email}</strong> 으로 안내
             메일을 보냈어요.
           </p>
-          <p>메일 속 링크를 누르면 {mode === "reset" ? "새 비밀번호를 설정" : "가입이 완료"}돼요.</p>
+          <p>
+            메일 속 링크를 누르면 {mode === "reset" ? "새 비밀번호를 설정" : "가입이 완료"}돼요.
+          </p>
           <button
             type="button"
             className="sc-btn-primary"

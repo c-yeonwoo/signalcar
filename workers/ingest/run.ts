@@ -69,9 +69,6 @@ async function main() {
     https://apis.data.go.kr/B553881/newRegistlnfoService_02/getnewRegistlnfoService02
     → https://www.data.go.kr/data/15059401/openapi.do 신청
 
-[선택 — 앱/어드민]
-  VITE_ADMIN_EMAILS           관리자 allowlist (콤마 구분)
-
 [유료·계약 — 키 아님]
   KAIDA 등록 DB               계약/라이선스 후 ETL
   Hyundai Developers          파트너 승인 (신차 시세 1순위 아님)
