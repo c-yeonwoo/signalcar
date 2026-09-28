@@ -139,7 +139,7 @@ function RootComponent() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const path = pathname.replace(/\/+$/, "") || "/";
   const priceRoute = path === "/" || path === "/explore" || path === "/compare" ||
-    path === "/me" || path === "/report" || path === "/diagnose" ||
+    path === "/me" || path === "/report" ||
     path === "/coach" || path.startsWith("/coach/") || path.startsWith("/car/");
 
   useEffect(() => {

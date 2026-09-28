@@ -21,23 +21,22 @@ function DealReportsPage() {
         .order("contract_month", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return data as any[];
+      return data;
     },
   });
 
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">공유된 실계약가</h1>
-        <p className="text-sm text-muted-foreground">사용자가 자발적으로 공유한 실계약가 (읽기 전용 · 다음 스프린트에서 공유 폼 추가)</p>
+        <h1 className="text-2xl font-bold tracking-tight">계약 제보 검토</h1>
+        <p className="text-sm text-muted-foreground">제보의 진위가 확인되기 전에는 실계약 통계로 취급하지 않습니다. 현재 이 화면은 읽기 전용입니다.</p>
       </div>
 
       <Card className="border-dashed">
         <CardContent className="p-4 flex gap-3 text-sm">
           <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-muted-foreground" />
           <div className="text-muted-foreground">
-            실계약가 데이터는 <strong>오직 사용자가 자발적으로 공유한 1차 데이터</strong>로만 구축합니다.
-            경쟁사(겟차·다나와·엔카) 크롤링은 금지되어 있습니다. 계약 공유 폼과 OCR 파이프라인은 다음 스프린트에서 추가됩니다.
+            미검증 계약 제보와 검증 완료 제보를 구분해 확인하세요. 문서 업로드·자동 추출과 제보 검수 흐름은 아직 운영 검증을 마치지 않았습니다.
           </div>
         </CardContent>
       </Card>
@@ -59,7 +58,7 @@ function DealReportsPage() {
             {isLoading ? (
               <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">불러오는 중…</TableCell></TableRow>
             ) : data.length === 0 ? (
-              <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">아직 공유된 실계약가가 없습니다.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">등록된 계약 제보가 없습니다.</TableCell></TableRow>
             ) : data.map((d) => (
               <TableRow key={d.id}>
                 <TableCell>{d.contract_month?.slice(0, 7) ?? "-"}</TableCell>

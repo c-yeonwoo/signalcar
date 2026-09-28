@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ConsumerShell } from "@/components/consumer-shell";
 import { PageHeader } from "@/components/ui-kit";
@@ -19,6 +20,9 @@ export function PriceReviewGate() {
         <div className="sc-card p-4 text-[12.5px] text-slate-600 leading-relaxed">
           계약 정보 공유와 견적 진단은 개인정보 처리·검토 운영 절차를 확인하는 동안 앱 화면에서 접수를 잠시 중단합니다. 검증된 가격 출처와 처리 경로를 준비한 뒤 다시 안내하겠습니다.
         </div>
+        <Link to="/diagnose" className="inline-block text-[12.5px] font-semibold text-[color:var(--color-brand-blue)] underline">
+          기존 견적 접수 기록 확인·삭제
+        </Link>
       </section>
 
       <section className="px-5 mt-7 pb-8">

@@ -21,7 +21,7 @@ function TermsPage() {
     <ConsumerShell hideTabs>
       <PageHeader backTo="/" backLabel="뒤로" eyebrow="Legal" title={<>이용약관</>} />
       <section className="px-5 mt-4 text-[13px] leading-relaxed text-slate-700 space-y-4 pb-10">
-        <p className="text-slate-500 text-[11.5px]">최종 업데이트: 2026-07-12 (MVP 초안)</p>
+        <p className="text-slate-500 text-[11.5px]">최종 업데이트: 2026-09-29 (정식 약관 검토 중인 초안)</p>
 
         <Block title="1. 목적">
           이 약관은 시그널카(이하 "회사")가 제공하는 신차 구매 코칭 서비스(이하 "서비스")의 이용 조건과
@@ -52,7 +52,7 @@ function TermsPage() {
         </Block>
 
         <Block title="6. 문의">
-          약관 관련 문의: hello@signalcar.example (문의 이메일은 정식 서비스 오픈 시 안내됩니다.)
+          약관 문의처는 정식 서비스 안내와 함께 게시할 예정입니다. 현재 이 페이지는 검토 중인 초안입니다.
         </Block>
       </section>
     </ConsumerShell>

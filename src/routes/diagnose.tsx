@@ -10,6 +10,8 @@ import { PageHeader, PrimaryButton } from "@/components/ui-kit";
 import { MAX_QUOTE_IMAGE_BYTES, quoteImagePath, validateQuoteImage } from "@/lib/quote-image";
 import type { Json } from "@/integrations/supabase/types";
 
+const QUOTE_INTAKE_OPEN = false;
+
 function resultText(value: Json | null, key: string): string | undefined {
   if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
   const field = value[key];
@@ -22,9 +24,9 @@ export const Route = createFileRoute("/diagnose")({
   head: () => ({
     meta: [
       { title: "견적서 진단 · 시그널카" },
-      { name: "description", content: "견적 진단 접수는 개인정보와 검토 운영 절차를 확인하는 동안 중단됩니다." },
+      { name: "description", content: "견적 진단 신규 접수는 중단 중이며 기존 접수 기록은 확인·삭제할 수 있습니다." },
       { property: "og:title", content: "견적서 진단 · 시그널카" },
-      { property: "og:description", content: "견적 진단 접수 준비 중입니다." },
+      { property: "og:description", content: "신규 접수 준비 중 · 기존 기록 확인·삭제" },
       { property: "og:url", content: "/diagnose" },
     ],
     links: [{ rel: "canonical", href: "/diagnose" }],
@@ -160,14 +162,17 @@ function DiagnosePage() {
     };
   }, [diagnosisId, queryClient, user?.id]);
 
-  // 비로그인 게이트
-  if (!sessionLoading && !user) {
+  if (sessionLoading) {
+    return <ConsumerShell><p className="px-5 py-10 text-sm text-slate-500">계정 정보를 확인하는 중이에요…</p></ConsumerShell>;
+  }
+
+  if (!user) {
     return (
       <ConsumerShell>
         <PageHeader
           eyebrow="Diagnose"
-          title={<>견적서를 진단하려면<br />로그인이 필요해요</>}
-          subtitle="개인정보를 직접 가린 이미지만 접수할 수 있어요."
+          title={<>내 견적 접수 기록을 보려면<br />로그인이 필요해요</>}
+          subtitle="신규 접수는 운영 절차를 확인하는 동안 중단됩니다. 기존 기록은 확인·삭제할 수 있어요."
         />
         <section className="px-5">
           <Link to="/auth" className="sc-btn-primary">
@@ -182,11 +187,13 @@ function DiagnosePage() {
     <ConsumerShell>
       <PageHeader
         eyebrow="견적서 진단"
-        title={<>받은 견적,<br />좋은 조건인지 봐드릴게요</>}
-        subtitle="이름·연락처·차대번호·주소를 가린 견적서만 올려주세요. 자동 가림 기능은 아직 없어요."
+        title={QUOTE_INTAKE_OPEN ? <>받은 견적,<br />좋은 조건인지 봐드릴게요</> : "내 견적 접수 기록"}
+        subtitle={QUOTE_INTAKE_OPEN
+          ? "이름·연락처·차대번호·주소를 가린 견적서만 올려주세요. 자동 가림 기능은 아직 없어요."
+          : "신규 접수는 검토 절차를 확인하는 동안 중단됩니다. 기존 기록은 다시 열거나 삭제할 수 있어요."}
       />
 
-      <section className="px-5">
+      {QUOTE_INTAKE_OPEN && <section className="px-5">
         <label className="block bg-white rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center cursor-pointer active:scale-[0.99] transition">
           <input
             type="file"
@@ -245,7 +252,7 @@ function DiagnosePage() {
             {submitting ? "업로드 중…" : "진단 요청하기"}
           </PrimaryButton>
         )}
-      </section>
+      </section>}
 
       {status === "pending" && (
         <section className="px-5 mt-4">

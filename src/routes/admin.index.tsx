@@ -35,7 +35,7 @@ function Index() {
     { title: "차종", value: data?.vehicles, icon: Car, to: "/admin/vehicles" as const },
     { title: "트림", value: data?.trims, icon: Layers, to: "/admin/vehicles" as const },
     { title: "공식 프로모션", value: data?.promotions, icon: Tag, to: "/admin/promotions" as const },
-    { title: "공유된 실계약가", value: data?.deals, icon: FileText, to: "/admin/deal-reports" as const },
+    { title: "계약 제보", value: data?.deals, icon: FileText, to: "/admin/deal-reports" as const },
   ];
 
   return (
@@ -43,7 +43,7 @@ function Index() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">전체 차량 대시보드</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          브랜드부터 공유된 실계약가까지 한눈에 확인하세요.
+          브랜드·차종과 검토 전 계약 제보를 구분해 확인하세요.
         </p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
