@@ -10,13 +10,13 @@
 - 업로드 전 이용자가 이미지를 미리 보고 이름·연락처·차대번호·주소를 직접 가렸음을 확인해야 한다. 서비스의 자동 가림 기능은 없다.
 - `quote-docs` 버킷은 비공개이며 DB 정책상 업로드·열람·삭제는 소유자의 경로와 `owner_id`가 함께 맞을 때만 허용한다. 진단 레코드는 이미 업로드한 자신의 파일에만 연결할 수 있다.
 - DB 접수 실패 시 업로드 파일 삭제를 시도한다. 이용자는 진단 화면에서 과거 접수 상태를 다시 열고 파일과 접수 기록을 삭제할 수 있다.
-- 계약 제보는 문서 없이 금액·계약월·차량·결제 방식만 직접 입력한다. 검증 전 제보는 가격 집계에 반영되지 않으며, 검증 전 열람권 자동 지급과 클라이언트 `localStorage` 기반 열람 해제는 제거했다. 근거 없는 협상 리포트도 공개하지 않는다.
+- 계약 제보는 문서 없이 금액·계약월·차량·결제 방식만 직접 입력한다. 검증 전 제보는 가격 집계에 반영되지 않으며, 클라이언트 `localStorage` 기반 열람 해제는 제거했다. 후속 [SC-017 격리](./LEGACY_ENTITLEMENT_QUARANTINE.md)에서 검증 후를 포함한 모든 과거 열람권 자동 지급도 중단했다. 근거 없는 협상 리포트도 공개하지 않는다.
 - 개인정보 화면의 자동 가림·자동 파기·즉시 계정 삭제에 대한 잘못된 약속을 정정했다.
 
 ## 확인한 증거
 
 - `bun test tests/quote-image.test.ts`: 파일 서명, 확장자 경로, 용량 검증 통과.
-- 격리 Supabase DB에 마이그레이션 적용 후 `supabase/tests/quote-docs.sql`: 소유자/타인 접근, 잘못된 경로, 없는 파일, 삭제, 검증 상태별 열람권 지급, 이전 RPC 권한 검증 통과. 테스트 트랜잭션은 롤백했다.
+- 격리 Supabase DB에 마이그레이션 적용 후 `supabase/tests/quote-docs.sql`: 소유자/타인 접근, 잘못된 경로, 없는 파일, 삭제 검증 통과. 후속 SC-017에서는 검증 상태와 무관하게 자동 열람권을 만들지 않는 계약으로 테스트를 갱신했다. 테스트 트랜잭션은 롤백했다.
 - 타입 검사, ESLint, 프로덕션 빌드와 로컬 화면 로그인 경로를 확인했다. 실제 로그인 후 Storage API 업로드와 삭제의 종단 간 검증은 아직 없다.
 - [Supabase 버킷 공개 설정](https://supabase.com/docs/guides/storage/buckets/fundamentals), [Storage 소유권](https://supabase.com/docs/guides/storage/security/ownership), [접근 정책](https://supabase.com/docs/guides/storage/security/access-control), [API 삭제](https://supabase.com/docs/guides/storage/management/delete-objects)를 정책 설계 기준으로 삼았다.
 

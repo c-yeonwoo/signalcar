@@ -5,7 +5,7 @@ DO $$
 BEGIN
   IF (SELECT public FROM storage.buckets WHERE id = 'quote-docs') IS DISTINCT FROM false
      OR (SELECT file_size_limit FROM storage.buckets WHERE id = 'quote-docs') IS DISTINCT FROM 5242880
-     OR has_function_privilege('authenticated', 'public.unlock_briefing_with_credit(uuid)', 'EXECUTE') THEN
+     OR to_regprocedure('public.unlock_briefing_with_credit(uuid)') IS NOT NULL THEN
     RAISE EXCEPTION 'quote-docs bucket must be private and limited to 5 MiB';
   END IF;
 END $$;
@@ -64,23 +64,23 @@ VALUES (
   40000000, '2026-09-01', 'manual'
 );
 
+RESET ROLE;
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM public.report_unlocks WHERE user_id = auth.uid()) THEN
+  IF EXISTS (SELECT 1 FROM public.report_unlocks
+             WHERE user_id = 'd0000000-0000-4000-8000-000000000001') THEN
     RAISE EXCEPTION 'unverified report granted an unlock';
   END IF;
 END $$;
 
-RESET ROLE;
 UPDATE public.deal_reports SET verification_status = 'receipt_verified'
 WHERE user_id = 'd0000000-0000-4000-8000-000000000001';
 
-SET LOCAL ROLE authenticated;
-SELECT set_config('request.jwt.claim.sub', 'd0000000-0000-4000-8000-000000000001', true);
 DO $$
 BEGIN
-  IF (SELECT count(*) FROM public.report_unlocks WHERE user_id = auth.uid()) <> 1 THEN
-    RAISE EXCEPTION 'verified report did not grant exactly one unlock';
+  IF EXISTS (SELECT 1 FROM public.report_unlocks
+             WHERE user_id = 'd0000000-0000-4000-8000-000000000001') THEN
+    RAISE EXCEPTION 'verified report created a legacy unlock without a ledger';
   END IF;
 END $$;
 
