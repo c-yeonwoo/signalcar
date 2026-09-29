@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Building2, Car, Tag, FileText, RefreshCw, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, Building2, Car, Tag, FileText, RefreshCw, ClipboardCheck, CircleDollarSign } from "lucide-react";
 
 import {
   Sidebar,
@@ -18,6 +18,7 @@ const items = [
   { title: "대시보드", url: "/admin", icon: LayoutDashboard },
   { title: "브랜드", url: "/admin/brands", icon: Building2 },
   { title: "차종·트림", url: "/admin/vehicles", icon: Car },
+  { title: "정가 근거 검토", url: "/admin/price-evidence", icon: CircleDollarSign },
   { title: "공식 프로모션", url: "/admin/promotions", icon: Tag },
   { title: "계약 제보", url: "/admin/deal-reports", icon: FileText },
   { title: "견적 수동 검토", url: "/admin/quotes", icon: ClipboardCheck },

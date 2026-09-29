@@ -936,6 +936,103 @@ export type Database = {
           },
         ]
       }
+      trim_msrp_evidence: {
+        Row: {
+          id: string
+          trim_id: string
+          amount_won: number
+          source_url: string
+          source_locator: string
+          source_document_id: string | null
+          captured_at: string
+          valid_from: string
+          valid_to: string | null
+          status: string
+          created_by: string | null
+          created_at: string
+          reviewed_by: string | null
+          reviewed_at: string | null
+          review_due_at: string | null
+          withdrawn_at: string | null
+        }
+        Insert: {
+          id?: string
+          trim_id: string
+          amount_won: number
+          source_url: string
+          source_locator: string
+          source_document_id?: string | null
+          captured_at?: string
+          valid_from: string
+          valid_to?: string | null
+          status?: string
+          created_by?: string | null
+          created_at?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          review_due_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Update: {
+          id?: string
+          trim_id?: string
+          amount_won?: number
+          source_url?: string
+          source_locator?: string
+          source_document_id?: string | null
+          captured_at?: string
+          valid_from?: string
+          valid_to?: string | null
+          status?: string
+          created_by?: string | null
+          created_at?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          review_due_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trim_msrp_evidence_trim_id_fkey"
+            columns: ["trim_id"]
+            isOneToOne: false
+            referencedRelation: "trims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trim_msrp_review_events: {
+        Row: {
+          id: string
+          evidence_id: string
+          actor_id: string | null
+          action: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          evidence_id: string
+          actor_id?: string | null
+          action: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          evidence_id?: string
+          actor_id?: string | null
+          action?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trim_msrp_review_events_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "trim_msrp_evidence"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicles: {
         Row: {
           body_type: Database["public"]["Enums"]["body_type"] | null
@@ -1017,7 +1114,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      current_trim_msrp: {
+        Row: {
+          id: string
+          trim_id: string
+          amount_won: number
+          source_url: string
+          source_locator: string
+          captured_at: string
+          valid_from: string
+          valid_to: string | null
+          reviewed_at: string
+          review_due_at: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_quote_reviewer: { Args: Record<PropertyKey, never>; Returns: boolean }
@@ -1029,6 +1140,10 @@ export type Database = {
           p_summary?: string | null
         }
         Returns: Database["public"]["Tables"]["quote_diagnoses"]["Row"]
+      }
+      review_trim_msrp_evidence: {
+        Args: { p_evidence_id: string; p_action: string }
+        Returns: Database["public"]["Tables"]["trim_msrp_evidence"]["Row"]
       }
     }
     Enums: {

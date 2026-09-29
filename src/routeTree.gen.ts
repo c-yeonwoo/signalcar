@@ -28,6 +28,7 @@ import { Route as CarVehicleIdRouteImport } from './routes/car.$vehicleId'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
+import { Route as AdminPriceEvidenceRouteImport } from './routes/admin.price-evidence'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminDealReportsRouteImport } from './routes/admin.deal-reports'
 import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
@@ -130,6 +131,11 @@ const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
   path: '/promotions',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPriceEvidenceRoute = AdminPriceEvidenceRouteImport.update({
+  id: '/price-evidence',
+  path: '/price-evidence',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/ingest',
   path: '/ingest',
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/price-evidence': typeof AdminPriceEvidenceRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/price-evidence': typeof AdminPriceEvidenceRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/deal-reports': typeof AdminDealReportsRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/price-evidence': typeof AdminPriceEvidenceRoute
   '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/ingest'
+    | '/admin/price-evidence'
     | '/admin/promotions'
     | '/admin/quotes'
     | '/admin/vehicles'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/ingest'
+    | '/admin/price-evidence'
     | '/admin/promotions'
     | '/admin/quotes'
     | '/admin/vehicles'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/admin/brands'
     | '/admin/deal-reports'
     | '/admin/ingest'
+    | '/admin/price-evidence'
     | '/admin/promotions'
     | '/admin/quotes'
     | '/admin/vehicles'
@@ -473,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPromotionsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/price-evidence': {
+      id: '/admin/price-evidence'
+      path: '/price-evidence'
+      fullPath: '/admin/price-evidence'
+      preLoaderRoute: typeof AdminPriceEvidenceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/ingest': {
       id: '/admin/ingest'
       path: '/ingest'
@@ -534,6 +553,7 @@ interface AdminRouteChildren {
   AdminBrandsRoute: typeof AdminBrandsRoute
   AdminDealReportsRoute: typeof AdminDealReportsRoute
   AdminIngestRoute: typeof AdminIngestRoute
+  AdminPriceEvidenceRoute: typeof AdminPriceEvidenceRoute
   AdminPromotionsRoute: typeof AdminPromotionsRoute
   AdminQuotesRoute: typeof AdminQuotesRoute
   AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
@@ -544,6 +564,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBrandsRoute: AdminBrandsRoute,
   AdminDealReportsRoute: AdminDealReportsRoute,
   AdminIngestRoute: AdminIngestRoute,
+  AdminPriceEvidenceRoute: AdminPriceEvidenceRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,
   AdminQuotesRoute: AdminQuotesRoute,
   AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
