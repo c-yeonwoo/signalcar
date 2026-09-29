@@ -20,15 +20,15 @@ function PromotionsListPage() {
         .order("month", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return data as any[];
+      return data;
     },
   });
 
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">공식 프로모션</h1>
-        <p className="text-sm text-muted-foreground">등록된 모든 제조사 공식 월별 프로모션 (최근 200건)</p>
+        <h1 className="text-2xl font-bold tracking-tight">프로모션 원자료</h1>
+        <p className="text-sm text-muted-foreground">과거 수집·등록 행입니다. 조건과 대상 트림을 검증하지 않아 소비자에게 공개하지 않습니다. 최근 200건을 감사할 수 있어요.</p>
       </div>
       <div className="border rounded-md">
         <Table>

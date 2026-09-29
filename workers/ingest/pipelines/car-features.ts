@@ -1,5 +1,5 @@
 /**
- * car_profiles + price_signals + deal_reports + sales_stats + promotions
+ * car_profiles + reviewed MSRP + verified deal_reports + sales_stats
  * → car_features_daily (+ price_signals.timing_verdict 동기화)
  */
 import { createClient } from "@supabase/supabase-js";
@@ -9,18 +9,12 @@ import { percentile } from "../../../src/lib/brain/price";
 
 type ProfileRow = {
   trim_id: string;
-  promo_amount: number | null;
   facelift: { month?: string; note?: string } | null;
-  trim: { base_price: number | null } | null;
 };
 
-type SignalRow = {
+type MsrpRow = {
   trim_id: string;
-  month: string;
-  median_deal_price: number | null;
-  sample_size: number;
-  promo_percentile: number | null;
-  evidence_kind: string;
+  amount_won: number;
 };
 
 type DealRow = {
@@ -33,12 +27,6 @@ type SalesRow = {
   trim_id: string;
   month: string;
   registered_count: number | null;
-};
-
-type PromoRow = {
-  trim_id: string;
-  month: string;
-  amount: number | null;
 };
 
 function seoulToday(): string {
@@ -83,7 +71,7 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
 
   const { data: profiles, error: pErr } = await sb
     .from("car_profiles")
-    .select("trim_id, promo_amount, facelift, trim:trims(base_price)")
+    .select("trim_id, facelift")
     .eq("published", true);
   if (pErr) throw pErr;
 
@@ -92,13 +80,11 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
     return { upserted: 0, dryRun: !!opts?.dryRun, featureDate, rows: [] as unknown[] };
   }
 
-  const [{ data: signals }, { data: deals }, { data: sales }, { data: promos }] = await Promise.all([
+  const [{ data: msrps, error: msrpError }, { data: deals, error: dealError }, { data: sales, error: salesError }] = await Promise.all([
     sb
-      .from("price_signals")
-      .select("trim_id, month, median_deal_price, sample_size, promo_percentile, evidence_kind")
-      .in("trim_id", trimIds)
-      .eq("evidence_kind", "verified_contract")
-      .order("month", { ascending: false }),
+      .from("current_trim_msrp")
+      .select("trim_id, amount_won")
+      .in("trim_id", trimIds),
     sb
       .from("deal_reports")
       .select("trim_id, contract_price, contract_month")
@@ -109,17 +95,12 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
       .select("trim_id, month, registered_count")
       .in("trim_id", trimIds)
       .order("month", { ascending: false }),
-    sb
-      .from("official_promotions")
-      .select("trim_id, month, amount")
-      .in("trim_id", trimIds)
-      .order("month", { ascending: false }),
   ]);
+  if (msrpError) throw msrpError;
+  if (dealError) throw dealError;
+  if (salesError) throw salesError;
 
-  const latestSignal = new Map<string, SignalRow>();
-  for (const s of (signals ?? []) as SignalRow[]) {
-    if (s.month === month && !latestSignal.has(s.trim_id)) latestSignal.set(s.trim_id, s);
-  }
+  const msrpByTrim = new Map(((msrps ?? []) as MsrpRow[]).map((row) => [row.trim_id, Number(row.amount_won)]));
 
   const pricesByTrim = new Map<string, number[]>();
   for (const d of (deals ?? []) as DealRow[]) {
@@ -137,14 +118,8 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
     salesByTrim.set(s.trim_id, arr);
   }
 
-  const promoByTrim = new Map<string, PromoRow>();
-  for (const p of (promos ?? []) as PromoRow[]) {
-    if (!promoByTrim.has(p.trim_id)) promoByTrim.set(p.trim_id, p);
-  }
-
   const rows = ((profiles ?? []) as ProfileRow[]).map((profile) => {
-    const sig = latestSignal.get(profile.trim_id);
-    const listPrice = profile.trim?.base_price != null ? Number(profile.trim.base_price) : null;
+    const listPrice = msrpByTrim.get(profile.trim_id) ?? null;
     const monthPrices = (pricesByTrim.get(profile.trim_id) ?? []).sort((a, b) => a - b);
     const sampleSize = monthPrices.length;
     const median = sampleSize > 0 ? percentile(monthPrices, 0.5) : null;
@@ -156,22 +131,9 @@ export async function buildCarFeatures(opts?: { dryRun?: boolean; syncSignals?: 
         ? (listPrice - median) / listPrice
         : null;
 
-    const promoRow = promoByTrim.get(profile.trim_id);
-    const promoAmount =
-      promoRow?.amount != null
-        ? Number(promoRow.amount)
-        : profile.promo_amount != null
-          ? Number(profile.promo_amount)
-          : null;
-
-    let promoPercentile =
-      sig?.promo_percentile != null ? Number(sig.promo_percentile) : null;
-    const promoAmountRatio =
-      promoAmount != null && listPrice && listPrice > 0 ? promoAmount / listPrice : null;
-    // 프로모 금액만 있고 percentile 없으면 거친 추정 (정가 대비)
-    if (promoPercentile == null && promoAmountRatio != null) {
-      promoPercentile = Math.max(5, Math.min(95, Math.round(promoAmountRatio * 800)));
-    }
+    const promoAmount = null;
+    const promoPercentile = null;
+    const promoAmountRatio = null;
 
     const salesRows = salesByTrim.get(profile.trim_id) ?? [];
     const latestSales = salesRows[0]?.registered_count ?? null;

@@ -123,16 +123,16 @@ export const LOOP_JOBS: LoopJobDef[] = [
   },
   {
     id: "promo-etl",
-    name: "공식 프로모션 월 ETL",
+    name: "공식 프로모션 원문 미리보기",
     description:
-      "기아 이달의 구매 혜택 HTML → official_promotions + car_profiles.promo_*. 금액 집합 해시 동일 시 스킵.",
+      "기아·현대 구매 혜택 원문을 미리보기 파일로 저장합니다. 트림·조건 검증 전 DB 자동 반영은 중단 중입니다.",
     cadence: "daily",
     pipeline: "promo-etl",
     domains: ["promo"],
-    targetTables: ["official_promotions", "car_profiles"],
-    defaultEnabled: true,
+    targetTables: [],
+    defaultEnabled: false,
     changeDetect: "fingerprint",
-    requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+    requiresEnv: [],
   },
   {
     id: "learn-match",

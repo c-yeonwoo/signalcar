@@ -88,7 +88,7 @@ function VehicleDetail() {
       </div>
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          {vehicle ? `${(vehicle as any).brand?.name ?? ""} ${vehicle.model_name}` : "로딩…"}
+          {vehicle ? `${vehicle.brand?.name ?? ""} ${vehicle.model_name}` : "로딩…"}
         </h1>
         {vehicle?.generation && <p className="text-sm text-muted-foreground">{vehicle.generation}</p>}
       </div>
@@ -105,7 +105,7 @@ function VehicleDetail() {
             <Tabs defaultValue="options">
               <TabsList>
                 <TabsTrigger value="options">옵션</TabsTrigger>
-                <TabsTrigger value="promotions">공식 프로모션</TabsTrigger>
+                <TabsTrigger value="promotions">프로모션 원자료</TabsTrigger>
               </TabsList>
               <TabsContent value="options">
                 <OptionsPanel trimId={activeTrimId} />
@@ -471,7 +471,7 @@ function PromotionsPanel({ trimId }: { trimId: string }) {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-base">공식 프로모션 ({promos.length})</CardTitle>
+        <CardTitle className="text-base">프로모션 원자료 ({promos.length})</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm" onClick={openNew}><Plus className="h-4 w-4 mr-1" />프로모션 추가</Button></DialogTrigger>
           <DialogContent>

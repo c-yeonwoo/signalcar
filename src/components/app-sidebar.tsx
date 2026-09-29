@@ -19,7 +19,7 @@ const items = [
   { title: "브랜드", url: "/admin/brands", icon: Building2 },
   { title: "차종·트림", url: "/admin/vehicles", icon: Car },
   { title: "정가 근거 검토", url: "/admin/price-evidence", icon: CircleDollarSign },
-  { title: "공식 프로모션", url: "/admin/promotions", icon: Tag },
+  { title: "프로모션 원자료", url: "/admin/promotions", icon: Tag },
   { title: "계약 제보", url: "/admin/deal-reports", icon: FileText },
   { title: "견적 수동 검토", url: "/admin/quotes", icon: ClipboardCheck },
   { title: "데이터 갱신 루프", url: "/admin/ingest", icon: RefreshCw },

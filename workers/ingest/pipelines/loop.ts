@@ -435,7 +435,7 @@ async function runProfileBootstrap(cwd: string, prevFp: string | null): Promise<
 
 async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobResult> {
   const { runPromoEtl } = await import("./promo-etl");
-  const dry = await runPromoEtl({ cwd, dryRun: true, brand: "all" });
+  const dry = await runPromoEtl({ cwd, brand: "all" });
   const fp = fingerprint({
     month: dry.month,
     offers: dry.fingerprintOffers,
@@ -450,19 +450,18 @@ async function runPromoEtlJob(cwd: string, prevFp: string | null): Promise<JobRe
       changed: false,
     };
   }
-  const written = await runPromoEtl({ cwd, dryRun: false, brand: "all" });
   return {
     jobId: "promo-etl",
     status: "ok",
     fingerprint: fp,
     stats: {
-      month: written.month,
-      offers: written.offers,
-      withAmount: written.withAmount,
-      db: written.db,
-      brands: written.brands,
+      month: dry.month,
+      offers: dry.offers,
+      withAmount: dry.withAmount,
+      previewOnly: true,
+      brands: dry.brands,
     },
-    changed: true,
+    changed: false,
   };
 }
 

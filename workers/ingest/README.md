@@ -68,7 +68,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 | 제품 데이터 | 1순위 소스 | 테이블 |
 |-------------|------------|--------|
 | 카탈로그·트림·MSRP·옵션 | 현대/기아/제네시스 공식 가격표 PDF | `vehicles`, `trims` (`catalog-parse`) |
-| 공식 프로모션 | 기아 special-offers (현대·제네시스 후속) | `official_promotions`, `car_profiles.promo_*` |
+| 프로모션 원문 미리보기 | 기아 special-offers·현대 monthly-benefit | 로컬 `workers/ingest/out` JSON. 조건·트림 검증 전에는 DB 자동 반영 중단 |
 | 실계약가·시그널 | 유저 계약 공유 + 집계 워커 | `deal_reports` → `price_signals` |
 | Brain 피처·타이밍 | 시그널·판매·프로모·페이스리프트 | `car_features_daily` |
 | 판매/등록 추이 | KOTSA OpenAPI, KAMA PDF, MOTIE 파일 | `sales_stats` |

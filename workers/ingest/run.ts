@@ -183,7 +183,6 @@ async function main() {
           : "all"
       ) as "kia" | "hyundai" | "all";
       const result = await runPromoEtl({
-        dryRun: has("--dry"),
         brand,
         month: get("--month"),
       });
