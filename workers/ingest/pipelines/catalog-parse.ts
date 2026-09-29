@@ -1,11 +1,10 @@
 /**
- * OEM 가격표 PDF → trims.base_price (+ vehicles slug 보강).
- * 1) PDF 텍스트 추출 2) 브랜드별 파서 3) preview JSON 4) SERVICE_ROLE 시 DB upsert
+ * OEM 가격표 PDF → 출처가 포함된 검토용 미리보기 JSON.
+ * 트림 매칭과 원문 검토 전에 DB 가격을 자동 갱신하지 않는다.
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { extractPdfText } from "../lib/pdf-text";
 import {
   parseGenericPriceText,
@@ -41,7 +40,7 @@ function cachePath(cwd: string, fileName: string, url: string) {
   const dir = join(cwd, "workers/ingest/out/pdf-cache");
   mkdirSync(dir, { recursive: true });
   const h = createHash("sha1").update(url).digest("hex").slice(0, 10);
-  const safe = fileName.replace(/[^\w.\-]+/g, "_").slice(0, 80);
+  const safe = fileName.replace(/[^\w.-]+/g, "_").slice(0, 80);
   return join(dir, `${h}-${safe}`);
 }
 
@@ -86,161 +85,8 @@ function summarize(table: ParsedPriceTable, meta: Omit<CatalogParseResultItem, "
   };
 }
 
-async function ensureBrand(
-  sb: SupabaseClient,
-  name: string,
-): Promise<string> {
-  const { data: existing } = await sb.from("brands").select("id").eq("name", name).maybeSingle();
-  if (existing?.id) return existing.id as string;
-  const { data, error } = await sb
-    .from("brands")
-    .insert({ name, name_en: name, country: "KR" })
-    .select("id")
-    .single();
-  if (error) throw error;
-  return data.id as string;
-}
-
-async function ensureVehicle(
-  sb: SupabaseClient,
-  brandId: string,
-  table: ParsedPriceTable,
-): Promise<string> {
-  const slug = table.vehicleSlug;
-  const { data: bySlug } = await sb.from("vehicles").select("id").eq("slug", slug).maybeSingle();
-  if (bySlug?.id) {
-    if (table.fuelHint) {
-      await sb.from("vehicles").update({ fuel_type: table.fuelHint }).eq("id", bySlug.id);
-    }
-    return bySlug.id as string;
-  }
-
-  // model_name 느슨 매칭
-  const { data: byName } = await sb
-    .from("vehicles")
-    .select("id, slug")
-    .eq("brand_id", brandId)
-    .ilike("model_name", `%${table.modelHint.replace(/더 뉴 |디 올 뉴 |2026 |2027 /g, "").slice(0, 20)}%`)
-    .limit(1)
-    .maybeSingle();
-  if (byName?.id) {
-    if (!byName.slug) await sb.from("vehicles").update({ slug }).eq("id", byName.id);
-    return byName.id as string;
-  }
-
-  const modelName = table.modelHint
-    .replace(/더 뉴 |디 올 뉴 |The New |The All New /gi, "")
-    .trim()
-    .slice(0, 80);
-  const { data, error } = await sb
-    .from("vehicles")
-    .insert({
-      brand_id: brandId,
-      model_name: modelName || slug,
-      slug,
-      fuel_type: table.fuelHint ?? null,
-      body_type: null,
-      notes: `oem-catalog-parse:${table.parser}`,
-    })
-    .select("id")
-    .single();
-  if (error) throw error;
-  return data.id as string;
-}
-
-function trimSlug(vehicleSlug: string, trim: { name: string; nameEn?: string; basePrice: number }) {
-  const base = slugify(trim.nameEn || trim.name) || "trim";
-  // 동일 트림명·다른 가격 구분
-  const priceKey = String(Math.round(trim.basePrice / 10_000));
-  return `${vehicleSlug}-${base}-${priceKey}`.slice(0, 100);
-}
-
-async function upsertTrims(
-  sb: SupabaseClient,
-  vehicleId: string,
-  table: ParsedPriceTable,
-): Promise<{ upserted: number; updatedExisting: number }> {
-  let upserted = 0;
-  let updatedExisting = 0;
-
-  const { data: existingTrims } = await sb
-    .from("trims")
-    .select("id, name, slug, base_price")
-    .eq("vehicle_id", vehicleId);
-
-  const existing = (existingTrims ?? []) as {
-    id: string;
-    name: string;
-    slug: string | null;
-    base_price: number | null;
-  }[];
-
-  for (const trim of table.trims) {
-    const slug = trimSlug(table.vehicleSlug, trim);
-    const nameNorm = trim.name.replace(/\s+/g, "").toLowerCase();
-    const enNorm = (trim.nameEn ?? "").replace(/\s+/g, "").toLowerCase();
-
-    // 1) slug exact
-    let hit = existing.find((t) => t.slug === slug);
-    // 2) 이름 부분 일치 (Gate0: Calligraphy / 노블레스 등)
-    if (!hit) {
-      hit = existing.find((t) => {
-        const n = t.name.replace(/\s+/g, "").toLowerCase();
-        return (
-          (nameNorm && n.includes(nameNorm)) ||
-          (enNorm && n.includes(enNorm)) ||
-          (nameNorm && n.includes(nameNorm.slice(0, 4)))
-        );
-      });
-    }
-
-    if (hit) {
-      await sb
-        .from("trims")
-        .update({
-          base_price: trim.basePrice,
-          slug: hit.slug ?? slug,
-          notes: `oem-msrp:${table.parser}:${new Date().toISOString().slice(0, 10)}`,
-        })
-        .eq("id", hit.id);
-      updatedExisting += 1;
-      continue;
-    }
-
-    const { error } = await sb.from("trims").insert({
-      vehicle_id: vehicleId,
-      name: trim.nameEn ? `${trim.name} (${trim.nameEn})` : trim.name,
-      base_price: trim.basePrice,
-      slug,
-      notes: `oem-catalog-parse:${table.parser}`,
-    });
-    if (error) {
-      console.warn(`[catalog-parse] trim insert fail ${slug}`, error.message);
-      continue;
-    }
-    upserted += 1;
-  }
-
-  return { upserted, updatedExisting };
-}
-
-async function markParsed(
-  sb: SupabaseClient,
-  url: string,
-  meta: Record<string, unknown>,
-) {
-  await sb
-    .from("source_documents")
-    .update({
-      parsed_at: new Date().toISOString(),
-      meta,
-    })
-    .eq("url", url);
-}
-
 export async function parseOfficialCatalogPrices(opts?: {
   cwd?: string;
-  dryRun?: boolean;
   /** 브랜드 제한 */
   brands?: Array<"hyundai" | "kia" | "genesis">;
   /** 최대 PDF 수 (개발용) */
@@ -402,15 +248,7 @@ export async function parseOfficialCatalogPrices(opts?: {
       errors: results.filter((r) => r.error).length,
       trims: ok.reduce((n, r) => n + r.trimCount, 0),
     },
-    results: results.map((r) =>
-      opts?.dryRun
-        ? r
-        : {
-            ...r,
-            // DB 적재 시 용량 줄이기 — preview 파일엔 table 유지
-            table: r.table,
-          },
-    ),
+    results,
   };
 
   const outDir = join(cwd, "workers/ingest/out");
@@ -430,57 +268,11 @@ export async function parseOfficialCatalogPrices(opts?: {
     }))
     .sort((a, b) => a.u.localeCompare(b.u));
 
-  if (opts?.dryRun) {
-    return {
-      ...payload.stats,
-      outPath,
-      dryRun: true as const,
-      db: null,
-      fingerprintPayload,
-    };
-  }
-
-  const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    console.warn("[catalog-parse] no SERVICE_ROLE — preview only");
-    return { ...payload.stats, outPath, dryRun: false as const, db: null };
-  }
-
-  const sb = createClient(url, key, { auth: { persistSession: false } });
-  let vehiclesTouched = 0;
-  let trimsInserted = 0;
-  let trimsUpdated = 0;
-
-  for (const r of ok) {
-    if (!r.table) continue;
-    try {
-      const brandId = await ensureBrand(sb, r.brand);
-      const vehicleId = await ensureVehicle(sb, brandId, r.table);
-      vehiclesTouched += 1;
-      const u = await upsertTrims(sb, vehicleId, r.table);
-      trimsInserted += u.upserted;
-      trimsUpdated += u.updatedExisting;
-      await markParsed(sb, r.url, {
-        kind: "price",
-        vehicleSlug: r.vehicleSlug,
-        trimCount: r.trimCount,
-        parser: r.parser,
-        minPrice: r.minPrice,
-        maxPrice: r.maxPrice,
-      });
-    } catch (e) {
-      console.warn(`[catalog-parse] db ${r.vehicleSlug}`, e instanceof Error ? e.message : e);
-    }
-  }
-
-  const db = { vehiclesTouched, trimsInserted, trimsUpdated };
-  console.log("[catalog-parse] db", db);
   return {
     ...payload.stats,
     outPath,
-    dryRun: false as const,
-    db,
+    dryRun: true as const,
+    db: null,
     fingerprintPayload,
   };
 }

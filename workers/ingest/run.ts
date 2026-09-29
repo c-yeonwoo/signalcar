@@ -166,7 +166,6 @@ async function main() {
         ? ([brandArg] as Array<"hyundai" | "kia" | "genesis">)
         : undefined;
       const result = await parseOfficialCatalogPrices({
-        dryRun: has("--dry"),
         limit: Number(get("--limit") ?? "60"),
         brands,
       });

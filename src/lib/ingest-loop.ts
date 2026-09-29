@@ -110,16 +110,16 @@ export const LOOP_JOBS: LoopJobDef[] = [
   },
   {
     id: "catalog-parse",
-    name: "OEM 가격표 PDF→MSRP",
+    name: "OEM 가격표 PDF 미리보기",
     description:
-      "현대·기아·제네시스 가격표 PDF 텍스트 파싱 → vehicles/trims.base_price. URL·트림 해시 동일 시 스킵.",
+      "현대·기아·제네시스 가격표 PDF 텍스트를 검토용 JSON으로 추출합니다. 원문·트림 대조 전에는 DB에 자동 반영하지 않습니다.",
     cadence: "daily",
     pipeline: "catalog-parse",
     domains: ["catalog", "msrp"],
-    targetTables: ["vehicles", "trims", "source_documents"],
-    defaultEnabled: true,
+    targetTables: [],
+    defaultEnabled: false,
     changeDetect: "fingerprint",
-    requiresEnv: ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+    requiresEnv: [],
   },
   {
     id: "promo-etl",

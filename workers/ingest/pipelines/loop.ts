@@ -469,7 +469,6 @@ async function runCatalogParse(cwd: string, prevFp: string | null): Promise<JobR
   const { parseOfficialCatalogPrices } = await import("./catalog-parse");
   const dry = await parseOfficialCatalogPrices({
     cwd,
-    dryRun: true,
     limit: 60,
     brands: ["hyundai", "kia", "genesis"],
   });
@@ -488,23 +487,17 @@ async function runCatalogParse(cwd: string, prevFp: string | null): Promise<JobR
       changed: false,
     };
   }
-  const written = await parseOfficialCatalogPrices({
-    cwd,
-    dryRun: false,
-    limit: 60,
-    brands: ["hyundai", "kia", "genesis"],
-  });
   return {
     jobId: "catalog-parse",
     status: "ok",
     fingerprint: fp,
     stats: {
-      docs: written.docs,
-      parsed: written.parsed,
-      trims: written.trims,
-      db: written.db,
+      docs: dry.docs,
+      parsed: dry.parsed,
+      trims: dry.trims,
+      previewOnly: true,
     },
-    changed: true,
+    changed: false,
   };
 }
 

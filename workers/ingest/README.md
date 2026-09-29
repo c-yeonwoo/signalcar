@@ -26,8 +26,8 @@ SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
 bun workers/ingest/run.ts car-features [--dry]
 # 또는: bun run ingest:features
 
-# OEM 가격표 PDF → trims.base_price (SERVICE_ROLE 있으면 DB upsert)
-bun workers/ingest/run.ts catalog-parse [--dry] [--limit 20] [--brand hyundai]
+# OEM 가격표 PDF → 원문 검토용 로컬 JSON (DB 자동 반영 중단)
+bun workers/ingest/run.ts catalog-parse [--limit 20] [--brand hyundai]
 # 또는: bun run ingest:catalog-parse
 
 # 공식 프로모션 월 ETL — 기아·현대 이달의 구매 혜택 (SERVICE_ROLE 있으면 DB upsert)
@@ -67,10 +67,10 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 | 제품 데이터 | 1순위 소스 | 테이블 |
 |-------------|------------|--------|
-| 카탈로그·트림·MSRP·옵션 | 현대/기아/제네시스 공식 가격표 PDF | `vehicles`, `trims` (`catalog-parse`) |
+| 가격표 원문 미리보기 | 현대/기아/제네시스 공식 가격표 PDF | 로컬 `workers/ingest/out` JSON. 트림·가격 원문 검토 전 DB 자동 반영 중단 |
 | 프로모션 원문 미리보기 | 기아 special-offers·현대 monthly-benefit | 로컬 `workers/ingest/out` JSON. 조건·트림 검증 전에는 DB 자동 반영 중단 |
 | 실계약가·시그널 | 유저 계약 공유 + 집계 워커 | `deal_reports` → `price_signals` |
-| Brain 피처·타이밍 | 시그널·판매·프로모·페이스리프트 | `car_features_daily` |
+| Brain 피처·타이밍 | 검증 정가·계약 시그널·판매·페이스리프트 | `car_features_daily` |
 | 판매/등록 추이 | KOTSA OpenAPI, KAMA PDF, MOTIE 파일 | `sales_stats` |
 | 신차·연식변경 뉴스 | 브랜드 뉴스룸 | `news_items` |
 | 세부가격 밴드 (유료) | KAIDA 등록 DB | `sales_stats` / signals |
