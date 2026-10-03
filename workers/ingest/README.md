@@ -57,7 +57,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## GitHub Actions 운영
 
-`.github/workflows/ingest-loop.yml`의 수동 실행은 `loop --dry --no-claim` 미리보기만 수행하고 DB 비밀값을 전달하지 않는다. 예약 실행은 GitHub 변수 `SIGNALCAR_INGEST_ENABLED=true`와 `signalcar-production` 환경의 운영 비밀값이 모두 준비된 경우에만 실행되며, 작업 중 오류가 나면 Action이 실패한다. 현재 워크플로는 GitHub에서 비활성 상태다. [배포 준비 기록](../../docs/product-review/2026-10-03/DEPLOYMENT_PROGRESS.md)의 D-01·D-02 조건과 실제 DB 잡 설정을 확인하기 전에는 다시 켜지 않는다.
+`.github/workflows/ingest-loop.yml`은 현재 수동 `loop --dry --no-claim` 미리보기만 수행한다. DB 비밀값을 전달하는 작업과 예약 트리거는 없다. [배포 준비 기록](../../docs/product-review/2026-10-03/DEPLOYMENT_PROGRESS.md)의 D-01·D-02 조건과 실제 DB 잡 설정을 확인한 뒤에만 별도 변경으로 운영 잡과 스케줄을 추가한다.
 
 ## Catalog sources (키 없음)
 
