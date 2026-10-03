@@ -30,7 +30,7 @@ bun workers/ingest/run.ts car-features [--dry]
 bun workers/ingest/run.ts catalog-parse [--limit 20] [--brand hyundai]
 # 또는: bun run ingest:catalog-parse
 
-# 공식 프로모션 월 ETL — 기아·현대 이달의 구매 혜택 (SERVICE_ROLE 있으면 DB upsert)
+# 공식 프로모션 원문 미리보기 — DB 자동 반영 중단
 bun workers/ingest/run.ts promo-etl [--dry] [--brand all|kia|hyundai] [--month 2026-07-01]
 # 또는: bun run ingest:promo -- --brand hyundai --dry
 
@@ -55,6 +55,10 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 가격 시그널 메일의 큐 생성과 발송은 자료 출처·수신 동의·철회 절차를 검수하는 동안 기본 중단된다. `SIGNALCAR_PRICE_ALERTS_ENABLED=true`가 명시되지 않으면 위 두 명령도 DB에 접속하거나 발송하지 않는다. 과거 대기 큐와 수신자를 확인하기 전에는 플래그를 켜지 않는다.
 
+## GitHub Actions 운영
+
+`.github/workflows/ingest-loop.yml`의 수동 실행은 `loop --dry --no-claim` 미리보기만 수행하고 DB 비밀값을 전달하지 않는다. 예약 실행은 GitHub 변수 `SIGNALCAR_INGEST_ENABLED=true`와 `signalcar-production` 환경의 운영 비밀값이 모두 준비된 경우에만 실행되며, 작업 중 오류가 나면 Action이 실패한다. 현재 워크플로는 GitHub에서 비활성 상태다. [배포 준비 기록](../../docs/product-review/2026-10-03/DEPLOYMENT_PROGRESS.md)의 D-01·D-02 조건과 실제 DB 잡 설정을 확인하기 전에는 다시 켜지 않는다.
+
 ## Catalog sources (키 없음)
 
 | 브랜드 | 방법 | 결과물 |
@@ -77,7 +81,7 @@ bun workers/ingest/run.ts sales-kot --year 2025 --month 11
 
 ## Roadmap
 
-1. **Now** — MSRP · promo-etl · profile-bootstrap · Brain features · learn-match / timing-eval. 신호 알림·발송은 검수까지 중단
+1. **Now** — 가격표·프로모션은 원문 미리보기만 허용. 운영 수집 전체는 배포 관문 확인 전까지 재개하지 않음
 2. **Next** — 현대/제네시스 프로모 · 알림 메일 발송 · trim_options
 3. **Then** — 뉴스→market_events · KAIDA
 4. **License** — KAIDA DB ETL (계약 후)

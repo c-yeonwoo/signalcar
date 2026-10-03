@@ -613,8 +613,6 @@ export type LoopRunOptions = {
   cwd?: string;
   /** 특정 job만 */
   only?: string[];
-  /** 비활성·미도래 무시하고 강제 */
-  force?: boolean;
   dryRun?: boolean;
   /** pending 수동 요청 처리 */
   claimRequests?: boolean;
@@ -679,7 +677,7 @@ export async function runIngestLoop(opts: LoopRunOptions = {}) {
     const enabled = enabledMap.get(jobId) ?? def.defaultEnabled;
     runtime.enabled = enabled;
 
-    if (!enabled && !opts.force) {
+    if (!enabled) {
       const r: JobResult = {
         jobId,
         status: "skipped_disabled",

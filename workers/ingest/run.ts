@@ -78,7 +78,7 @@ async function main() {
   news-index      공식 뉴스룸 링크 인덱싱
   danawa-private  다나와 백과 로컬 스냅샷 (out/ only, 제품 DB 금지)
   danawa-sales    다나와 판매조건 → Benefit JSON (out/ · --preview 시 src/data)
-  loop            일일 API loop (변경분만 갱신) · --job · --force · --dry · --sync-status
+  loop            일일 API loop (변경분만 갱신) · --job · --dry · --no-claim · --sync-status
   sources         레지스트리 출력
 `);
       break;
@@ -349,6 +349,9 @@ async function main() {
 
     case "loop": {
       const { runIngestLoop, syncLoopStatusToApp } = await import("./pipelines/loop");
+      if (has("--force")) {
+        throw new Error("--force is disabled; enable and review the job before running it");
+      }
       if (has("--sync-status")) {
         const saved = syncLoopStatusToApp(process.cwd());
         console.log(`synced → ${saved.previewPath}`);
@@ -358,7 +361,6 @@ async function main() {
       const result = await runIngestLoop({
         cwd: process.cwd(),
         only,
-        force: has("--force"),
         dryRun: has("--dry"),
         claimRequests: !has("--no-claim"),
       });
@@ -370,6 +372,9 @@ async function main() {
       }
       console.log(`state → ${result.saved.path}`);
       console.log(`admin preview → ${result.saved.previewPath}`);
+      if (result.results.some((r) => r.status === "error")) {
+        process.exitCode = 1;
+      }
       break;
     }
 
@@ -496,7 +501,7 @@ async function main() {
   bun workers/ingest/run.ts danawa-enrich
   bun workers/ingest/run.ts danawa-classify
   bun workers/ingest/run.ts danawa-sales --model 4802 [--brand 303] [--preview]
-  bun workers/ingest/run.ts loop [--job catalog-index] [--force] [--dry] [--sync-status]
+  bun workers/ingest/run.ts loop [--job catalog-index] [--dry] [--no-claim] [--sync-status]
   bun workers/ingest/run.ts danawa-private --brand 304 [--deep] [--max 12]
   bun workers/ingest/run.ts danawa-private --model 3995`);
   }
