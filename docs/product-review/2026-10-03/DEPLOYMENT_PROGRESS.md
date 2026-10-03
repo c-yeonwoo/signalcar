@@ -5,8 +5,8 @@
 | 작업 | 상태 | 확인 결과·남은 조건 |
 |---|---|---|
 | D-01 운영 기준선 | 진행 중 | 저장소 `supabase/config.toml`의 프로젝트 ref는 현재 CLI 계정의 프로젝트 목록에 없다. 운영 DB 적용 이력을 읽지 못했다. 예시 URL `https://signalcar.lovable.app`은 다시 404였다. GitHub Deployments 기록은 없고, Lovable의 실제 Publish URL·활성 SHA는 미확인이다. |
-| D-02 복구·비밀값 | 미착수 | 운영 프로젝트 접근과 백업·Storage 객체 정책 확인이 필요하다. GitHub Secrets 목록은 현재 권한에서 403으로 열람할 수 없다. 실제 키 값은 이 문서에 기록하지 않는다. |
-| D-03 코드·DB CI | CI 완료·Publish 관문 대기 | [GitHub Actions 실행](https://github.com/c-yeonwoo/signalcar/actions/runs/37118383241)에서 `npm ci`, 타입 검사, 앱 빌드, Bun 고정 설치, 단위 테스트 8개, 수집 CLI 번들, 격리 DB 마이그레이션 26개와 SQL 권한·데이터 계약 테스트 9개가 모두 통과했다. Lovable Publish가 이 검사 결과에 자동 연동된 것은 아니므로 릴리스 담당자가 통과 SHA를 확인해야 한다. |
+| D-02 복구·비밀값 | 일부 확인 | 추적 중인 `.env`와 그 Git 이력 1개 버전에서 알려진 서비스 역할·메일·공공 API 비밀값 할당은 발견되지 않았다. 이는 전체 저장소 비밀값 검사나 유출 부재의 증거는 아니다. 운영 백업·Storage 객체 정책은 미확인이고 GitHub Secrets 목록은 현재 권한에서 403이다. 실제 키 값은 이 문서에 기록하지 않는다. |
+| D-03 코드·DB CI | CI 완료·Publish 관문 대기 | [최신 GitHub Actions 실행](https://github.com/c-yeonwoo/signalcar/actions/runs/37118769506)에서 `npm ci`, 타입 검사, 앱 빌드, Bun 고정 설치, 단위 테스트 8개, 수집 CLI 번들, 격리 DB 마이그레이션 26개와 SQL 권한·데이터 계약 테스트 9개가 모두 통과했다. Lovable Publish가 이 검사 결과에 자동 연동된 것은 아니므로 릴리스 담당자가 통과 SHA를 확인해야 한다. |
 | D-04 스테이징 | 미착수 | 분리된 Supabase/Lovable 환경이 확인되지 않았다. 실제 고객 데이터로 대체하지 않는다. |
 | D-05 운영 DB 적용 경로 | 대기 | 현재 계정으로 운영 DB 이력·자동 적용 여부를 확인할 수 없다. `db push`는 실행하지 않았다. |
 | D-06 운영 릴리스 | 대기 | 실제 URL·DB·백업과 스테이징 검증 후 진행한다. `main` 반영을 Publish 완료로 표시하지 않는다. |
